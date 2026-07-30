@@ -1,5 +1,0 @@
-.env
-line-backend\.env
-flashbot-robot\.env
-__pycache__/
-*.pyc
