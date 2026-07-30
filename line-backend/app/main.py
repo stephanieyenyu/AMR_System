@@ -34,6 +34,23 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 app = FastAPI(title="AMR 配送系統 - LINE 後端")
 
+
+@app.on_event("startup")
+def _create_tables_on_startup():
+    """
+    服務啟動時自動建立資料表（如果還不存在），取代原本要另外手動執行
+    `python -m app.init_db` 的做法——這樣部署在沒有Shell可以下指令的環境
+    （例如Render免費方案）時，資料表一樣會自動就緒，不需要額外步驟。
+    這裡假設app.db有匯出engine這個SQLAlchemy引擎物件（標準命名慣例，
+    models.py已經確認app.db有匯出Base）；如果實際變數名稱不同，這裡
+    的import會直接失敗、在Render的Logs分頁看得到清楚的錯誤訊息，
+    到時候把錯誤訊息貼給我，我再對照db.py實際內容調整。
+    create_all()只會補建缺少的表，已經存在的資料表跟裡面的資料不會被
+    清空或更動。
+    """
+    from app.db import Base, engine
+    Base.metadata.create_all(bind=engine)
+
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
 
 
@@ -786,7 +803,7 @@ def try_assign_door(package_id: str, door_id: str, door_task_id, db: Session) ->
 
     ok, resp, error = call_robot_api(
         "POST", f"/api/door-tasks/{door_task_id}/assign",
-        json={"door_id": door_id, "quantity": quantity, "task_type": task_type, "package_id": package_id},
+        json={"door_id": door_id, "quantity": quantity, "task_type": task_type},
     )
     if not ok:
         no_door_available = resp is not None and resp.status_code in (400, 409)
