@@ -120,24 +120,3 @@ docker compose logs -f flashbot-robot
 
 # 機器人與 Pudu API 的逐筆指令/回應紀錄（獨立於上面的容器 log，已用 volume 保留）
 docker compose exec flashbot-robot cat instance/robot_commands.log
-```
-
----
-
-## 想了解架構與後續怎麼開發？
-
-完整的系統架構、資料流程圖、兩個模組的關鍵檔案說明、Pudu API 清單、以及未來新增功能/除錯注意事項，都寫在：
-
-📄 **[`docs/開發文件.md`](./docs/開發文件.md)**
-
-其中也記錄了合併/分析過程中發現的幾個現有程式碼問題（例如兩邊埠號設定不一致、部分測試與現行 API 路由脫節、README 與程式碼有落差的地方等），建議接手維護前先讀過一遍。
-
----
-
-## 已知注意事項（合併當下發現，尚未修正於原始程式碼）
-
-這些是把兩個 branch 內容組合起來後觀察到的既有問題，**沒有更動任何一邊的原始程式碼**，只在這裡列出來供你決定是否/如何修正：
-
-1. **`flashbot-robot` 的埠號設定原本互相矛盾**：`run.py` 的 `--port` 參數預設是 `6000`，但 `Dockerfile` 只 `EXPOSE 5000` 且沒有在 `CMD` 帶入 `--port`，`README.md` 又寫預設是 `5000`。本專案的 `docker-compose.yml` 已經在 `command:` 明確指定 `--port 5000`，讓實際監聽的埠與對外文件一致，但如果你直接用 `flashbot-robot/Dockerfile` 單獨建置容器（不透過這份 compose），仍然會遇到原本的埠號不一致，需要自行注意。
-2. **`line-backend/.gitignore` 檔尾原本殘留一行未清乾淨的 Git merge conflict 標記**（`>>>>>>> 8bb6076f...`）。這份合併專案的頂層 `.gitignore` 是重新寫過的乾淨版本，但原本 `line-backend/.gitignore` 這個檔案本身**還留著那個問題**，建議找時間回原本的 `main` branch 修掉。
-3. 其餘（測試與現行 API 路由不同步、部分 docstring 落後於實際上鎖邏輯等）詳見 `docs/開發文件.md` 第 5 章。
