@@ -34,23 +34,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 app = FastAPI(title="AMR 配送系統 - LINE 後端")
 
-
-@app.on_event("startup")
-def _create_tables_on_startup():
-    """
-    服務啟動時自動建立資料表（如果還不存在），取代原本要另外手動執行
-    `python -m app.init_db` 的做法——這樣部署在沒有Shell可以下指令的環境
-    （例如Render免費方案）時，資料表一樣會自動就緒，不需要額外步驟。
-    這裡假設app.db有匯出engine這個SQLAlchemy引擎物件（標準命名慣例，
-    models.py已經確認app.db有匯出Base）；如果實際變數名稱不同，這裡
-    的import會直接失敗、在Render的Logs分頁看得到清楚的錯誤訊息，
-    到時候把錯誤訊息貼給我，我再對照db.py實際內容調整。
-    create_all()只會補建缺少的表，已經存在的資料表跟裡面的資料不會被
-    清空或更動。
-    """
-    from app.db import Base, engine
-    Base.metadata.create_all(bind=engine)
-
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
 
 
@@ -803,7 +786,7 @@ def try_assign_door(package_id: str, door_id: str, door_task_id, db: Session) ->
 
     ok, resp, error = call_robot_api(
         "POST", f"/api/door-tasks/{door_task_id}/assign",
-        json={"door_id": door_id, "quantity": quantity, "task_type": task_type},
+        json={"door_id": door_id, "quantity": quantity, "task_type": task_type, "package_id": package_id},
     )
     if not ok:
         no_door_available = resp is not None and resp.status_code in (400, 409)
@@ -1441,15 +1424,13 @@ async def delete_packages(payload: DeletePackagesRequest, db: Session = Depends(
     跟系統裡其他操作（都是改status、留紀錄）完全不同，所以只讓管理員手動、
     明確勾選才能觸發，且每一筆都會在刪除前寫一筆task_log存證。
 
-    安全限制：不允許刪除「艙門還在使用中、任務還沒走完」的包裹，判斷方式是：
-    - status是pickup_now（已指派艙門）／delivering／arrived：艙門正在使用中
-    - status是rejected_at_door／returned_timeout，但door_closed_at還沒設：
-      機器人已經把包裹帶回來但艙門還沒被管理員關過，也算還在使用中
-    這種包裹背後對應機器人身上一個實際開著/關著的艙門，資料庫紀錄消失但
-    硬體狀態沒有跟著清掉，之後會對不起來、變成查無來源的艙門佔用。要刪除
-    這種包裹，請先用「叫回機器人」或走完正常流程把艙門釋放掉，再回來刪除。
-    completed／voided／已經door_closed_at的退回包裹，door_id即使還留著門號
-    也只是歷史紀錄，不是實際佔用中，可以直接刪除。
+    ⚠️ 已拿掉「艙門還在使用中不給刪」的限制，管理員可以直接刪除任何狀態的
+    包裹，包含pickup_now／delivering／arrived這幾種原本會被擋下的狀態。
+    這代表刪除的當下，資料庫紀錄消失了，但機器人身上實際的艙門狀態不會
+    跟著自動釋放——如果這筆包裹背後真的還有一扇門開著/關著等處理，刪掉
+    紀錄之後那扇門會變成「查無來源」的佔用，之後要嘛用機器人狀態欄的
+    開關門鍵手動處理，要嘛等下次「叫回機器人」讓機器人自己的邏輯去校正。
+    管理員自己判斷要不要在真的處理完艙門之前就刪除紀錄。
     """
     if not payload.package_ids:
         raise HTTPException(status_code=400, detail="沒有指定要刪除的包裹")
@@ -1465,10 +1446,6 @@ async def delete_packages(payload: DeletePackagesRequest, db: Session = Depends(
         package = db.query(Package).filter(Package.id == parsed).first()
         if not package:
             skipped.append({"id": pid, "reason": "找不到這筆包裹"})
-            continue
-
-        if is_door_actively_held(package):
-            skipped.append({"id": pid, "reason": "艙門仍在使用中，請先叫回機器人或完成派送流程後再刪除"})
             continue
 
         log_event(
