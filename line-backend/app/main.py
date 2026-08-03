@@ -4792,12 +4792,8 @@ async def admin_reports_page(request: Request):
     })
 
 @app.get("/admin/exceptions", response_class=HTMLResponse, dependencies=[Depends(require_admin_auth)])
-async def admin_exceptions_page(request: Request):
-    return templates.TemplateResponse("exceptions.html", {
-        "request": request,
-        "current_page": "exceptions",
-        "page_title": "退回/作廢包裹處理",
-    })
+async def admin_exceptions_page():
+    return HTMLResponse(content=ADMIN_EXCEPTIONS_HTML)
 
 @app.get("/admin/residents", response_class=HTMLResponse, dependencies=[Depends(require_admin_auth)])
 async def admin_residents_page(request: Request):
@@ -4811,7 +4807,343 @@ async def admin_residents_page(request: Request):
 # ADMIN_REPORTS_HTML 已遷移至 app/templates/reports.html + app/static/js/reports.js
 
 
-# ADMIN_EXCEPTIONS_HTML 已遷移至 app/templates/exceptions.html + app/static/js/exceptions.js
+ADMIN_EXCEPTIONS_HTML = """
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>退回/作廢包裹處理</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, "PingFang TC", "Microsoft JhengHei", sans-serif;
+    background: #f5f5f5; margin: 0; padding: 20px; color: #222; zoom: 1.15; }
+  h1 { color: #E2231A; font-size: 22px; margin-bottom: 20px; }
+  .card { background: white; border-radius: 8px; padding: 16px; margin-bottom: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 8px; border-bottom: 1px solid #eee; }
+  th { color: #888; font-weight: normal; }
+  button { padding: 6px 14px; font-size: 13px; border-radius: 6px; border: none;
+    background: #E2231A; color: white; cursor: pointer; }
+  button:hover { background: #c41c14; }
+  button:disabled { opacity: 0.5; cursor: default; }
+  button.secondary { background: white; color: #E2231A; border: 1px solid #E2231A; }
+  button.secondary:hover { background: #e9e9e9; }
+  select { padding: 8px 12px; font-size: 14px; border-radius: 6px; border: 1px solid #ccc; }
+  .action-buttons { display: inline-flex; gap: 6px; }
+  .status-badge { padding: 2px 8px; border-radius: 10px; font-size: 12px; background: #eee; }
+  .status-voided { background: #f8d7da; color: #721c24; }
+  .status-rejected_at_door { background: #dc3545; color: white; }
+  .status-returned_timeout { background: #dc3545; color: white; }
+  .pill { padding: 2px 8px; border-radius: 10px; font-size: 12px; }
+  .pill-waiting { background: #fff3cd; color: #856404; }
+  .pill-resolved { background: #d4edda; color: #155724; }
+  .pill-redispatched { background: #cce5ff; color: #004085; }
+  .empty-hint { color: #999; font-size: 14px; padding: 12px 0; }
+  .pkg-select-checkbox, #selectAllCheckbox {
+    appearance: none; -webkit-appearance: none;
+    width: 22px; height: 22px; border: 2px solid #ccc; border-radius: 7px;
+    cursor: pointer; position: relative; vertical-align: middle; margin: 0;
+  }
+  .pkg-select-checkbox:checked, #selectAllCheckbox:checked {
+    background: #E2231A; border-color: #E2231A;
+  }
+  .pkg-select-checkbox:checked::after, #selectAllCheckbox:checked::after {
+    content: ''; position: absolute; left: 7px; top: 3px;
+    width: 5px; height: 10px; border: solid white; border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  tr.selectable-row { cursor: pointer; }
+  tr.selectable-row:hover { background: #fff5f5; }
+  tr.needs-attention-row { background: #fff0f0; }
+</style>
+</head>
+<body>
+
+<h1>退回/作廢包裹處理
+  <a href="/admin" style="font-size:14px;font-weight:normal;color:#E2231A;margin-left:16px;">← 回 Dashboard</a>
+  <a href="/admin/reports" style="font-size:14px;font-weight:normal;color:#E2231A;">← 查看每日報表</a>
+  <a href="/admin/residents" style="font-size:14px;font-weight:normal;color:#E2231A;">住戶綁定管理 →</a>
+</h1>
+
+<div class="card">
+  <p style="font-size:13px;color:#888;margin-top:0;">
+    主畫面的確認/關門流程須先完成，才能在這裡按「重新派貨」。
+  </p>
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+    <button id="selectModeBtn" class="secondary" style="margin-left:0;" onclick="toggleSelectMode()">選取</button>
+    <button id="closeSelectedBtn" style="display:none;background:#dc3545;margin-left:0;" onclick="closeSelectedCases()" disabled>全部銷案（0）</button>
+    <input type="text" id="unitFilterInput" placeholder="輸入門牌搜尋"
+      style="width:220px;height:36px;padding:0 10px;border-radius:6px;border:1px solid #ccc;font-size:14px;box-sizing:border-box;" />
+    <button id="unitFilterBtn" onclick="filterByUnit()"
+      style="height:36px;padding:0 16px;font-size:14px;box-sizing:border-box;">查詢</button>
+    <button id="unitFilterClearBtn" onclick="clearUnitFilter()"
+      style="height:36px;padding:0 14px;font-size:14px;box-sizing:border-box;background:white;color:#E2231A;border:1px solid #E2231A;cursor:pointer;">清除</button>
+    <span id="unitFilterCount" style="font-size:13px;color:#888;"></span>
+  </div>
+  <table>
+    <thead><tr>
+      <th id="selectColHeader" style="display:none;width:30px;"><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)" /></th>
+      <th>門牌</th><th>收件人</th><th>狀態</th><th>建立時間</th><th>主畫面處理</th><th>操作</th><th>已通知時間</th>
+    </tr></thead>
+    <tbody id="exceptionsTableBody"><tr><td colspan="7">載入中...</td></tr></tbody>
+  </table>
+</div>
+
+<script>
+const STATUS_LABEL = {
+  voided: '不收（作廢）', rejected_at_door: '拒收', returned_timeout: '逾時未取',
+};
+
+let allExceptions = [];
+let selectMode = false;
+let selectedPackageIds = new Set();
+
+async function loadExceptions() {
+  const tbody = document.getElementById('exceptionsTableBody');
+  try {
+    const resp = await fetch('/admin/packages/exceptions');
+    allExceptions = await resp.json();
+    renderExceptions(allExceptions);
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="${selectMode ? 8 : 7}" style="color:red">載入失敗：${e.message}</td></tr>`;
+  }
+}
+
+function renderExceptions(packages) {
+  const tbody = document.getElementById('exceptionsTableBody');
+  const keyword = document.getElementById('unitFilterInput').value.trim();
+  const colCount = selectMode ? 8 : 7;
+
+  if (packages.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="${colCount}" class="empty-hint">${keyword ? '找不到符合的門牌' : '目前沒有退回/作廢的包裹'}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = packages.map(p => {
+    const checkboxCell = selectMode
+      ? `<td><input type="checkbox" class="pkg-select-checkbox" data-id="${p.id}" ${selectedPackageIds.has(p.id) ? 'checked' : ''} onchange="togglePackageSelect('${p.id}', this.checked)" /></td>`
+      : '';
+    const label = (p.status === 'rejected_at_door' && p.task_type === 'return')
+      ? '已取消退貨'
+      : (STATUS_LABEL[p.status] || p.status);
+    const createdAt = p.created_at ? p.created_at.replace('T', ' ').slice(0, 16) : '-';
+    const recipients = p.recipients.map(r => r.name).join('、') || '-';
+
+    const notifiedCell = p.pending_pickup_notified_at
+      ? p.pending_pickup_notified_at.replace('T', ' ').slice(0, 16)
+      : '-';
+    const notifyButton = p.pending_pickup_notified_at
+      ? ''
+      : `<button class="secondary" onclick="notifyPendingPickup(this, '${p.id}')">通知住戶</button>`;
+
+    let resolvedPill, action;
+    if (p.redispatched_at) {
+      resolvedPill = '<span class="pill pill-redispatched">已重新派送</span>';
+      action = `新包裹 ${p.redispatched_to.slice(0, 8)}...`;
+    } else if (!p.resolved) {
+      resolvedPill = '<span class="pill pill-waiting">尚未處理</span>';
+      action = `<span class="action-buttons">
+        <button disabled title="請先在主畫面確認/關門">重新派貨</button>
+        ${notifyButton || '<span style="font-size:12px;color:#888;">已通知</span>'}
+      </span>`;
+    } else {
+      resolvedPill = '<span class="pill pill-resolved">已處理</span>';
+      action = `<span class="action-buttons">
+        <button onclick="redispatch(this, '${p.id}')">重新派貨</button>
+        ${notifyButton}
+      </span>`;
+    }
+
+    const rowClass = (selectMode ? 'selectable-row ' : '') + (p.needs_attention ? 'needs-attention-row' : '');
+    const rowClick = selectMode ? ` onclick="handleRowClick(event, '${p.id}')"` : '';
+    const attentionBadge = p.needs_attention
+      ? '<div style="color:#dc3545;font-size:11px;font-weight:bold;margin-top:2px;">⚠️ 已超過72小時未處理</div>'
+      : '';
+
+    return `<tr class="${rowClass}"${rowClick}>
+      ${checkboxCell}
+      <td>${p.unit}</td>
+      <td>${recipients}</td>
+      <td><span class="status-badge status-${p.status}">${label}</span></td>
+      <td>${createdAt}</td>
+      <td>${resolvedPill}${attentionBadge}</td>
+      <td>${action}</td>
+      <td>${notifiedCell}</td>
+    </tr>`;
+  }).join('');
+}
+
+function toggleSelectMode() {
+  if (selectMode) {
+    exitSelectMode();
+    renderExceptions(allExceptions);
+    return;
+  }
+  selectMode = true;
+  document.getElementById('selectColHeader').style.display = 'table-cell';
+  document.getElementById('selectModeBtn').textContent = '取消選取';
+  document.getElementById('closeSelectedBtn').style.display = 'inline-block';
+  updateCloseSelectedButtonState();
+  renderExceptions(allExceptions);
+}
+
+function exitSelectMode() {
+  selectMode = false;
+  selectedPackageIds.clear();
+  document.getElementById('selectColHeader').style.display = 'none';
+  document.getElementById('selectModeBtn').textContent = '選取';
+  document.getElementById('closeSelectedBtn').style.display = 'none';
+  updateCloseSelectedButtonState();
+}
+
+function handleRowClick(event, id) {
+  if (event.target.closest('input, button, a')) return;
+  const checkbox = document.querySelector(`.pkg-select-checkbox[data-id="${id}"]`);
+  if (!checkbox) return;
+  checkbox.checked = !checkbox.checked;
+  togglePackageSelect(id, checkbox.checked);
+}
+
+function togglePackageSelect(id, checked) {
+  if (checked) {
+    selectedPackageIds.add(id);
+  } else {
+    selectedPackageIds.delete(id);
+  }
+  updateCloseSelectedButtonState();
+}
+
+function toggleSelectAll(checkbox) {
+  document.querySelectorAll('.pkg-select-checkbox').forEach(cb => {
+    cb.checked = checkbox.checked;
+    if (checkbox.checked) {
+      selectedPackageIds.add(cb.dataset.id);
+    } else {
+      selectedPackageIds.delete(cb.dataset.id);
+    }
+  });
+  updateCloseSelectedButtonState();
+}
+
+function updateCloseSelectedButtonState() {
+  const btn = document.getElementById('closeSelectedBtn');
+  const count = selectedPackageIds.size;
+  btn.textContent = `全部銷案（${count}）`;
+  btn.disabled = count === 0;
+}
+
+async function closeSelectedCases() {
+  const ids = Array.from(selectedPackageIds);
+  if (ids.length === 0) return;
+  if (!confirm(`確定要將選取的 ${ids.length} 筆包裹全部銷案嗎？銷案後這些紀錄會從此頁面移除，主畫面資料不受影響，且無法復原。`)) return;
+
+  const btn = document.getElementById('closeSelectedBtn');
+  btn.disabled = true;
+  const originalText = btn.textContent;
+  btn.textContent = '銷案中...';
+  try {
+    const resp = await fetch('/admin/packages/close-case-batch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ package_ids: ids }),
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.detail || '銷案失敗');
+
+    if (data.skipped && data.skipped.length > 0) {
+      const reasons = data.skipped.map(s => `${s.id.slice(0, 8)}...：${s.reason}`).join('\\n');
+      alert(`已銷案 ${data.closed.length} 筆，${data.skipped.length} 筆無法銷案：\n${reasons}`);
+    } else {
+      alert(`已銷案 ${data.closed.length} 筆`);
+    }
+    exitSelectMode();
+    loadExceptions();
+  } catch (e) {
+    alert('銷案失敗：' + e.message);
+  } finally {
+    updateCloseSelectedButtonState();
+  }
+}
+
+function filterByUnit() {
+  const keyword = document.getElementById('unitFilterInput').value.trim().toLowerCase();
+  const countEl = document.getElementById('unitFilterCount');
+  if (!keyword) {
+    countEl.textContent = '';
+    renderExceptions(allExceptions);
+    return;
+  }
+  const filtered = allExceptions.filter(p => p.unit.toLowerCase().includes(keyword));
+  countEl.textContent = `符合「${keyword}」共 ${filtered.length} 筆`;
+  renderExceptions(filtered);
+}
+
+function clearUnitFilter() {
+  document.getElementById('unitFilterInput').value = '';
+  document.getElementById('unitFilterCount').textContent = '';
+  renderExceptions(allExceptions);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('unitFilterInput');
+  if (input) {
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') filterByUnit();
+    });
+  }
+});
+
+async function notifyPendingPickup(btn, packageId) {
+  if (!confirm('確定要補發包裹通知給住戶嗎？（只能通知一次，請確認後再送出）')) return;
+  btn.disabled = true;
+  const originalText = btn.textContent;
+  btn.textContent = '通知中...';
+  try {
+    const resp = await fetch(`/packages/${packageId}/notify-pending-pickup`, { method: 'POST' });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.detail || '通知失敗');
+    if (data.notify_failed_count > 0) {
+      alert(`已通知 ${data.notified_count} 位收件人，${data.notify_failed_count} 位通知失敗`);
+    } else {
+      alert(`已通知 ${data.notified_count} 位收件人`);
+    }
+    loadExceptions();
+  } catch (e) {
+    alert('通知失敗：' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+}
+
+async function redispatch(btn, packageId) {
+  if (!confirm('確定要重新派送這筆包裹嗎？將建立一筆新包裹並重新通知住戶。')) return;
+  btn.disabled = true;
+  const originalText = btn.textContent;
+  btn.textContent = '派送中...';
+  try {
+    const resp = await fetch(`/packages/${packageId}/redispatch`, { method: 'POST' });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.detail || '重新派送失敗');
+    if (data.notify_failed && data.notify_failed.length > 0) {
+      alert(`已建立新包裹，但 ${data.notify_failed.join('、')} 通知失敗，請確認LINE綁定`);
+    } else {
+      alert('已建立新包裹並通知住戶');
+    }
+    loadExceptions();
+  } catch (e) {
+    alert('重新派送失敗：' + e.message);
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+}
+
+loadExceptions();
+</script>
+</body>
+</html>
+"""
 
 
 # ADMIN_RESIDENTS_HTML 已遷移至 app/templates/residents.html + app/static/js/residents.js
