@@ -1,13 +1,14 @@
 /* ============================================================
  * base.css — Admin Dashboard 四個頁面共用樣式
  *
- * 這份檔案取代了原本 ADMIN_DASHBOARD_HTML / ADMIN_REPORTS_HTML /
- * ADMIN_EXCEPTIONS_HTML / ADMIN_RESIDENTS_HTML 各自內嵌、彼此已經
- * 微妙長歪的 <style> 區塊。以後要調整顏色、字級、間距，只要改這一份，
- * 四頁會一起套用，不用再手動同步。
+ * 這份檔案取代了原本四個頁面各自內嵌、彼此已經長歪的 <style> 區塊。
+ * 以後要調整顏色、字級、間距，只要改這一份，四頁會一起套用。
  *
- * 按鈕尺寸統一採用 padding:6px 14px; font-size:13px 這組（原本
- * 例外處理/住戶管理頁面用的尺寸），因為四頁裡已經有兩頁是這個規格。
+ * 視覺方向（第二階段改版）：
+ * - 品牌紅（#E2231A）收斂到「危險/會動硬體/不可逆」的操作（.danger）、
+ *   以及頁首標題文字，不再是預設按鈕色。
+ * - 一般操作按鈕改用中性深灰，降低紅色的出現頻率，讓紅色保留警示作用。
+ * - 卡片拿掉陰影，改細邊框，視覺更扁平。
  * ============================================================ */
 
 * {
@@ -33,6 +34,7 @@ body {
 .page-header h1 {
   color: #E2231A;
   font-size: 22px;
+  font-weight: 500;
   margin: 0;
   white-space: nowrap;
 }
@@ -45,16 +47,17 @@ body {
 .page-header .admin-nav a {
   font-size: 14px;
   font-weight: normal;
-  color: #E2231A;
+  color: #666;
   text-decoration: none;
 }
 .page-header .admin-nav a:hover {
+  color: #222;
   text-decoration: underline;
 }
 .page-header .admin-nav .admin-nav-current {
   font-size: 14px;
   font-weight: bold;
-  color: #666;
+  color: #222;
 }
 .page-header .page-actions {
   margin-left: auto;
@@ -71,10 +74,10 @@ h2 {
 
 .card {
   background: white;
+  border: 1px solid #e3e3e0;
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 20px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 .card-header {
   display: flex;
@@ -106,14 +109,15 @@ button {
   margin-bottom: 8px;
 }
 
+/* 一般操作（查詢、儲存、建立、確認…）：中性深灰，不再是品牌紅 */
 button {
-  background: #E2231A;
+  background: #2c2c2a;
   color: white;
   border: none;
   cursor: pointer;
 }
 button:hover {
-  background: #c41c14;
+  background: #1a1a19;
 }
 button:disabled {
   opacity: 0.6;
@@ -121,22 +125,23 @@ button:disabled {
 }
 button.secondary {
   background: white;
-  color: #E2231A;
-  border: 1px solid #E2231A;
+  color: #444;
+  border: 1px solid #d0d0cc;
 }
 button.secondary:hover {
-  background: #e9e9e9;
+  background: #f2f2f0;
 }
 /* 會直接驅動硬體、或不可逆的操作（全部派送、召回機器人、刪除、銷案），
-   統一用這個 class 標示，跟一般操作在視覺上明顯區隔 */
+   統一用這個 class 標示，跟一般操作在視覺上明顯區隔——整份系統裡，
+   紅色只留給這一種按鈕，看到紅色就代表要停下來想一下再按 */
 button.danger {
-  background: #dc3545;
+  background: #E2231A;
   color: white;
-  border: 1px solid #dc3545;
+  border: 1px solid #E2231A;
   font-weight: bold;
 }
 button.danger:hover {
-  background: #bb2d3b;
+  background: #c41c14;
 }
 
 /* ---------- 表格 ---------- */
@@ -159,13 +164,13 @@ tr.selectable-row {
   cursor: pointer;
 }
 tr.selectable-row:hover {
-  background: #fff5f5;
+  background: #f7f7f5;
 }
 tr.needs-attention-row {
   background: #fff0f0;
 }
 
-/* ---------- 狀態徽章 ---------- */
+/* ---------- 狀態徽章（維持原本語意色，不受這次改版影響） ---------- */
 .status-badge {
   padding: 2px 8px;
   border-radius: 10px;
@@ -202,7 +207,6 @@ tr.needs-attention-row {
   padding: 14px 16px;
   margin-bottom: 20px;
   font-size: 14px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 .alert-box b { display: block; font-size: 15px; margin-bottom: 6px; }
 .alert-box ul { margin: 0; padding-left: 20px; }
@@ -217,7 +221,7 @@ tr.needs-attention-row {
 /* ---------- 每日報表頁專屬（統計方塊、時間軸等級色） ---------- */
 .summary-grid { display: flex; gap: 16px; flex-wrap: wrap; }
 .summary-box { background: #f9f9f9; border-radius: 8px; padding: 12px 20px; text-align: center; min-width: 90px; }
-.summary-box b { display: block; font-size: 22px; color: #E2231A; }
+.summary-box b { display: block; font-size: 22px; color: #222; }
 .summary-box span { font-size: 12px; color: #888; }
 .level-error { color: #c41c14; font-weight: bold; }
 .level-warning { color: #b58105; }
@@ -239,8 +243,8 @@ tr.needs-attention-row {
 }
 .pkg-select-checkbox:checked,
 #selectAllCheckbox:checked {
-  background: #E2231A;
-  border-color: #E2231A;
+  background: #2c2c2a;
+  border-color: #2c2c2a;
 }
 .pkg-select-checkbox:checked::after,
 #selectAllCheckbox:checked::after {
@@ -255,7 +259,7 @@ tr.needs-attention-row {
   transform: rotate(45deg);
 }
 
-/* ---------- 通用 modal（手動聯繫住戶、修改綁定等共用同一種外觀） ---------- */
+/* ---------- 通用 modal（修改綁定等共用同一種外觀） ---------- */
 .modal-overlay {
   display: none;
   position: fixed;

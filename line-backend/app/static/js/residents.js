@@ -30,7 +30,7 @@ function renderBindings(bindings) {
       <td>${boundAt}</td>
       <td style="text-align:right;">
         <button class="secondary" onclick="openEditBindingModal('${b.line_user_id}', '${b.unit}', '${b.name}')">修改</button>
-        <button onclick="deleteBinding(this, '${b.line_user_id}', '${b.unit}', '${b.name}')">刪除</button>
+        <button class="danger" onclick="deleteBinding(this, '${b.line_user_id}', '${b.unit}', '${b.name}')">刪除</button>
       </td>
     </tr>`;
   }).join('');

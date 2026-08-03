@@ -10,7 +10,7 @@
   </p>
   <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
     <button id="selectModeBtn" class="secondary" style="margin-left:0;" onclick="toggleSelectMode()">選取</button>
-    <button id="closeSelectedBtn" style="display:none;background:#dc3545;margin-left:0;" onclick="closeSelectedCases()" disabled>全部銷案（0）</button>
+    <button id="closeSelectedBtn" class="danger" style="display:none;margin-left:0;" onclick="closeSelectedCases()" disabled>全部銷案（0）</button>
     <input type="text" id="unitFilterInput" placeholder="輸入門牌搜尋"
       style="width:220px;height:36px;padding:0 10px;border-radius:6px;border:1px solid #ccc;font-size:14px;box-sizing:border-box;" />
     <button id="unitFilterBtn" onclick="filterByUnit()"
