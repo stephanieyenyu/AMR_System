@@ -410,7 +410,7 @@ function setPackagePagerLinkState(el, disabled) {
     el.style.pointerEvents = 'none';
     el.style.cursor = 'default';
   } else {
-    el.style.color = '#E2231A';
+    el.style.color = '#444';
     el.style.pointerEvents = 'auto';
     el.style.cursor = 'pointer';
   }

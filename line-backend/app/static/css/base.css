@@ -316,3 +316,23 @@ tr.needs-attention-row {
 .text-error { color: #c41c14; }
 .text-success { color: #155724; }
 .text-muted { color: #888; }
+
+/* ---------- 窄螢幕（平板/手機）：表格允許橫向捲動，避免撐爆版面；
+   間距/字級略為收斂，其餘排版本來就有 flex-wrap，會自動換行 ---------- */
+@media (max-width: 640px) {
+  body {
+    padding: 12px;
+    font-size: 15px;
+  }
+  .card {
+    padding: 14px;
+  }
+  .page-header h1 {
+    font-size: 22px;
+  }
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
