@@ -64,15 +64,15 @@
     <button id="selectModeBtn" class="secondary" style="margin-left:0;" onclick="toggleSelectMode()">選取</button>
     <button id="deleteSelectedBtn" class="danger" style="display:none;margin-left:0;" onclick="deleteSelectedPackages()" disabled>刪除已選（0）</button>
     <input type="text" id="unitFilterInput" placeholder="輸入門牌篩選"
-      style="width:150px;height:36px;padding:0 10px;border-radius:6px;border:1px solid #ccc;font-size:14px;box-sizing:border-box;" />
-    <label style="font-size:13px;color:#888;margin-left:4px;">建立時間：</label>
-    <input type="date" id="packageDateFrom" style="height:36px;padding:0 8px;border-radius:6px;border:1px solid #ccc;font-size:14px;box-sizing:border-box;" />
+      style="width:150px;height:42px;padding:0 10px;border-radius:6px;border:1px solid #ccc;font-size:16px;box-sizing:border-box;" />
+    <label style="font-size:15px;color:#888;margin-left:4px;">建立時間：</label>
+    <input type="date" id="packageDateFrom" style="height:42px;padding:0 8px;border-radius:6px;border:1px solid #ccc;font-size:16px;box-sizing:border-box;" />
     <span style="color:#888;">至</span>
-    <input type="date" id="packageDateTo" style="height:36px;padding:0 8px;border-radius:6px;border:1px solid #ccc;font-size:14px;box-sizing:border-box;" />
+    <input type="date" id="packageDateTo" style="height:42px;padding:0 8px;border-radius:6px;border:1px solid #ccc;font-size:16px;box-sizing:border-box;" />
     <button id="filterApplyBtn" style="margin-left:0;" onclick="applyFilters()">套用</button>
     <button id="filterClearBtn" class="secondary" style="margin-left:0;" onclick="clearFilters()">清除全部</button>
-    <span id="filterInfo" style="font-size:13px;color:#888;"></span>
-    <span id="pendingRequestHint" style="margin-left:auto;font-size:13px;color:#E2231A;font-weight:bold;">目前有 0 筆任務尚未處理派送，請盡速處理</span>
+    <span id="filterInfo" style="font-size:15px;color:#888;"></span>
+    <span id="pendingRequestHint" style="margin-left:auto;font-size:15px;color:#E2231A;font-weight:bold;">目前有 0 筆任務尚未處理派送，請盡速處理</span>
   </div>
   <table>
     <thead><tr>
@@ -81,10 +81,10 @@
     </tr></thead>
     <tbody id="packageTableBody"><tr><td colspan="6">載入中...</td></tr></tbody>
   </table>
-  <div style="display:flex;align-items:center;justify-content:flex-end;gap:16px;margin-top:10px;font-size:13px;color:#888;">
+  <div style="display:flex;align-items:center;justify-content:flex-end;gap:16px;margin-top:10px;font-size:15px;color:#888;">
     <span id="packagePagerInfo"></span>
-    <a id="packagePrevBtn" href="javascript:void(0)" onclick="prevPackagePage()" style="font-size:14px;color:#E2231A;cursor:pointer;">← 上一頁</a>
-    <a id="packageNextBtn" href="javascript:void(0)" onclick="nextPackagePage()" style="font-size:14px;color:#E2231A;cursor:pointer;">下一頁 →</a>
+    <a id="packagePrevBtn" href="javascript:void(0)" onclick="prevPackagePage()" style="font-size:16px;color:#E2231A;cursor:pointer;">← 上一頁</a>
+    <a id="packageNextBtn" href="javascript:void(0)" onclick="nextPackagePage()" style="font-size:16px;color:#E2231A;cursor:pointer;">下一頁 →</a>
   </div>
 </div>
 

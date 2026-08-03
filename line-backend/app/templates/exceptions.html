@@ -5,19 +5,19 @@
 {% block content %}
 
 <div class="card">
-  <p style="font-size:13px;color:#888;margin-top:0;">
+  <p style="font-size:15px;color:#888;margin-top:0;">
     主畫面的確認/關門流程須先完成，才能在這裡按「重新派貨」。
   </p>
   <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
     <button id="selectModeBtn" class="secondary" style="margin-left:0;" onclick="toggleSelectMode()">選取</button>
     <button id="closeSelectedBtn" class="danger" style="display:none;margin-left:0;" onclick="closeSelectedCases()" disabled>全部銷案（0）</button>
     <input type="text" id="unitFilterInput" placeholder="輸入門牌搜尋"
-      style="width:220px;height:36px;padding:0 10px;border-radius:6px;border:1px solid #ccc;font-size:14px;box-sizing:border-box;" />
+      style="width:220px;height:42px;padding:0 10px;border-radius:6px;border:1px solid #ccc;font-size:16px;box-sizing:border-box;" />
     <button id="unitFilterBtn" onclick="filterByUnit()"
-      style="height:36px;padding:0 16px;font-size:14px;box-sizing:border-box;">查詢</button>
+      style="height:42px;padding:0 16px;font-size:16px;box-sizing:border-box;">查詢</button>
     <button id="unitFilterClearBtn" onclick="clearUnitFilter()"
-      style="height:36px;padding:0 14px;font-size:14px;box-sizing:border-box;background:white;color:#E2231A;border:1px solid #E2231A;cursor:pointer;">清除</button>
-    <span id="unitFilterCount" style="font-size:13px;color:#888;"></span>
+      style="height:42px;padding:0 14px;font-size:16px;box-sizing:border-box;background:white;color:#E2231A;border:1px solid #E2231A;cursor:pointer;">清除</button>
+    <span id="unitFilterCount" style="font-size:15px;color:#888;"></span>
   </div>
   <table>
     <thead><tr>

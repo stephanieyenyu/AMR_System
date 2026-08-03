@@ -233,7 +233,7 @@ function renderPackageTable(pageItems, totalPages) {
       const scheduledText = p.scheduled_pickup_at.replace('T', ' ').slice(0, 16);
       const timeArrived = scheduledDate <= now;
       if (timeArrived && !p.door_id && p.status === 'pickup_now') {
-        scheduledCell = `<span style="background:#ff9800;color:white;padding:2px 8px;border-radius:10px;font-size:12px;font-weight:bold;">預約時間已到 ${scheduledText}</span>`;
+        scheduledCell = `<span style="background:#ff9800;color:white;padding:2px 8px;border-radius:10px;font-size:14px;font-weight:bold;">預約時間已到 ${scheduledText}</span>`;
         rowStyle = 'background:#fff3e0;';
       } else {
         scheduledCell = scheduledText;
@@ -258,7 +258,7 @@ function renderPackageTable(pageItems, totalPages) {
     } else if (p.status === 'completed') {
       if (p.pending_pickup_notified_at) {
         const notifiedText = p.pending_pickup_notified_at.replace('T', ' ').slice(0, 16);
-        action = `<span style="font-size:12px;color:#888;">已通知（${notifiedText}）</span>`;
+        action = `<span style="font-size:14px;color:#888;">已通知（${notifiedText}）</span>`;
       } else {
         action = `<button class="secondary" onclick="notifyLeftover(this, '${p.id}')" title="通知住戶：這筆任務已完成，但懷疑艙門裡還留有包裹沒被拿走">通知住戶</button>`;
       }
@@ -267,10 +267,10 @@ function renderPackageTable(pageItems, totalPages) {
     }
 
     const taskTypeBadge = p.task_type === 'return'
-      ? `<span style="background:#004085;color:white;padding:1px 6px;border-radius:8px;font-size:11px;margin-left:4px;">退貨</span>`
+      ? `<span style="background:#004085;color:white;padding:1px 6px;border-radius:8px;font-size:13px;margin-left:4px;">退貨</span>`
       : '';
     const unitCell = (p.package_count > 1
-      ? `${p.unit} <span style="background:#e3f2fd;color:#0d47a1;padding:1px 6px;border-radius:8px;font-size:11px;">${p.package_count}件</span>`
+      ? `${p.unit} <span style="background:#e3f2fd;color:#0d47a1;padding:1px 6px;border-radius:8px;font-size:13px;">${p.package_count}件</span>`
       : p.unit) + taskTypeBadge;
 
     const rowClass = selectMode ? 'selectable-row' : '';
@@ -487,7 +487,7 @@ function renderRejectAlert(packages) {
   }
 
   const reasonLabel = { rejected_at_door: '拒收', returned_timeout: '逾時未取', voided: '不收（作廢）' };
-  const btnStyle = 'background:white;color:#dc3545;border:none;padding:6px 14px;border-radius:6px;font-size:13px;cursor:pointer;';
+  const btnStyle = 'background:white;color:#dc3545;border:none;padding:6px 14px;border-radius:6px;font-size:15px;cursor:pointer;';
 
   // 拒收/逾時退回的開門/關門已經統一移到上面「機器人狀態」欄位的按鈕處理
   // （那邊的按鈕平常白色、有包裹在等待時會自動變紅色提醒），這裡不再重複放
@@ -497,11 +497,11 @@ function renderRejectAlert(packages) {
   const anyWaitingClose = returnPending.some(p => p.return_door_opened_at && !p.door_closed_at);
   let batchActionHtml = '';
   if (anyWaitingOpen) {
-    batchActionHtml = `<span style="font-size:13px;opacity:0.9;">請至上方「機器人狀態」欄位按「檢查艙門」開門 ↑</span>`;
+    batchActionHtml = `<span style="font-size:15px;opacity:0.9;">請至上方「機器人狀態」欄位按「檢查艙門」開門 ↑</span>`;
   } else if (anyWaitingClose) {
-    batchActionHtml = `<span style="font-size:13px;opacity:0.9;">艙門已開啟，請確認清空後至上方「機器人狀態」欄位按「確認關門」↑</span>`;
+    batchActionHtml = `<span style="font-size:15px;opacity:0.9;">艙門已開啟，請確認清空後至上方「機器人狀態」欄位按「確認關門」↑</span>`;
   } else if (returnPending.length > 0) {
-    batchActionHtml = `<span style="font-size:13px;opacity:0.9;">等待機器人返回</span>`;
+    batchActionHtml = `<span style="font-size:15px;opacity:0.9;">等待機器人返回</span>`;
   }
 
   alertEl.style.display = 'block';
@@ -519,13 +519,13 @@ function renderRejectAlert(packages) {
             statusText = `<button style="${btnStyle}" onclick="acknowledgeVoid(this, '${p.id}')">確定</button>`;
           } else if (!p.returned_at) {
             statusText = `<span style="opacity:0.8;">等待機器人返回</span>`;
-            forceResolveHtml = `<a href="javascript:void(0)" onclick="forceResolve(this, '${p.id}')" style="font-size:12px;color:white;text-decoration:underline;cursor:pointer;">手動結案</a>`;
+            forceResolveHtml = `<a href="javascript:void(0)" onclick="forceResolve(this, '${p.id}')" style="font-size:14px;color:white;text-decoration:underline;cursor:pointer;">手動結案</a>`;
           } else if (!p.return_door_opened_at) {
             statusText = `<span style="opacity:0.8;">待開門</span>`;
-            forceResolveHtml = `<a href="javascript:void(0)" onclick="forceResolve(this, '${p.id}')" style="font-size:12px;color:white;text-decoration:underline;cursor:pointer;">手動結案</a>`;
+            forceResolveHtml = `<a href="javascript:void(0)" onclick="forceResolve(this, '${p.id}')" style="font-size:14px;color:white;text-decoration:underline;cursor:pointer;">手動結案</a>`;
           } else {
             statusText = `<span style="opacity:0.8;">待關門</span>`;
-            forceResolveHtml = `<a href="javascript:void(0)" onclick="forceResolve(this, '${p.id}')" style="font-size:12px;color:white;text-decoration:underline;cursor:pointer;">手動結案</a>`;
+            forceResolveHtml = `<a href="javascript:void(0)" onclick="forceResolve(this, '${p.id}')" style="font-size:14px;color:white;text-decoration:underline;cursor:pointer;">手動結案</a>`;
           }
           return `<tr>
           <td>${p.unit}</td>
@@ -554,7 +554,7 @@ function renderReturnPendingAlert(packages) {
     return;
   }
 
-  const btnStyle = 'background:white;color:#004085;border:none;padding:6px 14px;border-radius:6px;font-size:13px;cursor:pointer;';
+  const btnStyle = 'background:white;color:#004085;border:none;padding:6px 14px;border-radius:6px;font-size:15px;cursor:pointer;';
 
   alertEl.style.display = 'block';
   alertEl.innerHTML = `
@@ -573,7 +573,7 @@ function renderReturnPendingAlert(packages) {
         }).join('')}
       </tbody>
     </table>
-    <div style="font-size:12px;opacity:0.85;margin-top:6px;">請先用上方「機器人狀態」欄位的「開啟艙門／關閉艙門」實際取出物品，再按這裡的「確認取出」結案</div>
+    <div style="font-size:14px;opacity:0.85;margin-top:6px;">請先用上方「機器人狀態」欄位的「開啟艙門／關閉艙門」實際取出物品，再按這裡的「確認取出」結案</div>
   `;
 }
 
@@ -864,7 +864,7 @@ async function loadRobotStatus() {
       return `
       <div class="door-box door-${(d.status || '').toUpperCase()}">
         <div>${d.door_number}</div><div>${d.status}</div>
-        ${label ? `<div style="font-size:11px">${label}</div>` : ''}
+        ${label ? `<div style="font-size:13px">${label}</div>` : ''}
       </div>`;
     }).join('');
   } catch (e) {

@@ -51,7 +51,7 @@ function renderExceptions(packages) {
       resolvedPill = '<span class="pill pill-waiting">尚未處理</span>';
       action = `<span class="action-buttons">
         <button disabled title="請先在主畫面確認/關門">重新派貨</button>
-        ${notifyButton || '<span style="font-size:12px;color:#888;">已通知</span>'}
+        ${notifyButton || '<span style="font-size:14px;color:#888;">已通知</span>'}
       </span>`;
     } else {
       resolvedPill = '<span class="pill pill-resolved">已處理</span>';
@@ -64,7 +64,7 @@ function renderExceptions(packages) {
     const rowClass = (selectMode ? 'selectable-row ' : '') + (p.needs_attention ? 'needs-attention-row' : '');
     const rowClick = selectMode ? ` onclick="handleRowClick(event, '${p.id}')"` : '';
     const attentionBadge = p.needs_attention
-      ? '<div style="color:#dc3545;font-size:11px;font-weight:bold;margin-top:2px;">⚠️ 已超過72小時未處理</div>'
+      ? '<div style="color:#dc3545;font-size:13px;font-weight:bold;margin-top:2px;">⚠️ 已超過72小時未處理</div>'
       : '';
 
     return `<tr class="${rowClass}"${rowClick}>
