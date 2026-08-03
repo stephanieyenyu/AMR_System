@@ -1,0 +1,35 @@
+{% extends "_base.html" %}
+
+{% block title %}退回/作廢包裹處理{% endblock %}
+
+{% block content %}
+
+<div class="card">
+  <p style="font-size:13px;color:#888;margin-top:0;">
+    主畫面的確認/關門流程須先完成，才能在這裡按「重新派貨」。
+  </p>
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+    <button id="selectModeBtn" class="secondary" style="margin-left:0;" onclick="toggleSelectMode()">選取</button>
+    <button id="closeSelectedBtn" style="display:none;background:#dc3545;margin-left:0;" onclick="closeSelectedCases()" disabled>全部銷案（0）</button>
+    <input type="text" id="unitFilterInput" placeholder="輸入門牌搜尋"
+      style="width:220px;height:36px;padding:0 10px;border-radius:6px;border:1px solid #ccc;font-size:14px;box-sizing:border-box;" />
+    <button id="unitFilterBtn" onclick="filterByUnit()"
+      style="height:36px;padding:0 16px;font-size:14px;box-sizing:border-box;">查詢</button>
+    <button id="unitFilterClearBtn" onclick="clearUnitFilter()"
+      style="height:36px;padding:0 14px;font-size:14px;box-sizing:border-box;background:white;color:#E2231A;border:1px solid #E2231A;cursor:pointer;">清除</button>
+    <span id="unitFilterCount" style="font-size:13px;color:#888;"></span>
+  </div>
+  <table>
+    <thead><tr>
+      <th id="selectColHeader" style="display:none;width:30px;"><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)" /></th>
+      <th>門牌</th><th>收件人</th><th>狀態</th><th>建立時間</th><th>主畫面處理</th><th>操作</th><th>已通知時間</th>
+    </tr></thead>
+    <tbody id="exceptionsTableBody"><tr><td colspan="7">載入中...</td></tr></tbody>
+  </table>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/exceptions.js"></script>
+{% endblock %}
