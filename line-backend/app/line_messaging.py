@@ -12,6 +12,49 @@ from app.models import now_taipei
 
 configuration = Configuration(access_token=settings.LINE_CHANNEL_ACCESS_TOKEN)
 
+# 跟 Dashboard（app/static/css/base.css）同一套色系，讓住戶在 LINE 上看到的
+# 按鈕跟管理員在網頁上看到的按鈕是同一個品牌調性，不是各用各的顏色。
+BUTTON_PRIMARY_COLOR = "#2c2c2a"     # 對應網頁的一般操作按鈕（深灰）
+BUTTON_SECONDARY_BG = "#FFFFFF"      # 對應網頁的次要操作按鈕（白底）
+BUTTON_SECONDARY_BORDER = "#D0D0CC"
+BUTTON_SECONDARY_TEXT = "#444444"
+
+
+def _flex_button(action: dict, style: str = "primary") -> dict:
+    """
+    組出一個 Flex 按鈕，用 box（自己畫背景/邊框/文字）取代 LINE 原生的
+    type:"button" 元件——原生 button 的 secondary 樣式沒辦法自訂邊框顏色，
+    顏色選項也有限，用 box 才能做出跟網頁 Dashboard 一致、比較精緻的外觀。
+
+    style="primary"：深灰底、白字，用在單一 bubble 裡最主要的那個操作
+    style="secondary"：白底、淺灰邊框、深灰字，用在其餘的次要操作
+    """
+    label = action["label"]
+    box = {
+        "type": "box",
+        "layout": "vertical",
+        "cornerRadius": "8px",
+        "paddingAll": "12px",
+        "action": action,
+        "contents": [
+            {
+                "type": "text",
+                "text": label,
+                "align": "center",
+                "weight": "bold",
+                "size": "md",
+                "color": "#FFFFFF" if style == "primary" else BUTTON_SECONDARY_TEXT,
+            }
+        ],
+    }
+    if style == "primary":
+        box["backgroundColor"] = BUTTON_PRIMARY_COLOR
+    else:
+        box["backgroundColor"] = BUTTON_SECONDARY_BG
+        box["borderColor"] = BUTTON_SECONDARY_BORDER
+        box["borderWidth"] = "1px"
+    return box
+
 
 def push_arrival_notification(line_user_id: str, package_id: str, unit: str, quantity: int = 1):
     """推播到貨通知，附「取貨」「預約取貨」「不收」三個按鈕。quantity是這個任務代表幾件實體包裹"""
@@ -41,9 +84,6 @@ def push_arrival_notification(line_user_id: str, package_id: str, unit: str, qua
         body_contents.append(
             {"type": "text", "text": f"共{quantity}件，將一次出貨", "wrap": True, "size": "sm", "color": "#029C4D"}
         )
-    body_contents.append(
-        {"type": "text", "text": "※ 預約以整點時段計算：半點前算當前時段，半點後算下一時段", "size": "xs", "color": "#999999", "wrap": True, "margin": "md"}
-    )
 
     contents = {
         "type": "bubble",
@@ -64,20 +104,16 @@ def push_arrival_notification(line_user_id: str, package_id: str, unit: str, qua
             "layout": "vertical",
             "spacing": "sm",
             "contents": [
-                {
-                    "type": "button",
-                    "style": "primary",
-                    "color": "#029C4D",
-                    "action": {
+                _flex_button(
+                    {
                         "type": "postback",
                         "label": "取貨",
                         "data": f"action=PICKUP_NOW&package_id={package_id}",
                     },
-                },
-                {
-                    "type": "button",
-                    "style": "secondary",
-                    "action": {
+                    style="primary",
+                ),
+                _flex_button(
+                    {
                         "type": "datetimepicker",
                         "label": "預約取貨",
                         "data": f"action=SCHEDULE_PICKUP&package_id={package_id}",
@@ -86,16 +122,16 @@ def push_arrival_notification(line_user_id: str, package_id: str, unit: str, qua
                         "min": min_str,
                         "max": max_str,
                     },
-                },
-                {
-                    "type": "button",
-                    "style": "secondary",
-                    "action": {
+                    style="secondary",
+                ),
+                _flex_button(
+                    {
                         "type": "postback",
                         "label": "不收",
                         "data": f"action=REJECT&package_id={package_id}",
                     },
-                },
+                    style="secondary",
+                ),
             ],
         },
     }
@@ -191,25 +227,22 @@ def push_arrived_notification(line_user_id: str, door_task_id: str, quantity: in
             "layout": "vertical",
             "spacing": "sm",
             "contents": [
-                {
-                    "type": "button",
-                    "style": "primary",
-                    "color": "#029C4D",
-                    "action": {
+                _flex_button(
+                    {
                         "type": "uri",
                         "label": "開啟相機掃碼",
                         "uri": f"https://liff.line.me/{settings.LIFF_ID}?door_task_id={door_task_id}&task_type={task_type}",
                     },
-                },
-                {
-                    "type": "button",
-                    "style": "secondary",
-                    "action": {
+                    style="primary",
+                ),
+                _flex_button(
+                    {
                         "type": "postback",
                         "label": cancel_label,
                         "data": f"action={cancel_action}&door_task_id={door_task_id}",
                     },
-                },
+                    style="secondary",
+                ),
             ],
         },
     }
