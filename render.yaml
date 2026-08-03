@@ -19,6 +19,7 @@ services:
     plan: starter
     rootDir: line-backend
     buildCommand: pip install -r requirements.txt
+    preDeployCommand: python migrate_add_schedule_reminder_sent_at_column.py
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /
     envVars:
