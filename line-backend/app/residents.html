@@ -1,0 +1,46 @@
+{% extends "_base.html" %}
+
+{% block title %}住戶綁定管理{% endblock %}
+
+{% block content %}
+
+<div class="card">
+  <p style="font-size:13px;color:#888;margin-top:0;">
+    列出所有住戶的LINE綁定紀錄（含已停用），可以直接刪除帳號綁定；刪除後此用戶不會再收到包裹通知，且無法復原。
+  </p>
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
+    <input type="text" id="unitFilterInput" placeholder="輸入門牌搜尋"
+      style="width:220px;height:36px;padding:0 10px;border-radius:6px;border:1px solid #ccc;font-size:14px;box-sizing:border-box;" />
+    <button id="unitFilterBtn" onclick="filterByUnit()"
+      style="height:36px;padding:0 16px;font-size:14px;box-sizing:border-box;">查詢</button>
+    <button id="unitFilterClearBtn" onclick="clearUnitFilter()"
+      style="height:36px;padding:0 14px;font-size:14px;box-sizing:border-box;background:white;color:#E2231A;border:1px solid #E2231A;cursor:pointer;">清除</button>
+    <span id="unitFilterCount" style="font-size:13px;color:#888;"></span>
+  </div>
+  <table>
+    <thead><tr><th>門牌</th><th>姓名</th><th>狀態</th><th>綁定時間</th></tr></thead>
+    <tbody id="bindingsTableBody"><tr><td colspan="5">載入中...</td></tr></tbody>
+  </table>
+</div>
+
+<div id="editBindingOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:100;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:10px;padding:24px;width:360px;max-width:90vw;">
+    <h3 style="margin:0 0 16px 0;">修改綁定</h3>
+    <input type="hidden" id="editBindingLineUserId" />
+    <label style="font-size:13px;color:#888;display:block;margin-bottom:4px;">門牌</label>
+    <input type="text" id="editBindingUnitInput" style="width:100%;height:36px;padding:0 10px;border-radius:6px;border:1px solid #ccc;font-size:14px;box-sizing:border-box;margin-bottom:12px;" />
+    <label style="font-size:13px;color:#888;display:block;margin-bottom:4px;">姓名</label>
+    <input type="text" id="editBindingNameInput" style="width:100%;height:36px;padding:0 10px;border-radius:6px;border:1px solid #ccc;font-size:14px;box-sizing:border-box;margin-bottom:16px;" />
+    <div id="editBindingMsg" style="font-size:13px;margin-bottom:8px;"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button class="secondary" style="margin:0;" onclick="closeEditBindingModal()">取消</button>
+      <button id="editBindingSaveBtn" style="margin:0;" onclick="saveEditBinding()">儲存</button>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/residents.js"></script>
+{% endblock %}
