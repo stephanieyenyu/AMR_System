@@ -51,6 +51,7 @@ class Package(Base):
     redispatched_to = Column(UUID(as_uuid=True), nullable=True)  # 重新派送後，新建立的包裹ID
     pending_pickup_notified_at = Column(DateTime, nullable=True)  # 例外處理頁「通知住戶」的時間，只能通知一次
     scheduled_pickup_at = Column(DateTime, nullable=True)  # 住戶預約取貨的時間（整點），到這個時間前不能放置/派送
+    schedule_reminder_sent_at = Column(DateTime, nullable=True)  # 預約時段前2小時提醒是否已發送（只發一次）
     created_at = Column(DateTime, default=now_taipei)
     updated_at = Column(DateTime, default=now_taipei, onupdate=now_taipei)
     case_closed_at = Column(DateTime, nullable=True)

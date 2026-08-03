@@ -338,6 +338,32 @@ def get_recipients(db: Session, package_id: str) -> list:
     return [row.line_user_id for row in rows]
 
 
+def _push_to_recipients(db: Session, package: Package, message: str, log_context: str) -> dict:
+    """
+    共用邏輯：把同一則文字訊息推播給這筆包裹的所有收件人，統計成功/失敗數，
+    失敗的每一筆都寫一筆task_log存證。
+
+    send_pending_pickup_notification（自動觸發）、notify_completed_leftover
+    （Dashboard「通知住戶」手動觸發）、check_schedule_reminder（預約提醒）
+    都需要「迴圈推播+統計失敗+記log」這段邏輯，合併成這一支共用，
+    不用每個地方各自維護一份一樣的迴圈。
+    """
+    recipients = get_recipients(db, str(package.id))
+    if not recipients:
+        return {"sent": False, "notified_count": 0, "notify_failed_count": 0}
+
+    notify_failed_count = 0
+    for line_user_id in recipients:
+        try:
+            push_status_update(line_user_id, message)
+        except Exception as e:
+            notify_failed_count += 1
+            log_event(db, "notify_failed", detail=f"{log_context}: {e}", package_id=package.id, level="error")
+
+    notified_count = len(recipients) - notify_failed_count
+    return {"sent": notified_count > 0, "notified_count": notified_count, "notify_failed_count": notify_failed_count}
+
+
 def send_pending_pickup_notification(db: Session, package: Package) -> dict:
     """
     推播「包裹因故未能送達，暫存於管理室，超過72小時管理員將作廢」提醒給收件人。
@@ -388,15 +414,9 @@ def send_pending_pickup_notification(db: Session, package: Package) -> dict:
             f"請盡快聯繫管理員領取。\n將於 {deadline_text} 由管理員作廢處理。"
         )
 
-    notify_failed_count = 0
-    for line_user_id in recipients:
-        try:
-            push_status_update(line_user_id, message)
-        except Exception as e:
-            notify_failed_count += 1
-            log_event(db, "notify_failed", detail=f"未取包裹提醒通知失敗: {e}", package_id=package.id, level="error")
-
-    notified_count = len(recipients) - notify_failed_count
+    push_result = _push_to_recipients(db, package, message, log_context="未取包裹提醒通知失敗")
+    notified_count = push_result["notified_count"]
+    notify_failed_count = push_result["notify_failed_count"]
 
     if notified_count > 0:
         package.pending_pickup_notified_at = now_taipei()
@@ -2866,6 +2886,121 @@ def check_stuck_dispatch():
         db.close()
 
 
+def check_schedule_reminder():
+    """
+    預約非當天時段取貨的包裹，在時段開始前2小時提醒收件人一次，避免臨到當天才想起來。
+    當天預約的不用額外提醒——時段本來就快到了，提醒的意義不大，這支只處理
+    「還有一天以上才到」的預約，在剩2小時窗口內補提醒一次。
+
+    做法跟 check_pickup_timeout 一樣：先抓候選，再逐一用 skip_locked 重新確認條件
+    仍成立才真的動手，避免跟住戶自己操作（例如臨時取消預約）同時發生時互相打架。
+    quantity>1（同一批多筆包裹）沿用 get_creation_batch_group 只發一次通知，
+    不要同一戶收到好幾則一樣的提醒，也重用 _push_to_recipients 統一發送邏輯。
+    """
+    db = SessionLocal()
+    try:
+        now = now_taipei()
+        today = now.date()
+        window_end = now + timedelta(hours=2)
+
+        candidate_batch_ids = [
+            row[0] for row in
+            db.query(Package.creation_batch_id)
+            .filter(
+                Package.status == "pickup_now",
+                Package.scheduled_pickup_at.isnot(None),
+                Package.scheduled_pickup_at > now,
+                Package.scheduled_pickup_at <= window_end,
+                Package.schedule_reminder_sent_at.is_(None),
+                Package.creation_batch_id.isnot(None),
+            )
+            .distinct()
+            .all()
+        ]
+        candidate_solo_ids = [
+            row.id for row in
+            db.query(Package.id)
+            .filter(
+                Package.status == "pickup_now",
+                Package.scheduled_pickup_at.isnot(None),
+                Package.scheduled_pickup_at > now,
+                Package.scheduled_pickup_at <= window_end,
+                Package.schedule_reminder_sent_at.is_(None),
+                Package.creation_batch_id.is_(None),
+            )
+            .all()
+        ]
+
+        def process_group(group):
+            primary = group[0]
+            if primary.scheduled_pickup_at.date() == today:
+                return  # 當天預約不用提前提醒
+
+            schedule_text = primary.scheduled_pickup_at.strftime("%m月%d日%H時")
+            message = f"提醒您，預約取貨時段將於 2 小時後開始（{schedule_text}）。如無法配合，請聯繫管理員協助處理。"
+
+            result = _push_to_recipients(db, primary, message, log_context="預約提醒推播失敗")
+            if result["notified_count"] > 0:
+                sent_at = now_taipei()
+                for p in group:
+                    p.schedule_reminder_sent_at = sent_at
+                db.commit()
+                log_event(
+                    db, "schedule_reminder_sent",
+                    detail=f"通知 {result['notified_count']} 位收件人，預約時段={schedule_text}",
+                    package_id=primary.id,
+                )
+
+        for batch_id in candidate_batch_ids:
+            member_ids = [
+                row.id for row in
+                db.query(Package.id)
+                .filter(Package.creation_batch_id == batch_id, Package.status == "pickup_now")
+                .all()
+            ]
+            group = []
+            group_ok = True
+            for package_id in member_ids:
+                p = (
+                    db.query(Package)
+                    .filter(Package.id == package_id)
+                    .with_for_update(skip_locked=True)
+                    .first()
+                )
+                if (not p or p.status != "pickup_now" or p.scheduled_pickup_at is None
+                        or p.scheduled_pickup_at <= now or p.scheduled_pickup_at > window_end
+                        or p.schedule_reminder_sent_at is not None):
+                    group_ok = False
+                    continue
+                group.append(p)
+
+            if not group or not group_ok:
+                db.rollback()
+                continue
+
+            process_group(group)
+
+        for package_id in candidate_solo_ids:
+            package = (
+                db.query(Package)
+                .filter(Package.id == package_id)
+                .with_for_update(skip_locked=True)
+                .first()
+            )
+            if not package:
+                db.rollback()
+                continue
+            if (package.status != "pickup_now" or package.scheduled_pickup_at is None
+                    or package.scheduled_pickup_at <= now or package.scheduled_pickup_at > window_end
+                    or package.schedule_reminder_sent_at is not None):
+                db.rollback()
+                continue
+
+            process_group([package])
+    finally:
+        db.close()
+
+
 scheduler = BackgroundScheduler()
 
 
@@ -2876,6 +3011,7 @@ scheduler = BackgroundScheduler()
 
 
 scheduler.add_job(check_pickup_timeout, "interval", minutes=1)
+scheduler.add_job(check_schedule_reminder, "interval", minutes=10)
 scheduler.add_job(check_assign_timeout, "interval", minutes=1)
 scheduler.add_job(check_return_timeout, "interval", minutes=1)
 scheduler.add_job(poll_robot_returned, "interval", seconds=20)
@@ -3333,15 +3469,8 @@ async def notify_completed_leftover(package_id: str, db: Session = Depends(get_d
         f"留存於管理室，請盡快聯繫管理員確認。\n將於 {deadline_text} 由管理員作廢處理。"
     )
 
-    notify_failed_count = 0
-    for line_user_id in recipients:
-        try:
-            push_status_update(line_user_id, message)
-        except Exception as e:
-            notify_failed_count += 1
-            log_event(db, "notify_failed", detail=f"已完成包裹的補通知失敗: {e}", package_id=package.id, level="error")
-
-    notified_count = len(recipients) - notify_failed_count
+    push_result = _push_to_recipients(db, package, message, log_context="已完成包裹的補通知失敗")
+    notified_count = push_result["notified_count"]
     if notified_count == 0:
         raise HTTPException(status_code=400, detail="推播給所有收件人皆失敗，請確認LINE綁定狀態後再試")
 
