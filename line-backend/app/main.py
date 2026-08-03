@@ -10,6 +10,8 @@ import requests
 from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.responses import PlainTextResponse, HTMLResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import OperationalError
 from pydantic import BaseModel, Field
@@ -33,6 +35,14 @@ from app.line_messaging import (
 from apscheduler.schedulers.background import BackgroundScheduler
 
 app = FastAPI(title="AMR 配送系統 - LINE 後端")
+
+# ========== Admin 前端樣板/靜態檔 ==========
+# 頁面正在陸續從 main.py 內嵌的 ADMIN_*_HTML 字串常數遷移到
+# app/templates（Jinja2）+ app/static（CSS/JS）。目前僅住戶管理頁面
+# （/admin/residents）已遷移完成，其餘三頁（Dashboard/報表/例外處理）
+# 仍使用舊有的 HTMLResponse(content=常數) 方式，會依風險由低到高逐頁遷移。
+templates = Jinja2Templates(directory="app/templates")
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
 
@@ -1424,13 +1434,15 @@ async def delete_packages(payload: DeletePackagesRequest, db: Session = Depends(
     跟系統裡其他操作（都是改status、留紀錄）完全不同，所以只讓管理員手動、
     明確勾選才能觸發，且每一筆都會在刪除前寫一筆task_log存證。
 
-    ⚠️ 已拿掉「艙門還在使用中不給刪」的限制，管理員可以直接刪除任何狀態的
-    包裹，包含pickup_now／delivering／arrived這幾種原本會被擋下的狀態。
-    這代表刪除的當下，資料庫紀錄消失了，但機器人身上實際的艙門狀態不會
-    跟著自動釋放——如果這筆包裹背後真的還有一扇門開著/關著等處理，刪掉
-    紀錄之後那扇門會變成「查無來源」的佔用，之後要嘛用機器人狀態欄的
-    開關門鍵手動處理，要嘛等下次「叫回機器人」讓機器人自己的邏輯去校正。
-    管理員自己判斷要不要在真的處理完艙門之前就刪除紀錄。
+    安全限制：不允許刪除「艙門還在使用中、任務還沒走完」的包裹，判斷方式是：
+    - status是pickup_now（已指派艙門）／delivering／arrived：艙門正在使用中
+    - status是rejected_at_door／returned_timeout，但door_closed_at還沒設：
+      機器人已經把包裹帶回來但艙門還沒被管理員關過，也算還在使用中
+    這種包裹背後對應機器人身上一個實際開著/關著的艙門，資料庫紀錄消失但
+    硬體狀態沒有跟著清掉，之後會對不起來、變成查無來源的艙門佔用。要刪除
+    這種包裹，請先用「叫回機器人」或走完正常流程把艙門釋放掉，再回來刪除。
+    completed／voided／已經door_closed_at的退回包裹，door_id即使還留著門號
+    也只是歷史紀錄，不是實際佔用中，可以直接刪除。
     """
     if not payload.package_ids:
         raise HTTPException(status_code=400, detail="沒有指定要刪除的包裹")
@@ -1446,6 +1458,10 @@ async def delete_packages(payload: DeletePackagesRequest, db: Session = Depends(
         package = db.query(Package).filter(Package.id == parsed).first()
         if not package:
             skipped.append({"id": pid, "reason": "找不到這筆包裹"})
+            continue
+
+        if is_door_actively_held(package):
+            skipped.append({"id": pid, "reason": "艙門仍在使用中，請先叫回機器人或完成派送流程後再刪除"})
             continue
 
         log_event(
@@ -4776,8 +4792,12 @@ async def admin_exceptions_page():
     return HTMLResponse(content=ADMIN_EXCEPTIONS_HTML)
 
 @app.get("/admin/residents", response_class=HTMLResponse, dependencies=[Depends(require_admin_auth)])
-async def admin_residents_page():
-    return HTMLResponse(content=ADMIN_RESIDENTS_HTML)
+async def admin_residents_page(request: Request):
+    return templates.TemplateResponse("residents.html", {
+        "request": request,
+        "current_page": "residents",
+        "page_title": "住戶綁定管理",
+    })
 
 
 ADMIN_REPORTS_HTML = """
@@ -5328,211 +5348,5 @@ loadExceptions();
 </html>
 """
 
-ADMIN_RESIDENTS_HTML = """
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>住戶綁定管理</title>
-<style>
-  * { box-sizing: border-box; }
-  body { font-family: -apple-system, "PingFang TC", "Microsoft JhengHei", sans-serif;
-    background: #f5f5f5; margin: 0; padding: 20px; color: #222; zoom: 1.15; }
-  h1 { color: #E2231A; font-size: 22px; margin-bottom: 20px; }
-  .card { background: white; border-radius: 8px; padding: 16px; margin-bottom: 20px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  th, td { text-align: left; padding: 8px; border-bottom: 1px solid #eee; }
-  th { color: #888; font-weight: normal; }
-  button { padding: 6px 14px; font-size: 13px; border-radius: 6px; border: none;
-    background: #E2231A; color: white; cursor: pointer; }
-  button:hover { background: #c41c14; }
-  button:disabled { opacity: 0.5; cursor: default; }
-  button.secondary { background: white; color: #E2231A; border: 1px solid #E2231A; }
-  button.secondary:hover { background: #e9e9e9; }
-  .status-badge { padding: 2px 8px; border-radius: 10px; font-size: 12px; background: #eee; }
-  .status-active { background: #d4edda; color: #155724; }
-  .status-inactive { background: #e2e3e5; color: #383d41; }
-  .empty-hint { color: #999; font-size: 14px; padding: 12px 0; }
-</style>
-</head>
-<body>
 
-<h1>住戶綁定管理
-  <a href="/admin" style="font-size:14px;font-weight:normal;color:#E2231A;margin-left:16px;">← 回 Dashboard</a>
-  <a href="/admin/reports" style="font-size:14px;font-weight:normal;color:#E2231A;">← 查看每日報表</a>
-  <a href="/admin/exceptions" style="font-size:14px;font-weight:normal;color:#E2231A;">← 退回/作廢包裹處理</a>
-</h1>
-
-<div class="card">
-  <p style="font-size:13px;color:#888;margin-top:0;">
-    列出所有住戶的LINE綁定紀錄（含已停用），可以直接刪除帳號綁定；刪除後此用戶不會再收到包裹通知，且無法復原。
-  </p>
-  <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
-    <input type="text" id="unitFilterInput" placeholder="輸入門牌搜尋"
-      style="width:220px;height:36px;padding:0 10px;border-radius:6px;border:1px solid #ccc;font-size:14px;box-sizing:border-box;" />
-    <button id="unitFilterBtn" onclick="filterByUnit()"
-      style="height:36px;padding:0 16px;font-size:14px;box-sizing:border-box;">查詢</button>
-    <button id="unitFilterClearBtn" onclick="clearUnitFilter()"
-      style="height:36px;padding:0 14px;font-size:14px;box-sizing:border-box;background:white;color:#E2231A;border:1px solid #E2231A;cursor:pointer;">清除</button>
-    <span id="unitFilterCount" style="font-size:13px;color:#888;"></span>
-  </div>
-  <table>
-    <thead><tr><th>門牌</th><th>姓名</th><th>狀態</th><th>綁定時間</th></tr></thead>
-    <tbody id="bindingsTableBody"><tr><td colspan="5">載入中...</td></tr></tbody>
-  </table>
-</div>
-
-<div id="editBindingOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:100;align-items:center;justify-content:center;">
-  <div style="background:white;border-radius:10px;padding:24px;width:360px;max-width:90vw;">
-    <h3 style="margin:0 0 16px 0;">修改綁定</h3>
-    <input type="hidden" id="editBindingLineUserId" />
-    <label style="font-size:13px;color:#888;display:block;margin-bottom:4px;">門牌</label>
-    <input type="text" id="editBindingUnitInput" style="width:100%;height:36px;padding:0 10px;border-radius:6px;border:1px solid #ccc;font-size:14px;box-sizing:border-box;margin-bottom:12px;" />
-    <label style="font-size:13px;color:#888;display:block;margin-bottom:4px;">姓名</label>
-    <input type="text" id="editBindingNameInput" style="width:100%;height:36px;padding:0 10px;border-radius:6px;border:1px solid #ccc;font-size:14px;box-sizing:border-box;margin-bottom:16px;" />
-    <div id="editBindingMsg" style="font-size:13px;margin-bottom:8px;"></div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;">
-      <button class="secondary" style="margin:0;" onclick="closeEditBindingModal()">取消</button>
-      <button id="editBindingSaveBtn" style="margin:0;" onclick="saveEditBinding()">儲存</button>
-    </div>
-  </div>
-</div>
-
-<script>
-let allBindings = [];
-
-async function loadBindings() {
-  const tbody = document.getElementById('bindingsTableBody');
-  try {
-    const resp = await fetch('/admin/line-bindings');
-    allBindings = await resp.json();
-    renderBindings(allBindings);
-  } catch (e) {
-    tbody.innerHTML = `<tr><td colspan="5" style="color:red">載入失敗：${e.message}</td></tr>`;
-  }
-}
-
-function renderBindings(bindings) {
-  const tbody = document.getElementById('bindingsTableBody');
-  const keyword = document.getElementById('unitFilterInput').value.trim();
-
-  if (bindings.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" class="empty-hint">${keyword ? '找不到符合的門牌' : '目前沒有任何綁定紀錄'}</td></tr>`;
-    return;
-  }
-
-  tbody.innerHTML = bindings.map(b => {
-    const statusLabel = b.status === 'active' ? '生效中' : '已停用';
-    const boundAt = b.bound_at ? b.bound_at.replace('T', ' ').slice(0, 16) : '-';
-    return `<tr>
-      <td>${b.unit}</td>
-      <td>${b.name}</td>
-      <td><span class="status-badge status-${b.status}">${statusLabel}</span></td>
-      <td>${boundAt}</td>
-      <td style="text-align:right;">
-        <button class="secondary" onclick="openEditBindingModal('${b.line_user_id}', '${b.unit}', '${b.name}')">修改</button>
-        <button onclick="deleteBinding(this, '${b.line_user_id}', '${b.unit}', '${b.name}')">刪除</button>
-      </td>
-    </tr>`;
-  }).join('');
-}
-
-function filterByUnit() {
-  const keyword = document.getElementById('unitFilterInput').value.trim().toLowerCase();
-  const countEl = document.getElementById('unitFilterCount');
-  if (!keyword) {
-    countEl.textContent = '';
-    renderBindings(allBindings);
-    return;
-  }
-  const filtered = allBindings.filter(b => b.unit.toLowerCase().includes(keyword));
-  countEl.textContent = `符合「${keyword}」共 ${filtered.length} 筆`;
-  renderBindings(filtered);
-}
-
-function clearUnitFilter() {
-  document.getElementById('unitFilterInput').value = '';
-  document.getElementById('unitFilterCount').textContent = '';
-  renderBindings(allBindings);
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  const input = document.getElementById('unitFilterInput');
-  if (input) {
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') filterByUnit();
-    });
-  }
-});
-
-function openEditBindingModal(lineUserId, unit, name) {
-  document.getElementById('editBindingOverlay').style.display = 'flex';
-  document.getElementById('editBindingLineUserId').value = lineUserId;
-  document.getElementById('editBindingUnitInput').value = unit;
-  document.getElementById('editBindingNameInput').value = name;
-  document.getElementById('editBindingMsg').textContent = '';
-}
-
-function closeEditBindingModal() {
-  document.getElementById('editBindingOverlay').style.display = 'none';
-}
-
-async function saveEditBinding() {
-  const lineUserId = document.getElementById('editBindingLineUserId').value;
-  const unit = document.getElementById('editBindingUnitInput').value.trim();
-  const name = document.getElementById('editBindingNameInput').value.trim();
-  const msgEl = document.getElementById('editBindingMsg');
-
-  if (!unit || !name) {
-    msgEl.style.color = 'red';
-    msgEl.textContent = '門牌與姓名都不能是空的';
-    return;
-  }
-
-  const btn = document.getElementById('editBindingSaveBtn');
-  btn.disabled = true;
-  const originalText = btn.textContent;
-  btn.textContent = '儲存中...';
-  try {
-    const resp = await fetch(`/admin/line-bindings/${lineUserId}/update`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ unit, name }),
-    });
-    const data = await resp.json();
-    if (!resp.ok) throw new Error(data.detail || '修改失敗');
-    loadBindings();
-    closeEditBindingModal();
-  } catch (e) {
-    msgEl.style.color = 'red';
-    msgEl.textContent = '修改失敗：' + e.message;
-  } finally {
-    btn.disabled = false;
-    btn.textContent = originalText;
-  }
-}
-
-async function deleteBinding(btn, lineUserId, unit, name) {
-  if (!confirm(`確定要刪除「${unit} ${name}」這筆綁定嗎？此操作無法復原，該LINE帳號之後將不會再收到這個門牌的包裹通知。`)) return;
-  btn.disabled = true;
-  const originalText = btn.textContent;
-  btn.textContent = '刪除中...';
-  try {
-    const resp = await fetch(`/admin/line-bindings/${lineUserId}/delete`, { method: 'POST' });
-    const data = await resp.json();
-    if (!resp.ok) throw new Error(data.detail || '刪除失敗');
-    loadBindings();
-  } catch (e) {
-    alert('刪除失敗：' + e.message);
-    btn.disabled = false;
-    btn.textContent = originalText;
-  }
-}
-
-loadBindings();
-</script>
-</body>
-</html>
-"""
+# ADMIN_RESIDENTS_HTML 已遷移至 app/templates/residents.html + app/static/js/residents.js
