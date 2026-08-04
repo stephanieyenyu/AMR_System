@@ -1,37 +1,38 @@
-# Aurobox — 社區 AMR 包裹配送系統（合併專案）
+# Aurobox — 社區 AMR 包裹配送系統
 
-本專案原本分別放在 GitHub `Liao-YuSheng/Aurobox` 這個 repo 的兩個獨立 branch：
+單一 repo 底下兩個資料夾，各自是獨立的服務：
 
-- **`main`**：LINE 後端 + 管理員 Dashboard（負責業務邏輯與狀態真相來源）
-- **`flashbot`**：機器人硬體控制層，串接 Pudu 開放平台 API
+- **`line-backend/`**：LINE 後端 + 管理員 Dashboard，業務邏輯與狀態真相來源
+- **`flashbot-robot/`**：機器人硬體控制層，串接 Pudu 開放平台 API
 
-這裡把兩個 branch 的內容各自完整保留，合併成同一個資料夾下的兩個子專案，並補上一份共用的 `docker-compose.yml`，讓兩個服務可以在同一個環境裡一起啟動、直接用容器名稱互相溝通（開發期兩邊各自需要 ngrok 對外的作法，在這個合併專案的容器化部署下不再需要）。
+`line-backend` 是大腦，`flashbot-robot` 是手腳，兩者沒有共用資料庫，純粹透過 HTTP API 溝通。目前部署在 **Render**，`line-backend`、`flashbot-robot` 各自是獨立的 Web Service。
 
 ```
-aurobox/
-├── docker-compose.yml       ← 新增：一次啟動兩個服務 + 各自的 PostgreSQL
-├── .gitignore               ← 新增：合併專案頂層規則
-├── README.md                ← 本檔案
-├── docs/
-│   └── 開發文件.md           ← 完整開發文件（架構、資料流、模組說明、除錯指南）
+AMR-System/
+├── render.yaml                    ← Render 服務設定（目前服務是手動建立，這份檔案不會被讀取，純文件用途）
+├── README.md                      ← 本檔案
+├── Aurobox-開發文件.md             ← 完整開發文件（架構、資料流、模組說明、除錯指南）
+├── Render部署指南.md               ← 從零開始建立一份全新 Render 部署
+├── Render使用說明.md               ← 系統已部署好之後，日常怎麼使用
 │
-├── line-backend/            ← 原 main branch 全部內容（未更動）
+├── line-backend/
 │   ├── app/
-│   │   ├── main.py
-│   │   ├── models.py
+│   │   ├── main.py                ← 路由、業務邏輯、排程任務
+│   │   ├── models.py              ← Package / LineBinding / PackageRecipient / TaskLog
 │   │   ├── config.py
 │   │   ├── db.py
 │   │   ├── init_db.py
-│   │   ├── line_messaging.py
-│   │   └── line_verify.py
+│   │   ├── line_messaging.py      ← LINE Flex Message 建構
+│   │   ├── line_verify.py
+│   │   ├── templates/             ← 四個管理頁面的 Jinja2 樣板
+│   │   └── static/                ← 對應的 CSS/JS
 │   ├── tests/
 │   ├── requirements.txt
-│   ├── Dockerfile
-│   ├── .env.example
-│   ├── start-server.bat
-│   └── start-ngrok.bat
+│   ├── migrate_add_*.py           ← 一次性資料庫欄位遷移腳本
+│   ├── start-server.bat           ← 本機開發用
+│   └── start-ngrok.bat            ← 本機開發用
 │
-└── flashbot-robot/           ← 原 flashbot branch 全部內容（未更動）
+└── flashbot-robot/
     ├── src/aurobox/
     │   ├── app.py
     │   ├── api.py
@@ -45,99 +46,35 @@ aurobox/
     │   └── cli.py
     ├── tests/
     ├── scripts/
-    ├── docs/                 ← 機器人團隊自己的架構規劃文件（原本就有，與上面的 docs/ 是不同資料夾）
     ├── run.py
     ├── pyproject.toml
-    ├── Dockerfile
-    ├── .env.example
     ├── README.md
     └── REPORT.md
 ```
 
-> **關於「合併」的範圍說明**：`line-backend/` 與 `flashbot-robot/` 兩個資料夾內部的程式碼**完全沒有更動**，就是原本兩個 branch 的內容（各自的 `README.md`、`REPORT.md` 也都保留原樣）。新增的只有頂層的 `docker-compose.yml`、`.gitignore`、這份 `README.md`，以及 `docs/開發文件.md`。這樣未來如果要拆回兩個獨立 repo/branch，也只要把這兩個資料夾各自搬出去即可，不會有交叉污染的風險。
+---
+
+## 想了解系統架構、怎麼開發新功能？
+
+完整的系統架構、資料流程圖、兩個模組的關鍵檔案說明、Pudu API 清單、色彩系統/共用函式規範、以及新增功能/除錯的具體步驟，都寫在：
+
+📄 **[`Aurobox-開發文件.md`](./Aurobox-開發文件.md)**
+
+## 想部署 / 想知道怎麼用？
+
+- 系統**已經部署好了**，日常只要打開瀏覽器連到 Render 給的網址就能用，不需要安裝任何東西 → 📄 **[`Render使用說明.md`](./Render使用說明.md)**
+- 想**重新建立一份全新的部署**（例如要開第二套測試環境，或這套環境需要重建）→ 📄 **[`Render部署指南.md`](./Render部署指南.md)**
+
+## 本機開發
+
+如果要在本機起服務測試（不透過 Render），`line-backend/` 底下的 `start-server.bat`／`start-ngrok.bat` 是本機開發用的啟動腳本，需要自己準備本機 PostgreSQL 並設定對應的環境變數（`LINE_CHANNEL_SECRET`、`DATABASE_URL` 等，見 `app/config.py`）。`flashbot-robot/` 同理，用 `python run.py` 啟動，環境變數見 `src/aurobox/config.py`。
 
 ---
 
-## 快速開始
+## 已知注意事項
 
-### 1. 設定環境變數
+1. **`render.yaml` 目前不會被 Render 讀取**——兩個服務是手動用「New → Web Service」建立的，不是用「New → Blueprint」建立，只有透過 Blueprint 管理的服務才會讀這個檔案。這個檔案目前純粹是文件用途，實際部署設定要在 Render Dashboard 各服務的 Settings 頁面裡改。
+2. **`flashbot-robot` 沒有 `requirements.txt`**，是用 `pyproject.toml` 管理套件（`pip install .`）。
+3. **`flashbot-robot/tests/` 裡的測試疑似跟現行 `api.py` 不同步**（沿用舊有已知問題，尚未確認是否已修正，見開發文件第 5.5 節）。
 
-```bash
-cp line-backend/.env.example line-backend/.env
-cp flashbot-robot/.env.example flashbot-robot/.env
-```
-
-編輯這兩份 `.env`，至少要填：
-
-| 檔案 | 必填變數 |
-|---|---|
-| `line-backend/.env` | `LINE_CHANNEL_SECRET`、`LINE_CHANNEL_ACCESS_TOKEN`、`LINE_LOGIN_CHANNEL_ID`、`LIFF_ID`、`LIFF_ID_RETURN`、`ADMIN_USERNAME`、`ADMIN_PASSWORD`（`.env.example` 裡沒列出這兩個，但 `app/config.py` 有預設值 `aurotek`/`flashbot`，正式使用務必在 `.env` 覆寫） |
-| `flashbot-robot/.env` | `Pd_key`、`Pd_secret`、`Aurotek_id`、`FLASHBOT_SN`、`DEFAULT_MAP_NAME`、`HOME_POINT_NAME`、`CHARGE_POINT_NAME`、`DOOR_MODE` |
-
-**兩份 `.env` 裡的 `DATABASE_URL`，用 docker-compose 啟動時要改成指向 compose 內的資料庫服務名稱**（不是 `localhost`）：
-
-```env
-# line-backend/.env
-DATABASE_URL=postgresql+psycopg://postgres:postgres@db-line:5432/aurobox_line
-
-# flashbot-robot/.env
-DATABASE_URL=postgresql://myuser:mypassword@db-robot:5432/aurobox_db
-```
-
-（帳號密碼要對應 `docker-compose.yml` 裡 `db-line` / `db-robot` 兩個服務目前設定的 `POSTGRES_USER` / `POSTGRES_PASSWORD`，要改密碼的話兩邊要一起改。）
-
-`ROBOT_API_BASE_URL`（line-backend 用）與 `CENTRAL_API_BASE_URL`（flashbot-robot 用）**不用改**——`docker-compose.yml` 已經用 `environment:` 區塊覆寫成 `http://flashbot-robot:5000` 與 `http://line-backend:8000`，會蓋掉 `.env` 裡開發用的 ngrok 網址。
-
-### 2. 啟動
-
-```bash
-docker compose up --build
-```
-
-啟動後：
-
-- LINE 後端 API / 管理員 Dashboard：`http://localhost:8000`（Dashboard 在 `/admin`，FastAPI Swagger 文件在 `/docs`）
-- 機器人控制模組 API：`http://localhost:5000`
-- 兩個 PostgreSQL 分別開在本機 `5433`（對應 line-backend）與 `5434`（對應 flashbot-robot），方便用 DBeaver/psql 之類的工具直接檢查資料。
-
-### 3. 建立資料表
-
-兩個服務容器啟動時**不會**自動幫你跑資料庫 migration：
-
-```bash
-# line-backend：第一次啟動需要手動建表
-docker compose exec line-backend python -m app.init_db
-
-# flashbot-robot：db.create_all() 已內建在 create_app() 裡，容器啟動時會自動建表
-# （不需要手動執行，但艙門預設值重置也是在這個時機做的，第一次啟動請確認 log 沒有報錯）
-```
-
-### 4. 查看 Log
-
-```bash
-docker compose logs -f line-backend
-docker compose logs -f flashbot-robot
-
-# 機器人與 Pudu API 的逐筆指令/回應紀錄（獨立於上面的容器 log，已用 volume 保留）
-docker compose exec flashbot-robot cat instance/robot_commands.log
-```
-
----
-
-## 想了解架構與後續怎麼開發？
-
-完整的系統架構、資料流程圖、兩個模組的關鍵檔案說明、Pudu API 清單、以及未來新增功能/除錯注意事項，都寫在：
-
-📄 **[`docs/開發文件.md`](./docs/開發文件.md)**
-
-其中也記錄了合併/分析過程中發現的幾個現有程式碼問題（例如兩邊埠號設定不一致、部分測試與現行 API 路由脫節、README 與程式碼有落差的地方等），建議接手維護前先讀過一遍。
-
----
-
-## 已知注意事項（合併當下發現，尚未修正於原始程式碼）
-
-這些是把兩個 branch 內容組合起來後觀察到的既有問題，**沒有更動任何一邊的原始程式碼**，只在這裡列出來供你決定是否/如何修正：
-
-1. **`flashbot-robot` 的埠號設定原本互相矛盾**：`run.py` 的 `--port` 參數預設是 `6000`，但 `Dockerfile` 只 `EXPOSE 5000` 且沒有在 `CMD` 帶入 `--port`，`README.md` 又寫預設是 `5000`。本專案的 `docker-compose.yml` 已經在 `command:` 明確指定 `--port 5000`，讓實際監聽的埠與對外文件一致，但如果你直接用 `flashbot-robot/Dockerfile` 單獨建置容器（不透過這份 compose），仍然會遇到原本的埠號不一致，需要自行注意。
-2. **`line-backend/.gitignore` 檔尾原本殘留一行未清乾淨的 Git merge conflict 標記**（`>>>>>>> 8bb6076f...`）。這份合併專案的頂層 `.gitignore` 是重新寫過的乾淨版本，但原本 `line-backend/.gitignore` 這個檔案本身**還留著那個問題**，建議找時間回原本的 `main` branch 修掉。
-3. 其餘（測試與現行 API 路由不同步、部分 docstring 落後於實際上鎖邏輯等）詳見 `docs/開發文件.md` 第 5 章。
+其餘細節（環境變數命名、Render 平台限制、資料庫欄位遷移流程等）都寫在《Aurobox-開發文件.md》與《Render部署指南.md》裡，不在這裡重複。
