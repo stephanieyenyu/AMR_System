@@ -5,7 +5,7 @@
 - **`line-backend/`**：LINE 後端 + 管理員 Dashboard，業務邏輯與狀態真相來源
 - **`flashbot-robot/`**：機器人硬體控制層，串接 Pudu 開放平台 API
 
-`line-backend` 是大腦，`flashbot-robot` 是手腳，兩者沒有共用資料庫，純粹透過 HTTP API 溝通。目前部署在 **Render**，`line-backend`、`flashbot-robot` 各自是獨立的 Web Service。
+`line-backend` 和`flashbot-robot` 沒有共用資料庫，純粹透過 HTTP API 溝通。目前部署在 **Render**，`line-backend`、`flashbot-robot` 各自是獨立的 Web Service。
 
 ```
 AMR-System/
