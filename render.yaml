@@ -1,4 +1,4 @@
-# Render Blueprint（不使用 Docker，改用 Render 原生 Python runtime）。
+# Render Blueprint（用 Render 原生 Python runtime）。
 # 放在 repo 根目錄，檔名必須是 render.yaml。
 #
 # 跟上一版最大差異：runtime改成python，不再需要任何Dockerfile——
@@ -58,16 +58,16 @@ services:
     region: singapore
     plan: starter
     rootDir: flashbot-robot
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install .
     startCommand: python run.py --host 0.0.0.0 --port $PORT
     envVars:
-      - key: APP_KEY
+      - key: Pd_key
         sync: false
-      - key: APP_SECRET
+      - key: Pd_secret
         sync: false
-      - key: SHOP_ID
+      - key: Aurotek_id
         sync: false
-      - key: DEFAULT_SN
+      - key: FLASHBOT_SN
         sync: false
       - key: DEFAULT_MAP_NAME
         sync: false
