@@ -10,7 +10,7 @@
 ```
 AMR-System/
 ├── render.yaml                    ← Render 服務設定（目前服務是手動建立，這份檔案不會被讀取，純文件用途）
-├── README.md                      ← 本檔案
+├── README.md                      
 ├── Aurobox-開發文件.md             ← 完整開發文件（架構、資料流、模組說明、除錯指南）
 ├── Render部署指南.md               ← 從零開始建立一份全新 Render 部署
 ├── Render使用說明.md               ← 系統已部署好之後，日常怎麼使用
