@@ -2889,8 +2889,8 @@ def check_stuck_dispatch():
 def check_schedule_reminder():
     """
     預約非當天時段取貨的包裹，在時段開始前2小時提醒收件人一次，避免臨到當天才想起來。
-    當天預約的不用額外提醒——時段本來就快到了，提醒的意義不大，這支只處理
-    「還有一天以上才到」的預約，在剩2小時窗口內補提醒一次。
+    「非當天」指的是預約時段跟建立當下不是同一天（提前訂的），這種才提醒；
+    如果是建立當下就約當天稍後時段（同一天內），時段本來就快到了，不用額外提醒。
 
     做法跟 check_pickup_timeout 一樣：先抓候選，再逐一用 skip_locked 重新確認條件
     仍成立才真的動手，避免跟住戶自己操作（例如臨時取消預約）同時發生時互相打架。
@@ -2900,7 +2900,6 @@ def check_schedule_reminder():
     db = SessionLocal()
     try:
         now = now_taipei()
-        today = now.date()
         window_end = now + timedelta(hours=2)
 
         candidate_batch_ids = [
@@ -2933,8 +2932,8 @@ def check_schedule_reminder():
 
         def process_group(group):
             primary = group[0]
-            if primary.scheduled_pickup_at.date() == today:
-                return  # 當天預約不用提前提醒
+            if primary.scheduled_pickup_at.date() == primary.created_at.date():
+                return  # 建立當天就約的（同天預約），時段本來就快到了，不用提前提醒
 
             schedule_text = primary.scheduled_pickup_at.strftime("%m月%d日%H時")
             message = f"提醒您，預約取貨時段將於 2 小時後開始（{schedule_text}）。如無法配合，請聯繫管理員協助處理。"
