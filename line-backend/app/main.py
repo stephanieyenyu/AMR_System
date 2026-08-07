@@ -3018,7 +3018,7 @@ scheduler = BackgroundScheduler()
 
 
 scheduler.add_job(check_pickup_timeout, "interval", minutes=1)
-scheduler.add_job(check_schedule_reminder, "interval", minutes=10)
+scheduler.add_job(check_schedule_reminder, "interval", minutes=1)
 scheduler.add_job(check_assign_timeout, "interval", minutes=1)
 scheduler.add_job(check_return_timeout, "interval", minutes=1)
 scheduler.add_job(poll_robot_returned, "interval", seconds=20)
