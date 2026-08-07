@@ -2930,13 +2930,21 @@ def check_schedule_reminder():
             .all()
         ]
 
+        from datetime import timedelta
+
         def process_group(group):
             primary = group[0]
-            if primary.scheduled_pickup_at.date() == primary.created_at.date():
-                return  # 建立當天就約的（同天預約），時段本來就快到了，不用提前提醒
+            
+            # 計算「預約時間」與「建立時間」的時差
+            time_difference = primary.scheduled_pickup_at - primary.created_at
+            
+            # 如果預約時間距離建立時間「小於或等於 2 小時」，代表他建立時就已經快到期了，不發送提早 2 小時的提醒
+            if time_difference <= timedelta(hours=2):
+                return
 
             schedule_text = primary.scheduled_pickup_at.strftime("%m月%d日%H時")
             message = f"提醒您，預約取貨時段將於 2 小時後開始（{schedule_text}）。如無法配合，請聯繫管理員協助處理。"
+
 
             result = _push_to_recipients(db, primary, message, log_context="預約提醒推播失敗")
             if result["notified_count"] > 0:
