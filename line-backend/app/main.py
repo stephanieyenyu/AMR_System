@@ -2888,7 +2888,8 @@ def check_stuck_dispatch():
 
 def check_schedule_reminder():
     """
-    預約非當天時段取貨的包裹，在時段開始前2小時提醒收件人一次，避免臨到當天才想起來。
+    【測試模式：提前10分鐘提醒，測完記得改回timedelta(hours=2)，一共兩處】
+    預約非當天時段取貨的包裹，在時段開始前提醒收件人一次，避免臨到當天才想起來。
     「非當天」指的是預約時段跟建立當下不是同一天（提前訂的），這種才提醒；
     如果是建立當下就約當天稍後時段（同一天內），時段本來就快到了，不用額外提醒。
 
@@ -2930,29 +2931,27 @@ def check_schedule_reminder():
             .all()
         ]
 
-            
-        # 計算「預約時間」與「建立時間」的時差
-        time_difference = primary.scheduled_pickup_at - primary.created_at
-            
-        # 如果預約時間距離建立時間「小於或等於 2 小時」，代表他建立時就已經快到期了，不發送提早 2 小時的提醒
-        if time_difference <= timedelta(minutes=1):
-            return
+        def process_group(group):
+            primary = group[0]
 
-        schedule_text = primary.scheduled_pickup_at.strftime("%m月%d日%H時")
-        message = f"提醒您，預約取貨時段將於 2 小時後開始（{schedule_text}）。如無法配合，請聯繫管理員協助處理。"
+            time_difference = primary.scheduled_pickup_at - primary.created_at
+            if time_difference <= timedelta(minutes=1):
+                return
 
+            schedule_text = primary.scheduled_pickup_at.strftime("%m月%d日%H時%M分")
+            message = f"提醒您，預約取貨時段將於稍後開始（{schedule_text}）。如無法配合，請聯繫管理員協助處理。"
 
-        result = _push_to_recipients(db, primary, message, log_context="預約提醒推播失敗")
-        if result["notified_count"] > 0:
-            sent_at = now_taipei()
-            for p in group:
-                p.schedule_reminder_sent_at = sent_at
-            db.commit()
-            log_event(
-                db, "schedule_reminder_sent",
-                detail=f"通知 {result['notified_count']} 位收件人，預約時段={schedule_text}",
-                package_id=primary.id,
-            )
+            result = _push_to_recipients(db, primary, message, log_context="預約提醒推播失敗")
+            if result["notified_count"] > 0:
+                sent_at = now_taipei()
+                for p in group:
+                    p.schedule_reminder_sent_at = sent_at
+                db.commit()
+                log_event(
+                    db, "schedule_reminder_sent",
+                    detail=f"通知 {result['notified_count']} 位收件人，預約時段={schedule_text}",
+                    package_id=primary.id,
+                )
 
         for batch_id in candidate_batch_ids:
             member_ids = [
@@ -2990,10 +2989,7 @@ def check_schedule_reminder():
                 .with_for_update(skip_locked=True)
                 .first()
             )
-            if not package:
-                db.rollback()
-                continue
-            if (package.status != "pickup_now" or package.scheduled_pickup_at is None
+            if (not package or package.status != "pickup_now" or package.scheduled_pickup_at is None
                     or package.scheduled_pickup_at <= now or package.scheduled_pickup_at > window_end
                     or package.schedule_reminder_sent_at is not None):
                 db.rollback()
@@ -3002,7 +2998,6 @@ def check_schedule_reminder():
             process_group([package])
     finally:
         db.close()
-
 
 scheduler = BackgroundScheduler()
 
