@@ -2930,7 +2930,6 @@ def check_schedule_reminder():
             .all()
         ]
 
-            primary = group[0]
             
             # 計算「預約時間」與「建立時間」的時差
             time_difference = primary.scheduled_pickup_at - primary.created_at
