@@ -54,6 +54,9 @@ def _queue_door_action(
                     while not _assign_queue.empty():
                         _assign_queue.get()
                     return
+
+                home_point = app.home_point
+                update_robot_state(sn, point=home_point)
                 print(f"[系統] 機器人已抵達，準備依序執行佇列中的艙門動作...", flush=True)
 
             # 3. 依序執行動作
@@ -86,6 +89,7 @@ def _queue_door_action(
     finally:
         _assign_lock.release()
 
+'''
 def _return_for_assign(
     app,
     controller,
@@ -145,6 +149,7 @@ def _return_for_assign(
     finally:
         # 確保即使發生異常，也一定會釋放 Lock
         _assign_lock.release()
+'''
 
 def _poll_notify_display_qr(
     app,
@@ -154,6 +159,7 @@ def _poll_notify_display_qr(
     task_id: str = None,
     timeout_seconds: int = 300, # 建議給個預設值，避免全域變數讀不到
     poll_interval: int = 5,
+    target_point: str = None
 ) -> None:
     """背景執行緒：輪詢機器人狀態直到抵達，再通知中央大腦。"""
     
@@ -183,7 +189,8 @@ def _poll_notify_display_qr(
                 if task_id and current_db_task_id != task_id:
                     print(f"[系統] 偵測到任務已變更 (可能遭遇 Recall)。任務 {door_task_id} 原任務 {task_id} 已失效，取消抵達推播！", flush=True)
                     return
-            
+
+            update_robot_state(sn, point=target_point)
             # 安全優化：在背景執行緒中，直接用傳入的 app 讀取 config 最安全
             callback_base_url = app.config.get('CENTRAL_API_BASE_URL', '')
             if not callback_base_url:
@@ -299,7 +306,14 @@ def _wait_and_execute_recall(app, controller, sn, home_point):
             res = controller.custom_call2(payload=payload)
             
             new_task = res.get('data', {}).get('task_id') if res and res.get('message') == 'SUCCESS' else None
-            update_robot_state(sn, point=home_point, task_id=new_task)
+            update_robot_state(sn, task_id=new_task)
+
+            app = current_app._get_current_object()
+            threading.Thread(
+                target=_poll_and_update_location, 
+                args=(app, controller, sn, home_point), 
+                daemon=True
+            ).start()
 
             # 處理本機資料庫的艙門保護 (將未送達的包裹鎖定為 FULL)
             active_doors = Door.query.filter_by(sn=sn).with_for_update().all()
@@ -313,6 +327,44 @@ def _wait_and_execute_recall(app, controller, sn, home_point):
             db.session.remove()
             _recall_lock.release()
 
+def _poll_and_update_location(
+        app, 
+        controller, 
+        sn, 
+        target_point,  
+        timeout_seconds=300, 
+        poll_interval=5
+    ):
+    """
+    通用背景執行緒：單純輪詢直到抵達定點，
+    抵達後才將資料庫的位置更新為 target_point，並清空任務狀態。
+    """
+    with app.app_context():
+        try:
+            # 暫停 5 秒讓硬體有時間將狀態切換為 MOVING
+            time.sleep(5)
+            print(f"[系統] 開始追蹤機器人前往 {target_point} ...", flush=True)
+            
+            arrived = controller.wait_until_arrived(
+                sn=sn,
+                timeout_seconds=timeout_seconds,
+                poll_interval=poll_interval
+            )
+            
+            from .services import update_robot_state
+            if arrived:
+                # 機器人真正抵達後，才更新最後位置，並清空任務狀態
+                update_robot_state(sn, point=target_point, clear_task=True)
+                print(f"[系統] 機器人已成功抵達 {target_point}，位置與任務狀態已刷新！", flush=True)
+            else:
+                print(f"[系統] 前往 {target_point} 輪詢超時，可能卡在路上！", flush=True)
+                update_robot_state(sn, clear_task=True)
+                
+        except Exception as e:
+            print(f"[系統] 背景位置更新發生異常: {e}", flush=True)
+        finally:
+            from .models import db
+            db.session.remove()
 '''
 def _hardware_watchdog(app, controller, sn):
     """背景執行緒：專職監控硬體異常狀態 (如 STUCK 超時)"""

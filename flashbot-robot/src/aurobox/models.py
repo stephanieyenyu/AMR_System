@@ -61,6 +61,6 @@ class RobotState(db.Model):
     def __repr__(self):
         return f"<RobotState {self.sn} - Last Point: {self.last_point}>"
 
-@event.listens_for(Door, "before_delete")
-def _prevent_door_delete(mapper, connection, target):
-    raise ValueError("Door records are immutable and cannot be deleted.")
+# @event.listens_for(Door, "before_delete")
+# def _prevent_door_delete(mapper, connection, target):
+#     raise ValueError("Door records are immutable and cannot be deleted.")

@@ -1,3 +1,4 @@
+import json
 import os
 
 try:
@@ -12,6 +13,18 @@ load_dotenv()
 
 def load_config():
     """Load PUDU API configuration from environment variables."""
+
+    raw_mapping = os.getenv(
+        "DOOR_MAPPING", 
+        '{"H_01": ["H_01", "H_02"], "H_02": ["H_03"], "H_03": ["H_04"]}'
+    )
+    
+    try:
+        door_mapping = json.loads(raw_mapping)
+    except json.JSONDecodeError:
+        print("[系統] 警告：DOOR_MAPPING 環境變數格式錯誤，將使用預設三門映射")
+        door_mapping = {"H_01": ["H_01", "H_02"], "H_02": ["H_03"], "H_03": ["H_04"]}
+
     return {
         "PUDU_BASE_URL": os.getenv("PUDU_BASE_URL", "https://css-open-platform.pudutech.com"),
         "APP_KEY": os.getenv("Pd_key"),
@@ -22,7 +35,7 @@ def load_config():
         "HOME_POINT_NAME": os.getenv("HOME_POINT_NAME", "office"),
         "CHARGE_POINT_NAME": os.getenv("CHARGE_POINT_NAME", "閃閃充電"),
         "DOOR_MODE": os.getenv("DOOR_MODE", "4_DOORS"),
-        
+        "DOOR_MAPPING": door_mapping,
         "CENTRAL_API_BASE_URL": os.getenv("CENTRAL_API_BASE_URL", ""),
         "DATABASE_URL": os.getenv("DATABASE_URL", ""),
     }

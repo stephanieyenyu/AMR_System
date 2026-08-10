@@ -10,6 +10,7 @@ class FlashbotController:
         self.default_sn = config.get("DEFAULT_SN")
         self.default_map_name = config.get("DEFAULT_MAP_NAME", "")
         self.door_mode = config.get("DOOR_MODE", "4_DOORS")
+        self.door_mapping = config.get("DOOR_MAPPING", {})
         self.client = PuduApiClient(
             app_key=config["APP_KEY"],
             app_secret=config["APP_SECRET"],
@@ -243,17 +244,9 @@ class FlashbotController:
             op = state.get("operation")
             
             # 攔截並轉換
-            if self.door_mode == "3_DOORS":
-                if logic_door == "H_01":
-                    # 邏輯 1 號門 -> 打開/關閉實體的 1 號與 2 號門
-                    physical_states.append({"door_number": "H_01", "operation": op})
-                    physical_states.append({"door_number": "H_02", "operation": op})
-                elif logic_door == "H_02":
-                    # 邏輯 2 號門 -> 操作實體的 3 號門
-                    physical_states.append({"door_number": "H_03", "operation": op})
-                elif logic_door == "H_03":
-                    # 邏輯 3 號門 -> 操作實體的 4 號門
-                    physical_states.append({"door_number": "H_04", "operation": op})
+            if self.door_mode == "3_DOORS" and logic_door in self.door_mapping:
+                for phys_door in self.door_mapping[logic_door]:
+                    physical_states.append({"door_number": phys_door, "operation": op})
             else:
                 # 4 門模式直接直通
                 physical_states.append(state)

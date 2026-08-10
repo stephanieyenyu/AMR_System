@@ -17,6 +17,11 @@ def ensure_default_doors(app: Flask) -> None:
 
     # 讀取設定檔中的 DOOR_MODE
     mode = app.config.get('DOOR_MODE', '4_DOORS')
+
+    print("============== DEBUG ==============", flush=True)
+    print(f"實際讀取到的 DOOR_MODE 是: [{mode}]", flush=True)
+    print("===================================", flush=True)
+    
     if mode == '3_DOORS':
         active_door_numbers = ("H_01", "H_02", "H_03")
     else:
@@ -40,7 +45,16 @@ def ensure_default_doors(app: Flask) -> None:
                 door_task_id=None,
             )
         )
+        
+    extra_doors = Door.query.filter(
+        Door.sn == sn,
+        ~Door.door_number.in_(active_door_numbers)
+    ).all()
     
+    for extra_door in extra_doors:
+        db.session.delete(extra_door)
+        print(f"[系統] 已清理非目前模式下的殘留艙門: {extra_door.door_number}", flush=True)
+
     # 重置目前的邏輯門狀態
     doors = Door.query.filter_by(sn=sn).all()
     
@@ -97,6 +111,8 @@ def create_app(config=None, reset_db=True):
     app.config['DEFAULT_MAP_NAME'] = app_config.get('DEFAULT_MAP_NAME')
     app.config['HOME_POINT_NAME'] = app_config.get('HOME_POINT_NAME')
     app.config['CHARGE_POINT_NAME'] = app_config.get('CHARGE_POINT_NAME')
+    app.config['DOOR_MODE'] = app_config.get('DOOR_MODE', '4_DOORS')
+    app.config['DOOR_MAPPING'] = app_config.get('DOOR_MAPPING', {})
     app.config['CENTRAL_API_BASE_URL'] = app_config.get('CENTRAL_API_BASE_URL')
 
     app.pudu_controller = FlashbotController(app_config)
