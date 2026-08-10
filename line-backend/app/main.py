@@ -2930,9 +2930,6 @@ def check_schedule_reminder():
             .all()
         ]
 
-        from datetime import timedelta
-
-        def process_group(group):
             primary = group[0]
             
             # 計算「預約時間」與「建立時間」的時差
