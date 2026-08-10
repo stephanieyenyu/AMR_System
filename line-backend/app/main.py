@@ -2900,7 +2900,7 @@ def check_schedule_reminder():
     db = SessionLocal()
     try:
         now = now_taipei()
-        window_end = now + timedelta(hours=2)
+        window_end = now + timedelta(minutes=10)
 
         candidate_batch_ids = [
             row[0] for row in
@@ -2939,7 +2939,7 @@ def check_schedule_reminder():
             time_difference = primary.scheduled_pickup_at - primary.created_at
             
             # 如果預約時間距離建立時間「小於或等於 2 小時」，代表他建立時就已經快到期了，不發送提早 2 小時的提醒
-            if time_difference <= timedelta(hours=2):
+            if time_difference <= timedelta(minutes=1):
                 return
 
             schedule_text = primary.scheduled_pickup_at.strftime("%m月%d日%H時")
