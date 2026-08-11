@@ -639,6 +639,67 @@ def get_dashboard_status():
 # ==========================================================
 # 11. 緊急召回 (Recall)
 # ==========================================================
+def _execute_recall_immediately(app, sn, home_point):
+    """背景執行召回：避免 API request 因硬體等待而逾時。"""
+    with app.app_context():
+        controller = app.pudu_controller
+
+        try:
+            active_doors = Door.query.filter(Door.sn == sn).with_for_update().all()
+            robot_state = RobotState.query.filter_by(sn=sn).first()
+            active_task_id = robot_state.current_task_id if robot_state else None
+
+            if active_task_id:
+                try:
+                    controller.custom_call_cancel({"task_id": active_task_id})
+                    print(f"[系統] 已發送 Cancel 註銷任務 {active_task_id}", flush=True)
+                except Exception as e:
+                    print(f"[系統] 註銷任務 {active_task_id} 發生異常: {e}", flush=True)
+
+            update_robot_state(sn, clear_task=True)
+
+            # 以短輪詢取代固定 sleep，減少不必要等待。
+            deadline = time.time() + 3
+            while time.time() < deadline:
+                try:
+                    status = controller.get_status_summary(sn)
+                    if status.get('move_state') in ('IDLE', 'ARRIVE', None):
+                        break
+                except Exception:
+                    # 如果硬體狀態暫時讀不到，仍繼續嘗試召回，避免卡死流程。
+                    break
+                time.sleep(0.5)
+
+            payload = build_custom_call_payload(sn=sn, point=home_point)
+            res = controller.custom_call2(payload=payload)
+
+            new_task = res.get('data', {}).get('task_id') if res and res.get('message') == 'SUCCESS' else None
+            update_robot_state(sn, task_id=new_task)
+
+            threading.Thread(
+                target=_poll_and_update_location,
+                args=(app, controller, sn, home_point),
+                daemon=True
+            ).start()
+
+            recalled_doors = []
+            for door in active_doors:
+                if door.status in [DoorStatus.PICKING.value, DoorStatus.ASSIGNED.value, DoorStatus.PUTTING.value, DoorStatus.LOADING.value]:
+                    door.status = DoorStatus.FULL.value
+                    recalled_doors.append(door.door_number)
+                elif door.status == DoorStatus.FULL.value:
+                    recalled_doors.append(door.door_number)
+
+            db.session.commit()
+            print(f"[系統] Recall 背景執行完成，保護艙門: {recalled_doors}", flush=True)
+
+        except Exception as e:
+            db.session.rollback()
+            import traceback
+            current_app.logger.error(traceback.format_exc())
+            print(f"[系統] Recall 背景執行失敗: {e}", flush=True)
+
+
 @api_bp.route('/robot/recall', methods=['POST'])
 def robot_recall():
     """
@@ -658,8 +719,7 @@ def robot_recall():
     active_doors = Door.query.filter(Door.sn == sn).with_for_update().all()
 
     # === 狀態防護牆 (保護最後一哩路的送貨流程) ===
-    live_status = controller.get_status_summary(sn)
-    move_state = live_status.get('move_state')
+    # 這裡刻意不呼叫外部硬體 API，避免 request 卡住造成上游5秒timeout。
     
     # 檢查是否有門正在 PICKING (已掃碼，門已開，等待 Complete 關門)
     is_picking = any(
@@ -672,7 +732,7 @@ def robot_recall():
     active_task_id = robot_state.current_task_id if robot_state else None
     is_at_door = (robot_state and robot_state.last_point != home_point)
 
-    is_protected = is_picking or (is_at_door and move_state in ['APPROACHING', 'ARRIVE']) or (is_at_door and move_state == 'IDLE' and active_task_id)
+    is_protected = is_picking or (is_at_door and active_task_id)
     # 拒絕召回的條件：
     # 1. 正在接近或剛抵達 (APPROACHING / ARRIVE)
     # 2. 門已經被打開，住戶正在取件 (PICKING 狀態)
@@ -696,55 +756,16 @@ def robot_recall():
             'returning_home': False
         }), 200
 
-    try:
-        # 發送 Cancel 取消任務
-        if active_task_id:
-            try:
-                controller.custom_call_cancel({"task_id": active_task_id})
-                print(f"[系統] 成功發送 Cancel 註銷任務 {active_task_id}，等待硬體重置...", flush=True)
-            except Exception as e:
-                print(f"[系統] 註銷任務 {active_task_id} 發生異常: {e}", flush=True)
-            
-        update_robot_state(sn, clear_task=True)
-        # 物理緩衝：等待硬體完全註銷舊路線，回到 IDLE
-        time.sleep(6)
+    app = current_app._get_current_object()
+    threading.Thread(
+        target=_execute_recall_immediately,
+        args=(app, sn, home_point),
+        daemon=True,
+    ).start()
 
-        # 發送常規導航指令回管理室
-        print(f"[系統] 硬體重置完畢，發送新導航指令回管理室 {home_point}...", flush=True)
-        payload = build_custom_call_payload(sn=sn, point=home_point)
-        res = controller.custom_call2(payload=payload)
-
-        new_task = res.get('data', {}).get('task_id') if res and res.get('message') == 'SUCCESS' else None
-        update_robot_state(sn, task_id=new_task)
-
-        app = current_app._get_current_object()
-        threading.Thread(
-            target=_poll_and_update_location, 
-            args=(app, controller, sn, home_point), 
-            daemon=True
-        ).start()
-
-        # 處理本機資料庫的艙門保護
-        recalled_doors = []
-        for door in active_doors:
-            # 遭遇 Recall，只要是處理到一半的狀態，通通強制轉為 FULL 保護起來
-            if door.status in [DoorStatus.PICKING.value, DoorStatus.ASSIGNED.value, DoorStatus.PUTTING.value, DoorStatus.LOADING.value]:
-                door.status = DoorStatus.FULL.value
-                recalled_doors.append(door.door_number)
-            elif door.status == DoorStatus.FULL.value:
-                recalled_doors.append(door.door_number)
-
-        db.session.commit()
-
-        return jsonify({
-            'status': 'success',
-            'message': 'Robot recall triggered successfully. Navigating home.',
-            'cancelled_task': active_task_id,
-            'protected_doors': recalled_doors,
-            'returning_home': True
-        })
-
-    except Exception as e:
-        import traceback
-        current_app.logger.error(traceback.format_exc())
-        return jsonify({'error': str(e)}), 500
+    return jsonify({
+        'status': 'success',
+        'message': 'Recall accepted. Robot recall is executing in background.',
+        'queued': False,
+        'returning_home': True,
+    }), 200
