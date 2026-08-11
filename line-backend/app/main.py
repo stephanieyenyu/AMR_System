@@ -2888,7 +2888,6 @@ def check_stuck_dispatch():
 
 def check_schedule_reminder():
     """
-    【測試模式：提前10分鐘提醒，測完記得改回timedelta(hours=2)，一共兩處】
     預約非當天時段取貨的包裹，在時段開始前提醒收件人一次，避免臨到當天才想起來。
     「非當天」指的是預約時段跟建立當下不是同一天（提前訂的），這種才提醒；
     如果是建立當下就約當天稍後時段（同一天內），時段本來就快到了，不用額外提醒。
@@ -2901,7 +2900,7 @@ def check_schedule_reminder():
     db = SessionLocal()
     try:
         now = now_taipei()
-        window_end = now + timedelta(minutes=10)
+        window_end = now + timedelta(hours=2)
 
         candidate_batch_ids = [
             row[0] for row in
@@ -2935,7 +2934,7 @@ def check_schedule_reminder():
             primary = group[0]
 
             time_difference = primary.scheduled_pickup_at - primary.created_at
-            if time_difference <= timedelta(minutes=1):
+            if time_difference <= timedelta(hours=2):
                 return
 
             schedule_text = primary.scheduled_pickup_at.strftime("%m月%d日%H時%M分")
