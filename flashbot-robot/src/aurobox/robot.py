@@ -33,20 +33,17 @@ class FlashbotController:
 
         try:
             sources["v1"] = self.get_status_v1(sn)
-        except Exception as e:
-            print(f"[狀態查詢失敗] get_status_v1: {e}", flush=True)
+        except Exception:
             sources["v1"] = {}
 
         try:
             sources["v2"] = self.get_status(sn)
-        except Exception as e:
-            print(f"[狀態查詢失敗] get_status (v2): {e}", flush=True)
+        except Exception:
             sources["v2"] = {}
 
         try:
             sources["task"] = self.get_task_state(sn)
-        except Exception as e:
-            print(f"[狀態查詢失敗] get_task_state: {e}", flush=True)
+        except Exception:
             sources["task"] = {}
 
         return sources

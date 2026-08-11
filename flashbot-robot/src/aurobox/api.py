@@ -18,6 +18,32 @@ def _get_active_doors(app):
         return ("H_01", "H_02", "H_03")
     return ("H_01", "H_02", "H_03", "H_04")
 
+
+def _can_accept_new_door_task(app, sn, robot_state, home_point, charge_point):
+    """判斷機器人是否可接受新的門任務。"""
+    if not robot_state:
+        return True
+
+    if robot_state.current_task_id:
+        return False
+
+    controller = app.pudu_controller
+    try:
+        live_status = controller.get_status_summary(sn)
+    except Exception:
+        live_status = {}
+
+    is_charging = bool(
+        live_status.get('is_charging') in (1, True)
+        or live_status.get('state') == 'Charging'
+    )
+
+    last_point = (robot_state.last_point or '').strip()
+    if last_point in [home_point, charge_point] or is_charging:
+        return True
+
+    return False
+
 # ==========================================================
 # 0. 讓機器人返回充電站 (Recharge)
 # ==========================================================
@@ -105,8 +131,7 @@ def assign_door_for_package(door_task_id):
     charge_point = current_app.config.get('CHARGE_POINT_NAME')
     robot_state = RobotState.query.filter_by(sn=sn).first()
     
-    # 如果機器人不在管理室，也不在充電站，代表它正在外面(例如住戶家)送貨，這時才擋下！
-    if robot_state and robot_state.last_point and (robot_state.last_point not in [home_point, charge_point]):
+    if robot_state and not _can_accept_new_door_task(current_app, sn, robot_state, home_point, charge_point):
         return jsonify({
             'error': 'Robot is currently out for tasks. Please wait until it returns.', 
             'status': 'conflict'
