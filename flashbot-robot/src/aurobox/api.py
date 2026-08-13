@@ -24,8 +24,14 @@ def _can_accept_new_door_task(app, sn, robot_state, home_point, charge_point):
     if not robot_state:
         return True
 
+    # 若已有裝載中的艙門，允許同一輪次連續分配，避免第二單被誤擋 409。
+    has_loading_session = Door.query.filter(
+        Door.sn == sn,
+        Door.status.in_([DoorStatus.ASSIGNED.value, DoorStatus.LOADING.value])
+    ).first() is not None
+
     if robot_state.current_task_id:
-        return False
+        return has_loading_session
 
     controller = app.pudu_controller
     try:
@@ -39,7 +45,7 @@ def _can_accept_new_door_task(app, sn, robot_state, home_point, charge_point):
     )
 
     last_point = (robot_state.last_point or '').strip()
-    if last_point in [home_point, charge_point] or is_charging:
+    if last_point in (home_point, charge_point) or is_charging:
         return True
 
     return False
