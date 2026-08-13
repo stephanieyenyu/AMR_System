@@ -1718,7 +1718,7 @@ async def admin_robot_status():
 
 def require_robot_at_office():
     """
-    開門/關門這兩個動作只有機器人真的在管理室（office）時才安全——機器人如果還在
+    開門/關門這兩個動作只有機器人真的在管理室時才安全——機器人如果還在
     外面配送或返航途中，這時候手動開關門跟它實際任務狀態對不起來，可能誤觸發
     艙門硬體動作。這裡主動查一次/api/dashboard/status，比對current_location
     是不是settings.ROBOT_HOME_POINT_NAME，不是的話直接擋下，不呼叫真正的開關門API。
