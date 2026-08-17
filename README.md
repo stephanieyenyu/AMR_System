@@ -12,10 +12,9 @@ package at the door, or when a delivery times out with no one home.
 
 ---
 
-[![Watch the delivery cycle](docs/images/demo-capture.png)](docs/media/demo.mp4)
+![Full delivery cycle](docs/images/demo.gif)
 
-**▶ [Watch the full delivery cycle](docs/media/demo.mp4)** — parcel creation → loading →
-dispatch → arrival → QR scan → pickup → return to standby.
+*Parcel creation → loading → dispatch → arrival → QR scan → pickup → return to standby.*
 
 ---
 
