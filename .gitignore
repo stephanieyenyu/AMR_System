@@ -1,42 +1,37 @@
-# ============================================================
-# Aurobox 合併專案 - 頂層 .gitignore
-# 兩個子專案（line-backend/、flashbot-robot/）各自也保留了自己原本的 .gitignore，
-# 這份頂層檔案是給「不屬於任何一個子專案、只跟合併後整體有關」的項目用
-# （例如根目錄下若有整合測試、共用腳本、IDE 設定等）。
-# ============================================================
+# Environment
+.env
+.env.local
+*.env
+!.env.example
 
 # Python
 __pycache__/
-*.py[codz]
-*.pyc
+*.py[cod]
 *.egg-info/
-.eggs/
-build/
-dist/
-
-# 虛擬環境
 .venv/
 venv/
 env/
-ENV/
-
-# 環境變數（機密資訊，兩個子專案各自的 .env 都不進版控）
-.env
-line-backend/.env
-flashbot-robot/.env
-
-# 測試 / coverage
 .pytest_cache/
-.coverage
-htmlcov/
+.mypy_cache/
 
-# 機器人運行時資料（log、SQLite 備援檔）
-flashbot-robot/instance/
-instance/
+# Database
+*.db
+*.sqlite3
 
-# IDE
+# Editors / OS
 .vscode/
 .idea/
+.DS_Store
+Thumbs.db
+desktop.ini
 
-# Docker
-docker-compose.override.yml
+# Logs
+*.log
+logs/
+
+# Diagram export artifacts
+docs/diagrams/export/
+palette.png
+
+# Node
+node_modules/

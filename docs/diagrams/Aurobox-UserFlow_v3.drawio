@@ -1,0 +1,775 @@
+<mxfile host="app.diagrams.net" pages="2">
+  <diagram name="User Flow" id="uf4">
+    <mxGraphModel dx="1436" dy="661" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2100" pageHeight="3980" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="bA" parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#bbbbbb;dashed=1;verticalAlign=top;align=left;spacingLeft=12;spacingTop=6;fontSize=16;fontStyle=1;fontColor=#777777;fillColor=#fafafa;" value="A　初始化：地圖點位與門牌對應" vertex="1">
+          <mxGeometry height="382" width="1420" x="200" y="88" as="geometry" />
+        </mxCell>
+        <mxCell id="bB" parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#bbbbbb;dashed=1;verticalAlign=top;align=left;spacingLeft=12;spacingTop=6;fontSize=16;fontStyle=1;fontColor=#777777;fillColor=#f3f7fb;" value="B　加好友與門牌綁定" vertex="1">
+          <mxGeometry height="500" width="1420" x="200" y="488" as="geometry" />
+        </mxCell>
+        <mxCell id="bC" parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#bbbbbb;dashed=1;verticalAlign=top;align=left;spacingLeft=12;spacingTop=6;fontSize=16;fontStyle=1;fontColor=#777777;fillColor=#fafafa;" value="C　送件：登記到派送" vertex="1">
+          <mxGeometry height="615" width="1420" x="200" y="988" as="geometry" />
+        </mxCell>
+        <mxCell id="bD" parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#bbbbbb;dashed=1;verticalAlign=top;align=left;spacingLeft=12;spacingTop=6;fontSize=16;fontStyle=1;fontColor=#777777;fillColor=#f3f7fb;" value="D　取件：住戶取貨" vertex="1">
+          <mxGeometry height="770" width="1420" x="200" y="1603" as="geometry" />
+        </mxCell>
+        <mxCell id="bE" parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#bbbbbb;dashed=1;verticalAlign=top;align=left;spacingLeft=12;spacingTop=6;fontSize=16;fontStyle=1;fontColor=#777777;fillColor=#fafafa;" value="E　退件：住戶申請退貨" vertex="1">
+          <mxGeometry height="825" width="1420" x="200" y="2373" as="geometry" />
+        </mxCell>
+        <mxCell id="bF" parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#bbbbbb;dashed=1;verticalAlign=top;align=left;spacingLeft=12;spacingTop=6;fontSize=16;fontStyle=1;fontColor=#777777;fillColor=#f3f7fb;" value="F　退回管理室與例外處理" vertex="1">
+          <mxGeometry height="682" width="1420" x="200" y="3198" as="geometry" />
+        </mxCell>
+        <mxCell id="lane1" parent="1" style="swimlane;horizontal=1;startSize=40;html=1;whiteSpace=wrap;fontSize=14;fontStyle=1;fillColor=none;strokeColor=#666666;strokeWidth=2;swimlaneFillColor=none;" value="住戶（LINE 端）" vertex="1">
+          <mxGeometry height="3860" width="440" x="200" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="cinA" parent="lane1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontColor=#666666;fontSize=13;fontStyle=1;strokeWidth=2;" value="B" vertex="1">
+          <mxGeometry height="30" width="30" x="10" y="557" as="geometry" />
+        </mxCell>
+        <mxCell id="h49" edge="1" parent="lane1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#1565c0;dashed=1;fontColor=#1565c0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" value="逾時未退貨">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+            <Array as="points">
+              <mxPoint x="420.05999999999995" y="2840" />
+              <mxPoint x="420.05999999999995" y="3121.06" />
+            </Array>
+            <mxPoint x="340" y="2840" as="sourcePoint" />
+            <mxPoint x="500" y="3121" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h47" edge="1" parent="lane1" source="D6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#b23b3b;strokeWidth=2;fontColor=#b23b3b;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="D10" value="暫時不退貨">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+            <Array as="points">
+              <mxPoint x="390.05999999999995" y="2840" />
+              <mxPoint x="390.05999999999995" y="3041.06" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="coutD2" parent="lane1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b23b3b;fontColor=#b23b3b;fontSize=13;fontStyle=1;strokeWidth=2;" value="F" vertex="1">
+          <mxGeometry height="30" width="30" x="10" y="3030" as="geometry" />
+        </mxCell>
+        <mxCell id="lane2" parent="1" style="swimlane;horizontal=1;startSize=40;html=1;whiteSpace=wrap;fontSize=14;fontStyle=1;fillColor=none;strokeColor=#666666;strokeWidth=2;swimlaneFillColor=none;" value="系統（LINE 後端）" vertex="1">
+          <mxGeometry height="3860" width="500" x="660" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="coutD1" parent="lane2" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b23b3b;fontColor=#b23b3b;fontSize=13;fontStyle=1;strokeWidth=2;" value="F" vertex="1">
+          <mxGeometry height="30" width="30" x="450" y="3026" as="geometry" />
+        </mxCell>
+        <mxCell id="lane3" parent="1" style="swimlane;horizontal=1;startSize=40;html=1;whiteSpace=wrap;fontSize=14;fontStyle=1;fillColor=none;strokeColor=#666666;strokeWidth=2;swimlaneFillColor=none;" value="管理員（Dashboard）" vertex="1">
+          <mxGeometry height="3860" width="440" x="1180" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="cinB" parent="lane3" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#333333;fontSize=13;fontStyle=1;strokeWidth=2;" value="C" vertex="1">
+          <mxGeometry height="30" width="30" x="380" y="993" as="geometry" />
+        </mxCell>
+        <mxCell id="coutB2" parent="lane3" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontColor=#333333;fontSize=13;fontStyle=1;strokeWidth=2;" value="C" vertex="1">
+          <mxGeometry height="30" width="30" x="370" y="3766" as="geometry" />
+        </mxCell>
+        <mxCell id="A0" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ededed;strokeColor=#555555;fontSize=11;arcSize=50;fontStyle=1;" value="加入 LINE 官方帳號好友" vertex="1">
+          <mxGeometry height="44" width="300" x="240" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="A1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf1fa;strokeColor=#2f6096;fontSize=11;arcSize=10;" value="回覆綁定說明" vertex="1">
+          <mxGeometry height="50" width="380" x="700" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="A2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="在聊天室輸入「門牌 姓名」&lt;br&gt;例：5F-1 王小明" vertex="1">
+          <mxGeometry height="56" width="300" x="240" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="A3" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;" value="格式是否為「兩段文字」？" vertex="1">
+          <mxGeometry height="70" width="380" x="700" y="745" as="geometry" />
+        </mxCell>
+        <mxCell id="A4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf1fa;strokeColor=#2f6096;fontSize=11;arcSize=10;" value="建立或更新綁定&lt;br&gt;回覆「綁定成功」" vertex="1">
+          <mxGeometry height="56" width="380" x="700" y="845" as="geometry" />
+        </mxCell>
+        <mxCell id="A5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="已綁定 → 引導看使用說明&lt;br&gt;未綁定 → 提示格式不正確" vertex="1">
+          <mxGeometry height="56" width="300" x="240" y="845" as="geometry" />
+        </mxCell>
+        <mxCell id="A6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="（可選）「限本人通知」開／關" vertex="1">
+          <mxGeometry height="52" width="300" x="240" y="925" as="geometry" />
+        </mxCell>
+        <mxCell id="B0" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="在 Dashboard 建立包裹&lt;br&gt;選門牌、收件人、件數" vertex="1">
+          <mxGeometry height="56" width="300" x="1220" y="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="B1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf1fa;strokeColor=#2f6096;fontSize=11;arcSize=10;" value="推播到貨通知&lt;br&gt;依「限本人通知」決定通知本人或同門牌全部" vertex="1">
+          <mxGeometry height="62" width="380" x="700" y="1100" as="geometry" />
+        </mxCell>
+        <mxCell id="B2" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;" value="住戶如何回應到貨通知？" vertex="1">
+          <mxGeometry height="72" width="300" x="240" y="1190" as="geometry" />
+        </mxCell>
+        <mxCell id="B3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="選擇預約時段&lt;br&gt;自動捨入到整點或半點" vertex="1">
+          <mxGeometry height="52" width="300" x="240" y="1290" as="geometry" />
+        </mxCell>
+        <mxCell id="B4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1565c0;fontSize=10;arcSize=10;dashed=1;fontColor=#1565c0;" value="預約時段前 2 小時&lt;br&gt;推播提醒一次" vertex="1">
+          <mxGeometry height="52" width="380" x="700" y="1290" as="geometry" />
+        </mxCell>
+        <mxCell id="B5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf1fa;strokeColor=#2f6096;fontSize=11;arcSize=10;" value="自動推播：取消收件的包裹將留存管理室&lt;br&gt;請盡快聯繫管理員，72 小時後作廢" vertex="1">
+          <mxGeometry height="62" width="380" x="700" y="1370" as="geometry" />
+        </mxCell>
+        <mxCell id="B6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fdeeee;strokeColor=#b23b3b;fontSize=11;arcSize=10;" value="收到「留存管理室」通知" vertex="1">
+          <mxGeometry height="44" width="300" x="240" y="1450" as="geometry" />
+        </mxCell>
+        <mxCell id="coutB" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b23b3b;fontColor=#b23b3b;fontSize=13;fontStyle=1;strokeWidth=2;" value="F" vertex="1">
+          <mxGeometry height="30" width="30" x="210" y="1370" as="geometry" />
+        </mxCell>
+        <mxCell id="B7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="按「放置包裹」&lt;br&gt;艙門開啟後放入包裹" vertex="1">
+          <mxGeometry height="56" width="300" x="1220" y="1370" as="geometry" />
+        </mxCell>
+        <mxCell id="B8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1565c0;fontSize=10;arcSize=10;dashed=1;fontColor=#1565c0;" value="8 分鐘未派送&lt;br&gt;自動釋放艙門，需重新放置" vertex="1">
+          <mxGeometry height="52" width="380" x="700" y="1450" as="geometry" />
+        </mxCell>
+        <mxCell id="B9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="按「全部派送」" vertex="1">
+          <mxGeometry height="44" width="300" x="1220" y="1530" as="geometry" />
+        </mxCell>
+        <mxCell id="C0" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf1fa;strokeColor=#2f6096;fontSize=11;arcSize=10;" value="機器人抵達住戶門口&lt;br&gt;推播「已抵達，請掃碼取貨」" vertex="1">
+          <mxGeometry height="58" width="380" x="700" y="1635" as="geometry" />
+        </mxCell>
+        <mxCell id="C1" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;" value="住戶如何處理這次取貨？" vertex="1">
+          <mxGeometry height="76" width="300" x="240" y="1725" as="geometry" />
+        </mxCell>
+        <mxCell id="C2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="開啟掃碼頁&lt;br&gt;掃描機器人螢幕上的 QR Code" vertex="1">
+          <mxGeometry height="56" width="300" x="240" y="1830" as="geometry" />
+        </mxCell>
+        <mxCell id="C3" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;" value="取貨碼相符&lt;br&gt;且掃碼者為收件人？" vertex="1">
+          <mxGeometry height="76" width="380" x="700" y="1915" as="geometry" />
+        </mxCell>
+        <mxCell id="C4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="艙門開啟" vertex="1">
+          <mxGeometry height="44" width="380" x="700" y="2020" as="geometry" />
+        </mxCell>
+        <mxCell id="C5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="顯示驗證失敗&lt;br&gt;請重新掃描" vertex="1">
+          <mxGeometry height="48" width="300" x="240" y="2020" as="geometry" />
+        </mxCell>
+        <mxCell id="C6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="取出包裹&lt;br&gt;按「取貨完成」或圖文選單「關門」" vertex="1">
+          <mxGeometry height="56" width="300" x="240" y="2090" as="geometry" />
+        </mxCell>
+        <mxCell id="C7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ededed;strokeColor=#555555;fontSize=11;arcSize=50;fontStyle=1;" value="艙門關閉，送件完成" vertex="1">
+          <mxGeometry height="44" width="380" x="700" y="2090" as="geometry" />
+        </mxCell>
+        <mxCell id="C8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf1fa;strokeColor=#2f6096;fontSize=11;arcSize=10;" value="回覆「已為您取消取貨，&lt;br&gt;包裹將由機器人送回管理室」" vertex="1">
+          <mxGeometry height="56" width="380" x="700" y="2165" as="geometry" />
+        </mxCell>
+        <mxCell id="C9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1565c0;fontSize=10;arcSize=10;dashed=1;fontColor=#1565c0;" value="逾時未取：8 分鐘無動作&lt;br&gt;系統自動判定並取消這一站" vertex="1">
+          <mxGeometry height="52" width="380" x="700" y="2235" as="geometry" />
+        </mxCell>
+        <mxCell id="C10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf1fa;strokeColor=#2f6096;fontSize=11;arcSize=10;" value="自動推播：包裹因故未能送達，暫存管理室&lt;br&gt;請盡快聯繫管理員，72 小時後作廢" vertex="1">
+          <mxGeometry height="62" width="380" x="700" y="2300" as="geometry" />
+        </mxCell>
+        <mxCell id="C11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fdeeee;strokeColor=#b23b3b;fontSize=11;arcSize=10;" value="收到「暫存管理室」通知" vertex="1">
+          <mxGeometry height="44" width="300" x="240" y="2300" as="geometry" />
+        </mxCell>
+        <mxCell id="coutC" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b23b3b;fontColor=#b23b3b;fontSize=13;fontStyle=1;strokeWidth=2;" value="F" vertex="1">
+          <mxGeometry height="30" width="30" x="210" y="2220" as="geometry" />
+        </mxCell>
+        <mxCell id="D0" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="圖文選單「申請退貨」&lt;br&gt;在頁面填寫件數送出" vertex="1">
+          <mxGeometry height="56" width="300" x="240" y="2405" as="geometry" />
+        </mxCell>
+        <mxCell id="D1" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;" value="是否已完成門牌綁定？" vertex="1">
+          <mxGeometry height="70" width="380" x="700" y="2490" as="geometry" />
+        </mxCell>
+        <mxCell id="D2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="提示先完成綁定" vertex="1">
+          <mxGeometry height="44" width="300" x="240" y="2590" as="geometry" />
+        </mxCell>
+        <mxCell id="coutA" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontColor=#666666;fontSize=13;fontStyle=1;strokeWidth=2;" value="B" vertex="1">
+          <mxGeometry height="30" width="30" x="210" y="2530" as="geometry" />
+        </mxCell>
+        <mxCell id="D3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="建立退貨任務" vertex="1">
+          <mxGeometry height="44" width="380" x="700" y="2590" as="geometry" />
+        </mxCell>
+        <mxCell id="D4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="按「放置包裹」指派空艙門&lt;br&gt;再按「全部派送」" vertex="1">
+          <mxGeometry height="56" width="300" x="1220" y="2665" as="geometry" />
+        </mxCell>
+        <mxCell id="D5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf1fa;strokeColor=#2f6096;fontSize=11;arcSize=10;" value="機器人抵達住戶門口&lt;br&gt;推播「已抵達，請掃碼放件」" vertex="1">
+          <mxGeometry height="58" width="380" x="700" y="2750" as="geometry" />
+        </mxCell>
+        <mxCell id="D6" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;" value="住戶如何處理這次退貨？" vertex="1">
+          <mxGeometry height="80" width="300" x="240" y="2840" as="geometry" />
+        </mxCell>
+        <mxCell id="D7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="放入退貨物&lt;br&gt;按「放貨完成」" vertex="1">
+          <mxGeometry height="52" width="300" x="240" y="2960" as="geometry" />
+        </mxCell>
+        <mxCell id="D8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="艙門關閉&lt;br&gt;退貨物隨機器人帶回管理室" vertex="1">
+          <mxGeometry height="56" width="380" x="700" y="2960" as="geometry" />
+        </mxCell>
+        <mxCell id="D8a" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e7f0fa;strokeColor=#004085;fontColor=#004085;fontSize=11;arcSize=10;" value="主控台跳出&lt;b&gt;藍色提醒橫幅&lt;/b&gt;&lt;br&gt;「退貨件已送達管理室，請盡速取出」" vertex="1">
+          <mxGeometry height="58" width="300" x="1220" y="2965" as="geometry" />
+        </mxCell>
+        <mxCell id="D8b" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="在&lt;b&gt;主控台&lt;/b&gt;「機器人狀態」欄按「開啟艙門」&lt;br&gt;取出退貨件後按「關閉艙門」" vertex="1">
+          <mxGeometry height="52" width="300" x="1220" y="3043" as="geometry" />
+        </mxCell>
+        <mxCell id="D9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ededed;strokeColor=#555555;fontSize=11;arcSize=50;fontStyle=1;" value="在藍色提醒橫幅按「確認取出」&lt;br&gt;艙門釋放，退貨流程結束" vertex="1">
+          <mxGeometry height="52" width="300" x="1220" y="3115" as="geometry" />
+        </mxCell>
+        <mxCell id="D10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1565c0;fontSize=10;arcSize=10;dashed=1;fontColor=#1565c0;" value="暫時不退貨：&lt;b&gt;不自動推播&lt;/b&gt;&lt;br&gt;留給管理員判斷是否補發" vertex="1">
+          <mxGeometry height="62" width="380" x="700" y="3050" as="geometry" />
+        </mxCell>
+        <mxCell id="D11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf1fa;strokeColor=#2f6096;fontSize=11;arcSize=10;" value="逾時未退貨：8 分鐘無動作&lt;br&gt;自動推播「管理室並未收到您的退貨包裹」" vertex="1">
+          <mxGeometry height="62" width="380" x="700" y="3130" as="geometry" />
+        </mxCell>
+        <mxCell id="D12" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fdeeee;strokeColor=#b23b3b;fontSize=11;arcSize=10;" value="收到「未收到退貨包裹」通知" vertex="1">
+          <mxGeometry height="44" width="300" x="240" y="3130" as="geometry" />
+        </mxCell>
+        <mxCell id="cinE" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b23b3b;fontColor=#b23b3b;fontSize=13;fontStyle=1;strokeWidth=2;" value="F" vertex="1">
+          <mxGeometry height="30" width="30" x="1550" y="3230" as="geometry" />
+        </mxCell>
+        <mxCell id="E0" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fdeeee;strokeColor=#b23b3b;fontSize=11;arcSize=10;" value="&lt;b&gt;主控台&lt;/b&gt;跳出紅色提示框，&lt;b&gt;例外處理頁&lt;/b&gt;同步列出&lt;br&gt;狀態一轉成「拒收／逾時未取／不收／已取消退貨」就立刻出現，不需人工建立" vertex="1">
+          <mxGeometry height="66" width="300" x="1220" y="3275" as="geometry" />
+        </mxCell>
+        <mxCell id="E1" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;" value="艙門內是否需要開門確認？" vertex="1">
+          <mxGeometry height="76" width="300" x="1220" y="3365" as="geometry" />
+        </mxCell>
+        <mxCell id="E2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="包裹隨機器人帶回管理室" vertex="1">
+          <mxGeometry height="44" width="380" x="700" y="3475" as="geometry" />
+        </mxCell>
+        <mxCell id="E3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="不收：在&lt;b&gt;主控台&lt;/b&gt;紅色提示框按「確定」&lt;br&gt;包裹未出過門，本來就在管理室" vertex="1">
+          <mxGeometry height="52" width="300" x="1220" y="3475" as="geometry" />
+        </mxCell>
+        <mxCell id="E4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="在&lt;b&gt;主控台&lt;/b&gt;「機器人狀態」欄&lt;br&gt;按「開啟艙門」→ 取出 → 按「關閉艙門」" vertex="1">
+          <mxGeometry height="48" width="300" x="1220" y="3560" as="geometry" />
+        </mxCell>
+        <mxCell id="E5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1565c0;fontSize=10;arcSize=10;dashed=1;fontColor=#1565c0;" value="開門後 8 分鐘未關門&lt;br&gt;自動關門，需重新開門" vertex="1">
+          <mxGeometry height="52" width="380" x="700" y="3560" as="geometry" />
+        </mxCell>
+        <mxCell id="E6" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;" value="&lt;b&gt;例外處理頁&lt;/b&gt;&lt;br&gt;管理員後續處置？" vertex="1">
+          <mxGeometry height="76" width="300" x="1220" y="3640" as="geometry" />
+        </mxCell>
+        <mxCell id="E7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf1fa;strokeColor=#2f6096;fontSize=11;arcSize=10;" value="補發退回通知&lt;br&gt;（自動推播失敗、或退貨取消時用）" vertex="1">
+          <mxGeometry height="56" width="380" x="700" y="3750" as="geometry" />
+        </mxCell>
+        <mxCell id="E8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="重新派貨：另建一筆新包裹" vertex="1">
+          <mxGeometry height="44" width="300" x="1220" y="3750" as="geometry" />
+        </mxCell>
+        <mxCell id="E9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ededed;strokeColor=#555555;fontSize=11;arcSize=50;fontStyle=1;" value="銷案，流程結束" vertex="1">
+          <mxGeometry height="44" width="380" x="700" y="3820" as="geometry" />
+        </mxCell>
+        <mxCell id="note1" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fbfbf5;strokeColor=#b8b39a;fontSize=10;size=14;align=left;" value="圖文選單「我的包裹」可隨時查詢目前&lt;br&gt;所有未結束的包裹，純查詢、不含操作按鈕。" vertex="1">
+          <mxGeometry height="56" width="300" x="1220" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="note3" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fbfbf5;strokeColor=#b8b39a;fontSize=10;size=14;align=left;" value="&lt;b&gt;圖例&lt;/b&gt;&lt;br&gt;&lt;font color=&#39;#333333&#39;&gt;&lt;b&gt;━━&lt;/b&gt;&lt;/font&gt; 主流程　&lt;font color=&#39;#2e7d32&#39;&gt;&lt;b&gt;━━&lt;/b&gt;&lt;/font&gt; 順利取／退件&lt;br&gt;&lt;font color=&#39;#b23b3b&#39;&gt;&lt;b&gt;━━&lt;/b&gt;&lt;/font&gt; 例外：拒收、逾時、不收&lt;br&gt;&lt;font color=&#39;#1565c0&#39;&gt;&lt;b&gt;╌╌&lt;/b&gt;&lt;/font&gt; 系統排程自動觸發　&lt;font color=&#39;#999999&#39;&gt;&lt;b&gt;╌╌&lt;/b&gt;&lt;/font&gt; 回頭重試&lt;br&gt;藍底＝發給住戶的訊息　圓圈＝接續點&lt;br&gt;Dashboard 欄的紅／藍框＝主控台的紅色／藍色提示橫幅" vertex="1">
+          <mxGeometry height="116" width="300" x="1220" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="h1" edge="1" parent="1" source="A0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="A1" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="890" y="542" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h2" edge="1" parent="1" source="A1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="A2" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="890" y="688" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h3" edge="1" parent="1" source="A2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="A3" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="540.06" y="700" />
+              <mxPoint x="650.06" y="700" />
+              <mxPoint x="650.06" y="720" />
+              <mxPoint x="890.06" y="720" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h4" edge="1" parent="1" source="A3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="A4" value="是">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h5" edge="1" parent="1" source="A3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#999999;dashed=1;fontColor=#888888;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="A5" value="否">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+            <Array as="points">
+              <mxPoint x="650" y="780" />
+              <mxPoint x="650" y="873" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h6" edge="1" parent="1" source="A5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#999999;dashed=1;fontColor=#888888;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="A2" value="重新輸入">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+            <Array as="points">
+              <mxPoint x="390" y="820" />
+              <mxPoint x="390" y="820" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h7" edge="1" parent="1" source="A4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#999999;dashed=1;fontColor=#888888;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="A6" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="650" y="873" />
+              <mxPoint x="650" y="951" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h8" edge="1" parent="1" source="cinA" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="A2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="h9" edge="1" parent="1" source="cinB" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="B0" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="h10" edge="1" parent="1" source="B0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="B1" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1170" y="1048" />
+              <mxPoint x="1170" y="1131" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h11" edge="1" parent="1" source="B1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="B2" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="650.06" y="1131.06" />
+              <mxPoint x="650.06" y="1160" />
+              <mxPoint x="390.06" y="1160" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h12" edge="1" parent="1" source="B2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.476;entryY=0.057;entryDx=0;entryDy=0;entryPerimeter=0;" target="B7" value="取貨">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+            <Array as="points">
+              <mxPoint x="650.06" y="1226" />
+              <mxPoint x="650.06" y="1246" />
+              <mxPoint x="1362.76" y="1246" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h13" edge="1" parent="1" source="B2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="B3" value="預約取貨">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h14" edge="1" parent="1" source="B3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#1565c0;dashed=1;fontColor=#1565c0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="B4" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="650" y="1316" />
+              <mxPoint x="650" y="1316" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h15" edge="1" parent="1" source="B4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" target="B7" value="時段到才可放置">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+            <Array as="points">
+              <mxPoint x="1295" y="1316" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h16" edge="1" parent="1" source="B2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#b23b3b;strokeWidth=2;fontColor=#b23b3b;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" target="B5" value="不收">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+            <Array as="points">
+              <mxPoint x="465" y="1260" />
+              <mxPoint x="650" y="1260" />
+              <mxPoint x="650" y="1385.57" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h17" edge="1" parent="1" source="B5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#b23b3b;strokeWidth=2;fontColor=#b23b3b;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="B6" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="650" y="1401" />
+              <mxPoint x="650" y="1472" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h18" edge="1" parent="1" source="B6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#b23b3b;strokeWidth=2;fontColor=#b23b3b;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="coutB" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="225" y="1472" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h19" edge="1" parent="1" source="B7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#1565c0;dashed=1;fontColor=#1565c0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="B8" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1170" y="1398" />
+              <mxPoint x="1170" y="1476" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h20" edge="1" parent="1" source="B8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#999999;dashed=1;fontColor=#888888;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="B7" value="重新放置">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+            <Array as="points">
+              <mxPoint x="1170" y="1476" />
+              <mxPoint x="1170" y="1398" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h21" edge="1" parent="1" source="B7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="B9" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="h22" edge="1" parent="1" source="B9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="C0" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1170" y="1552" />
+              <mxPoint x="1170" y="1664" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h23" edge="1" parent="1" source="C0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="C1" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="390.06" y="1664" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h24" edge="1" parent="1" source="C1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#2e7d32;strokeWidth=2;fontColor=#2e7d32;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="C2" value="掃碼取貨">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h25" edge="1" parent="1" source="C2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#2e7d32;strokeWidth=2;fontColor=#2e7d32;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="C3" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="890.06" y="1858" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h26" edge="1" parent="1" source="C3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#2e7d32;strokeWidth=2;fontColor=#2e7d32;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="C4" value="通過">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h27" edge="1" parent="1" source="C3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#999999;dashed=1;fontColor=#888888;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="C5" value="失敗">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+            <Array as="points">
+              <mxPoint x="650" y="1953" />
+              <mxPoint x="650" y="2044" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h29" edge="1" parent="1" source="C4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#2e7d32;strokeWidth=2;fontColor=#2e7d32;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" target="C6" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="650.06" y="2042" />
+              <mxPoint x="650.06" y="2100" />
+              <mxPoint x="540.06" y="2100" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h30" edge="1" parent="1" source="C6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#2e7d32;strokeWidth=2;fontColor=#2e7d32;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="C7" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="650" y="2118" />
+              <mxPoint x="650" y="2112" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h31" edge="1" parent="1" source="C1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#b23b3b;strokeWidth=2;fontColor=#b23b3b;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="C8" value="拒收">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+            <Array as="points">
+              <mxPoint x="600.06" y="1763.06" />
+              <mxPoint x="600.06" y="2193.06" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h32" edge="1" parent="1" source="C1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#1565c0;dashed=1;fontColor=#1565c0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="C9" value="逾時未取">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+            <Array as="points">
+              <mxPoint x="620.06" y="1763.06" />
+              <mxPoint x="620.06" y="2261.06" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h33" edge="1" parent="1" source="C8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#b23b3b;strokeWidth=2;fontColor=#b23b3b;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="C10" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1135" y="2193" />
+              <mxPoint x="1135" y="2331" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h34" edge="1" parent="1" source="C9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#b23b3b;strokeWidth=2;fontColor=#b23b3b;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="C10" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="h35" edge="1" parent="1" source="C10" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#b23b3b;strokeWidth=2;fontColor=#b23b3b;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="C11" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="650" y="2331" />
+              <mxPoint x="650" y="2322" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h36" edge="1" parent="1" source="C11" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#b23b3b;strokeWidth=2;fontColor=#b23b3b;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="coutC" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="h37" edge="1" parent="1" source="D0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="D1" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="890" y="2433" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h38" edge="1" parent="1" source="D1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#999999;dashed=1;fontColor=#888888;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="D2" value="否">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+            <Array as="points">
+              <mxPoint x="795" y="2560" />
+              <mxPoint x="390" y="2560" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h39" edge="1" parent="1" source="D2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#999999;dashed=1;fontColor=#888888;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="coutA" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="h40" edge="1" parent="1" source="D1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="D3" value="是">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h41" edge="1" parent="1" source="D3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="D4" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1370" y="2612" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h42" edge="1" parent="1" source="D4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="D5" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1170" y="2693" />
+              <mxPoint x="1170" y="2779" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h43" edge="1" parent="1" source="D5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="D6" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="390" y="2779" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h44" edge="1" parent="1" source="D6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#2e7d32;strokeWidth=2;fontColor=#2e7d32;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="D7" value="掃碼放件">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h45" edge="1" parent="1" source="D7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#2e7d32;strokeWidth=2;fontColor=#2e7d32;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="D8" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="650" y="2986" />
+              <mxPoint x="650" y="2988" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h46" edge="1" parent="1" source="D8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#2e7d32;strokeWidth=2;fontColor=#2e7d32;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="D8a" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1170" y="2988" />
+              <mxPoint x="1170" y="2994" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h66" edge="1" parent="1" source="D8a" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#2e7d32;strokeWidth=2;fontColor=#2e7d32;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="D8b" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="h67" edge="1" parent="1" source="D8b" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#2e7d32;strokeWidth=2;fontColor=#2e7d32;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="D9" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="h48" edge="1" parent="1" source="D10" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#b23b3b;strokeWidth=2;fontColor=#b23b3b;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="coutD1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="h50" edge="1" parent="1" source="D11" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#b23b3b;strokeWidth=2;fontColor=#b23b3b;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="D12" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="700.06" y="3152" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h51" edge="1" parent="1" source="D12" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#b23b3b;strokeWidth=2;fontColor=#b23b3b;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="coutD2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="h52" edge="1" parent="1" source="cinE" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#b23b3b;strokeWidth=2;fontColor=#b23b3b;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E0" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="h53" edge="1" parent="1" source="E0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#b23b3b;strokeWidth=2;fontColor=#b23b3b;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="h54" edge="1" parent="1" source="E1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#b23b3b;strokeWidth=2;fontColor=#b23b3b;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E2" value="是：拒收／逾時／退貨取消">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+            <Array as="points">
+              <mxPoint x="890" y="3403" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h55" edge="1" parent="1" source="E2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#b23b3b;strokeWidth=2;fontColor=#b23b3b;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" target="E4" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1170" y="3497" />
+              <mxPoint x="1170" y="3572" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h56" edge="1" parent="1" source="E1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#b23b3b;strokeWidth=2;fontColor=#b23b3b;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E3" value="否：不收">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h57" edge="1" parent="1" source="E3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#b23b3b;strokeWidth=2;fontColor=#b23b3b;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="E6" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1585" y="3501" />
+              <mxPoint x="1585" y="3678" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h58" edge="1" parent="1" source="E4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#1565c0;dashed=1;fontColor=#1565c0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" target="E5" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1220" y="3580.03" />
+              <mxPoint x="1110" y="3580.03" />
+              <mxPoint x="1110" y="3573" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h59" edge="1" parent="1" source="E5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#999999;dashed=1;fontColor=#888888;exitX=1;exitY=0.75;exitDx=0;exitDy=0;" value="重新開門">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+            <Array as="points">
+              <mxPoint x="1080" y="3600" />
+              <mxPoint x="1219.4" y="3600" />
+            </Array>
+            <mxPoint x="1219.4" y="3600" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h60" edge="1" parent="1" source="E4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#b23b3b;strokeWidth=2;fontColor=#b23b3b;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="h61" edge="1" parent="1" source="E6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#b23b3b;strokeWidth=2;fontColor=#b23b3b;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="E9" value="銷案">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+            <Array as="points">
+              <mxPoint x="1295" y="3740" />
+              <mxPoint x="1170" y="3740" />
+              <mxPoint x="1170" y="3842" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h62" edge="1" parent="1" source="E6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#b23b3b;strokeWidth=2;fontColor=#b23b3b;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="E7" value="補發通知">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+            <Array as="points">
+              <mxPoint x="1295" y="3720" />
+              <mxPoint x="1130" y="3720" />
+              <mxPoint x="1130" y="3778" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h63" edge="1" parent="1" source="E7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#999999;dashed=1;fontColor=#888888;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="E6" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="890" y="3678" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h64" edge="1" parent="1" source="E6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E8" value="重新派貨">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="h65" edge="1" parent="1" source="E8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="coutB2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="h28" edge="1" parent="1" source="C5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#999999;dashed=1;fontColor=#888888;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="C2" value="重新掃描">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+            <Array as="points" />
+            <mxPoint x="510" y="2044" as="sourcePoint" />
+            <mxPoint x="510" y="1886" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="extbox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f2f2f2;strokeColor=#999999;dashed=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;fontSize=12;fontStyle=1;fontColor=#666666;" value="機器人平台（Pudu 面板）　不在本系統內" vertex="1">
+          <mxGeometry height="180" width="360" x="1640" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="X1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#999999;fontSize=11;arcSize=10;fontColor=#555555;" value="在 Pudu 面板的地圖上&lt;br&gt;建立「管理室」點位" vertex="1">
+          <mxGeometry height="48" width="320" x="1660" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="X2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#999999;fontSize=11;arcSize=10;fontColor=#555555;" value="為每個門牌各建一個點位&lt;br&gt;點位名稱＝門牌字串（例：5F-1）" vertex="1">
+          <mxGeometry height="56" width="320" x="1660" y="212" as="geometry" />
+        </mxCell>
+        <mxCell id="M2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;arcSize=10;" value="&lt;span style=&quot;color: rgb(102, 102, 102);&quot;&gt;部署時設定 ROBOT_HOME_POINT_NAME＝管理室點位名稱&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(102, 102, 102);&quot;&gt;用於判斷是否已返航、是否允許手動開關艙門；&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(102, 102, 102);&quot;&gt;設定CHARGE_POINT_NAME＝充電站點位名稱&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="320" x="1660" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="M4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="綁定時輸入的門牌&lt;br&gt;必須與地圖點位名稱完全一致" vertex="1">
+          <mxGeometry height="56" width="300" x="240" y="262" as="geometry" />
+        </mxCell>
+        <mxCell id="M7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="建立包裹時的門牌下拉&lt;br&gt;直接讀綁定資料，無法自行輸入新門牌" vertex="1">
+          <mxGeometry height="56" width="300" x="1220" y="262" as="geometry" />
+        </mxCell>
+        <mxCell id="M5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;fontSize=11;arcSize=10;" value="派送時把 packages.unit 原字串&lt;br&gt;直接當作點位名稱送給機器人" vertex="1">
+          <mxGeometry height="52" width="380" x="700" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="M6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fdeeee;strokeColor=#b23b3b;fontSize=11;arcSize=10;" value="&lt;b&gt;整條鏈須由管理員驗證綁定&lt;/b&gt;&lt;br&gt;門牌與點位對不上時&lt;br&gt;要到機器人導航失敗才會發現" vertex="1">
+          <mxGeometry height="66" width="300" x="1220" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="n1" edge="1" parent="1" source="X1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="X2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n2" edge="1" parent="1" source="X1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="M2" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1990" y="173.29" />
+              <mxPoint x="1990" y="344.71" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="n3" edge="1" parent="1" source="X2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#999999;dashed=1;fontColor=#888888;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="M4" value="門牌字串必須一致">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+            <Array as="points">
+              <mxPoint x="1600" y="240" />
+              <mxPoint x="1600" y="336" />
+              <mxPoint x="580" y="336" />
+              <mxPoint x="580" y="290" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="n4" edge="1" parent="1" source="M4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="M7" value="成為門牌選項">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+            <Array as="points">
+              <mxPoint x="650" y="290" />
+              <mxPoint x="650" y="290" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="n5" edge="1" parent="1" source="M2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#333333;strokeWidth=2;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="M5" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1660" y="340" />
+              <mxPoint x="890" y="340" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="n6" edge="1" parent="1" source="M5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;labelBackgroundColor=#ffffff;endSize=8;strokeColor=#b23b3b;strokeWidth=2;fontColor=#b23b3b;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="M6" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1170" y="386" />
+              <mxPoint x="1170" y="413" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="note4" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fbfbf5;strokeColor=#b8b39a;fontSize=10;size=14;align=left;" value="&lt;b&gt;Dashboard 兩個頁面的責任分工&lt;/b&gt;&lt;br&gt;&lt;b&gt;主控台 /admin&lt;/b&gt;：紅色提示框（拒收／逾時／不收待處理）、&lt;br&gt;藍色提醒橫幅（退貨件待取出）、「機器人狀態」欄的&lt;br&gt;「開啟艙門／關閉艙門」——這是艙門開關的&lt;b&gt;唯一入口&lt;/b&gt;。&lt;br&gt;&lt;b&gt;例外處理頁 /admin/exceptions&lt;/b&gt;：待處理清單、補發通知、&lt;br&gt;重新派貨、銷案，&lt;b&gt;不含任何艙門開關按鈕&lt;/b&gt;。" vertex="1">
+          <mxGeometry height="140" width="360" x="1640" y="3300" as="geometry" />
+        </mxCell>
+        <mxCell id="note0" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fbfbf5;strokeColor=#b8b39a;fontSize=10;size=14;align=left;" value="&lt;b&gt;A 階段是一次性設定&lt;/b&gt;&lt;br&gt;點位在 Pudu 面板建立，Dashboard 上&lt;br&gt;沒有任何點位管理功能。門牌字串是&lt;br&gt;後面所有階段的共同鍵：綁定、&lt;br&gt;建立包裹、派送用的都是同一個字串。" vertex="1">
+          <mxGeometry height="110" width="360" x="1640" y="396" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="nI0eMgIxQVlXXDngbtGs" name="第 2 页">
+    <mxGraphModel dx="774" dy="515" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
