@@ -291,11 +291,10 @@ The robot service requires Pudu Open Platform credentials, which are not include
 
 ## Author
 
-**Stephanie Lin, Yen Yu** — AI Development Dept. Intern, Aurotek
+<!-- Fill in -->
+**[Your Name]** — AI Development Dept. Intern, Aurotek
 
-Shared for portfolio purposes with permission from Aurotek. Not licensed for reuse.
-
-Built with one other intern over [2026/07/01-2026/08/31]. I owned `line-backend` end to end —
+Built with one other intern over [dates]. I owned `line-backend` end to end —
 the parcel state machine, LINE integration, admin dashboard, scheduled automation,
 and the integration contract with the robot service. My teammate owned
 `flashbot-robot`. The HTTP interface between them was designed jointly.
