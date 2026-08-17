@@ -6,47 +6,9 @@ fails differently and deploys on a different cadence than business logic.
 
 ## Data flow
 
-```mermaid
-flowchart LR
-    subgraph LINE["LINE Platform"]
-        User[Resident's LINE client]
-        LIFF["LIFF pages<br/>QR pickup / return request"]
-    end
+![System architecture](images/architecture.png)
 
-    subgraph Backend["line-backend — FastAPI on Render"]
-        Webhook["/webhook"]
-        API["Business API<br/>/packages/*, /door-tasks/*"]
-        Dashboard["Admin dashboard<br/>Jinja2 + static"]
-        Scheduler["APScheduler<br/>timeouts and reminders"]
-        DB1[(PostgreSQL)]
-    end
-
-    subgraph Robot["flashbot-robot — Flask on Render"]
-        RobotAPI["Hardware control API<br/>/api/door-tasks/*, /api/robot/*"]
-        BgTasks["Background threads<br/>polling / door queue"]
-        DB2[(PostgreSQL)]
-    end
-
-    subgraph Pudu["Pudu Open Platform"]
-        PuduAPI["custom_call2 / control_doors<br/>custom_content / status"]
-    end
-
-    Admin[Staff browser] -->|HTTP Basic Auth| Dashboard
-    User -->|Message / Postback| Webhook
-    User -->|Scan / request return| LIFF
-    LIFF --> API
-    Webhook --> API
-    Dashboard --> API
-    API <--> DB1
-    Scheduler --> API
-
-    API -->|"call_robot_api()"| RobotAPI
-    RobotAPI -->|"/door-tasks/{id}/arrived<br/>(the only callback)"| API
-    RobotAPI <--> DB2
-    RobotAPI --> BgTasks
-    BgTasks --> PuduAPI
-    RobotAPI --> PuduAPI
-```
+*Editable source: [`diagrams/Aurobox-Component v2.drawio`](diagrams/)*
 
 ## Communication properties
 

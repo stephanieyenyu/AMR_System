@@ -5,43 +5,13 @@ and the robot's physical state. The first two are owned by `line-backend`; the t
 the robot service's view of the hardware.
 
 **Source** `技術文件/Diagrams/Package-state-and-Robot-motion_v2.md`
-**Rendered** [`images/deliver-state-machine.png`](images/deliver-state-machine.png) ·
-[`images/return-state-machine.png`](images/return-state-machine.png) ·
-[`images/robot-mission-flow.png`](images/robot-mission-flow.png)
+**Editable sources** [`diagrams/`](diagrams/) — open with draw.io
 
 ---
 
 ## Delivery
 
-```mermaid
-stateDiagram-v2
-    direction LR
-    Pending : pending<br>awaiting response
-    PickupNow : pickup_now<br>awaiting dispatch
-    Delivering : delivering<br>en route
-    Arrived : arrived<br>at door
-    Completed : completed
-    Voided : voided<br>declined
-    Rejected : rejected_at_door<br>refused at door
-    Returned : returned_timeout<br>pickup timed out
-    Again : deliver_again<br>staff contacts resident,<br>decides on redelivery
-
-    [*] --> Pending
-    Pending --> PickupNow : resident chooses immediate pickup
-    Pending --> PickupNow : resident schedules pickup
-    Pending --> Voided : resident declines
-    PickupNow --> Delivering : staff assigns door and dispatches
-    Delivering --> Arrived : robot reaches waypoint
-    Arrived --> Completed : resident scans and collects
-    Arrived --> Rejected : resident refuses
-    Arrived --> Returned : 8 minutes with no collection
-    Rejected --> Again
-    Returned --> Again
-    Again --> PickupNow : redispatch
-    Again --> [*] : void
-    Voided --> [*]
-    Completed --> [*]
-```
+![Delivery state machine](images/deliver-state-machine.png)
 
 **`pickup_now`** may or may not carry a `door_task_id` — the key appears once a door is
 assigned, not on entry to the state.
@@ -57,28 +27,7 @@ after an exception, implemented through the exceptions page rather than as a sto
 
 ## Return
 
-```mermaid
-stateDiagram-v2
-    direction LR
-    Pending : pending
-    PickupNow : pickup_now<br>awaiting dispatch
-    Delivering : delivering<br>en route
-    Arrived : arrived<br>at door
-    Completed : completed<br>parcel deposited
-    ReturnRejected : rejected_at_door<br>return cancelled
-    Timeout : returned_timeout<br>timed out
-
-    [*] --> Pending
-    Pending --> PickupNow : return parcel created
-    PickupNow --> Delivering : staff assigns door and dispatches
-    Delivering --> Arrived : robot reaches waypoint
-    Arrived --> Completed : resident scans, opens door, deposits parcel
-    Arrived --> ReturnRejected : resident cancels the return
-    Arrived --> Timeout : 8 minutes without scanning
-    Completed --> [*] : staff retrieves after robot returns
-    ReturnRejected --> [*]
-    Timeout --> [*]
-```
+![Return state machine](images/return-state-machine.png)
 
 **Returns skip `pending` in practice.** `POST /liff/return-request/submit` writes
 `status=pickup_now` directly. The `pending` node is shown for symmetry with the delivery
@@ -98,49 +47,7 @@ suppressing the auto-notification that a delivery refusal would trigger.
 The hardware's view, maintained by the robot service. Cargo door status transitions are
 annotated because they are what the two databases must agree on.
 
-```mermaid
-stateDiagram-v2
-    direction LR
-    Idle : idle<br>standby at ops room
-    Assign_Return : assign_return<br>return to load,<br>open door for delivery
-    Moving : moving
-    Dispatch : dispatch<br>dispatch all,<br>close doors
-    Arrived : arrived<br>at waypoint,<br>display QR
-    DoorOpen : door_open
-    RemoveQR : remove_qr
-    WaitingUser : waiting_user
-    DoorClose : door_close
-    Returning : returning
-    Return_Open : return_open<br>inspection on return
-    Return_Close : return_close
-    Stuck : robot_stuck<br>hardware or navigation fault
-    Charging : charging
-
-    [*] --> Idle
-    Idle --> Assign_Return : staff assigns a door
-    Assign_Return --> Assign_Return : additional tasks assigned
-    Assign_Return --> Dispatch : dispatch all
-    Dispatch --> Moving : travel to waypoint
-    Moving --> Arrived : waypoint reached
-    Moving --> Stuck : obstruction or navigation loss
-    Arrived --> DoorOpen : scan verified
-    DoorOpen --> WaitingUser : door released
-    Arrived --> RemoveQR : 8 minutes idle, or refusal
-    WaitingUser --> DoorClose : deposit or collection done, or timeout
-    DoorClose --> Moving : further stops remain
-    DoorClose --> Returning : all stops complete
-    RemoveQR --> Moving : further stops remain
-    RemoveQR --> Returning : all stops complete
-    Returning --> Idle : back at ops room
-    Returning --> Stuck : obstructed en route
-    Moving --> Returning : staff force-recall
-    Idle --> Charging : sent to dock
-    Charging --> Assign_Return : staff assigns a door
-    Idle --> Return_Open : staff opens door to inspect
-    Return_Open --> Return_Close : leftover parcels removed
-    Return_Close --> Idle : inspection complete
-    Stuck --> Idle : staff clears or resets
-```
+![Robot mission flow](images/robot-mission-flow.png)
 
 ### Cargo door status alongside robot state
 
