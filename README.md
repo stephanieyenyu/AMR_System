@@ -12,15 +12,10 @@ package at the door, or when a delivery times out with no one home.
 
 ---
 
-<!-- ══════════════════════════════════════════════════════════
-     VIDEO: Upload the mp4 to any GitHub issue comment box
-     (do NOT submit the comment). GitHub returns a
-     user-images.githubusercontent.com URL. Paste it below.
-     ══════════════════════════════════════════════════════════ -->
+[![Watch the delivery cycle](docs/images/demo-capture.png)](docs/media/demo.mp4)
 
-https://github.com/user-attachments/assets/REPLACE-WITH-YOUR-VIDEO-URL
-
-*Full delivery cycle: parcel creation → loading → dispatch → arrival → QR scan → pickup → return to standby*
+**▶ [Watch the full delivery cycle](docs/media/demo.mp4)** — parcel creation → loading →
+dispatch → arrival → QR scan → pickup → return to standby.
 
 ---
 
