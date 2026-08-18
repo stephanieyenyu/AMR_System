@@ -37,7 +37,7 @@ Two interns built this system inside a six-person team at Aurotek during July an
 |---|---|
 | **Parcel state machine** | Eight states across delivery and return flows, covering every exception branch: refusal at the door, pickup timeout, resident decline, robot recall, 72-hour void countdown |
 | **LINE integration** | Messaging API v3 — webhook signature verification, Flex Messages, Rich Menu, push notification, 11 conversation entry points across text commands and postback actions |
-| **LIFF applications** | Two embedded web apps: QR pickup, which validates the LIFF ID token against the parcel's recipient set before actuating a door, and return request submission |
+| **LIFF applications** | Two embedded web apps: QR pickup, which validates the LIFF ID token against the recipient set before releasing every cargo door under that task, and return request submission |
 | **Admin dashboard** | Four pages, 26 authenticated routes — parcel creation, live robot and cargo-door state, exception resolution, resident binding management, daily reporting with per-parcel event timelines |
 | **Scheduled automation** | Six APScheduler jobs: pickup timeout, door-assignment timeout, return timeout, collection reminder, return-state reconciliation, stuck-dispatch recovery |
 | **Data model** | Four tables, the grouping-key scheme for multi-parcel trips, and an append-only event log spanning 53 event types |
@@ -176,21 +176,29 @@ Parcels bound for the same stop share a `door_task_id` derived from
 `line_user_id + unit + task_type`. All parcels under one key transition as a unit —
 arrival, verification, completion, refusal, timeout.
 
-The property this buys is per-recipient rather than per-parcel semantics. The robot carries
-several parcels and actuates several doors on one trip, so without grouping a resident with
-three parcels is visited three times and scans the QR code three times to open three doors
-in sequence. Under the grouping key that resident is visited once and scans once, and the
-three parcels resolve together — including when the resolution is a refusal or a timeout,
-where three independent countdowns would otherwise have to be reconciled by hand.
+The key resolves two independent problems at two layers.
 
-Under the test arrival pattern the mechanism engaged on 106 parcels dispatched as 83 trips,
-with 21 trips carrying more than one parcel. That figure confirms grouping fired; it is not
-an efficiency result, because the arrival pattern was set by what needed testing rather
-than by anything representative.
+**Dispatch.** The robot carries several parcels and actuates several doors on one trip, so
+per-parcel dispatch returns it to the same unit once per parcel. Grouping makes the trip
+rather than the parcel the unit of dispatch. Under the test arrival pattern the mechanism
+engaged on 106 parcels dispatched as 83 trips, with 21 trips carrying more than one parcel.
+That figure confirms grouping fired; it is not an efficiency result, because the arrival
+pattern was set by what needed testing rather than by anything representative.
 
-`task_type` is load-bearing in the key. Omitting it merges a delivery and a return
-addressed to the same resident into a single stop, coupling two transition sequences that
-differ.
+**Pickup identity.** The QR code on the robot's screen originally encoded `package_id`, so a
+resident with three parcels waiting scanned three times to open three doors in sequence.
+Changing the payload to `door_task_id` made one scan release every parcel under that key at
+that stop. This is independent of the dispatch change: grouping determines how many times
+the robot stops, the QR payload determines how many times the resident scans, and either
+could have been changed without the other.
+
+`task_type` is load-bearing in the key, and deliberately so. Omitting it would merge a
+delivery and a return addressed to the same resident into one stop and one scan. Those are
+distinct interactions with distinct transition sequences — one releases parcels to the
+resident, the other accepts parcels back — and collapsing them would couple two flows that
+differ and leave the resident with no boundary between what they were collecting and what
+they were returning. Two scans across a delivery and a return is the intended semantics,
+not a missed consolidation.
 
 ### A single egress point for robot invocation
 
