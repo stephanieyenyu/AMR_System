@@ -175,8 +175,8 @@ Full event inventory: [`event-types.md`](event-types.md). The comment block in
 | `updated_at` | DATETIME | | `onupdate`, UTC |
 
 `last_point` is what `poll_robot_returned` compares against `ROBOT_HOME_POINT_NAME` to
-decide whether the robot has returned. The entire compensating-recovery mechanism rests
-on this one column.
+decide whether the robot has returned. The entire reconciliation loop rests on this one
+column.
 
 ---
 
@@ -212,8 +212,8 @@ wrong door or fails to open one at all.
 
 This is the structural reason for the design decision described in
 [`architecture.md`](architecture.md#design-principle-one-authority-for-state): with no
-database-level guarantee available, correctness has to come from a single writer plus a
-compensating reconciliation path.
+database-level guarantee available, correctness comes instead from a single-writer authority plus an idempotent
+reconciliation loop.
 
 ---
 

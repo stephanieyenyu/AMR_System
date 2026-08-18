@@ -1,8 +1,8 @@
 # State Machines
 
-Three views of the same system: parcel state for deliveries, parcel state for returns,
-and the robot's physical state. The first two are owned by `line-backend`; the third is
-the robot service's view of the hardware.
+Three views of one system: parcel state under delivery, parcel state under return, and
+the robot's physical state. `line-backend` owns the first two. The third is the robot
+service's view of its own hardware.
 
 **Source** `技術文件/Diagrams/Package-state-and-Robot-motion_v2.md`
 **Editable sources** [`diagrams/`](diagrams/) — open with draw.io

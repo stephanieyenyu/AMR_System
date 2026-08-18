@@ -1,9 +1,9 @@
 # Known Issues
 
-Every entry below states whether it was verified against source code or the production
-database, and what remains unconfirmed. Entries are kept rather than silently fixed
-because the classification itself — verified, unverified, accepted — is part of what this
-document is for.
+Each entry below records whether it was verified against source code or against the
+production database, and what remains unconfirmed. Entries are retained rather than
+silently resolved: the classification itself — verified, unverified, accepted — is the
+substance of the document.
 
 **Snapshot** 2026-08-14 · `task_logs` 2,678 rows · `packages` 164 rows
 
@@ -36,7 +36,7 @@ returned. The `poll_robot_returned` scheduler subsequently detected via
 `/api/dashboard/status` that the robot had reached the standby point and backfilled all
 thirteen records in a single pass. Each `task_log` entry states this in its detail field.
 
-**Assessment.** The compensating mechanism worked as designed. The apparent inversion is
+**Assessment.** The reconciliation loop worked as designed. The apparent inversion is
 a consequence of backfill, not of clock skew or data corruption.
 
 **Consequence.** Any duration metric anchored on `returned_at` is invalid. No such metric

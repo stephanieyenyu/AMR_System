@@ -3,9 +3,9 @@
 **Source** `line-backend/app/main.py`
 **Totals** 39 HTTP routes · 14 outbound robot calls · 11 LINE conversation entry points · 6 scheduled jobs
 
-Grouped by **who calls the endpoint**, not by path. The same path prefix carries
-different callers under different authentication schemes, so ordering by path would
-obscure the trust boundaries.
+Routes are grouped by caller rather than by path. A single path prefix carries different
+callers under different authentication schemes, so ordering by path would obscure the
+trust boundaries this inventory exists to make visible.
 
 ---
 

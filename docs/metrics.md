@@ -1,8 +1,8 @@
 # Metrics
 
-Every figure quoted in the README is derived from the production PostgreSQL databases
-of a live deployment. This document states the source and derivation for each, so the
-numbers can be checked rather than taken on faith.
+Every figure quoted in the README derives from the production PostgreSQL databases of a
+live deployment. This document records the source and derivation of each so that the
+numbers can be checked rather than accepted.
 
 **Snapshot date** 2026-08-14
 **Observation window** 2026-07-14 to 2026-08-14 (21 days with activity)
@@ -10,7 +10,8 @@ numbers can be checked rather than taken on faith.
 response for all 164 records at snapshot time
 
 Unit identifiers in the data (`stephanie`, `jason`, `kevin`, `zola`, `joyce`) are test
-account labels, not resident records. `豆豆待機` and `高高待機` are robot standby waypoints.
+account labels rather than resident records. `豆豆待機` and `高高待機` denote robot standby
+waypoints.
 
 ---
 
@@ -242,7 +243,7 @@ misrepresent what the system does.
 ### Timestamp-derived durations are unreliable
 
 Time deltas anchored on `returned_at` produce negative and implausible values because the
-compensating scheduler backfills that column after the fact — later than the
+reconciliation loop backfills that column after the fact — later than the
 `door_closed_at` of parcels whose doors were manually opened earlier. **No duration or
 latency metric is quoted anywhere in this project.** The data does not support one.
 
