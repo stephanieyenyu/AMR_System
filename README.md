@@ -1,166 +1,215 @@
-# Aurobox — Autonomous Parcel Delivery for Residential Buildings
+# Flashbot — Autonomous Parcel Delivery for Residential Buildings
 
-An end-to-end delivery system built around a Pudu autonomous mobile robot (AMR).
-Residents receive arrival notifications through LINE, schedule pickup, and open the
-robot's cargo door by scanning a QR code. Building staff create parcels, monitor the
-robot, and resolve exceptions through a web dashboard.
+A parcel delivery system built on a Pudu autonomous mobile robot, deployed and measured
+in a residential building over 21 days of testing. Residents receive arrival notices
+through LINE, schedule collection, and open the robot's cargo door by scanning the QR
+code on its screen. Building staff register parcels, monitor the robot, and resolve
+exceptions from a web dashboard.
 
-**This project contains no machine learning.** It is the orchestration and state-management
-layer that a robot needs before any learned policy can run on top of it — the part that
-handles what happens when the hardware does not respond, when a resident refuses a
-package at the door, or when a delivery times out with no one home.
+The engineering problem is not delivery. A parcel in this system has more distinct ways
+to fail than to succeed — refusal at the door, collection timeout, resident decline,
+emergency recall, expiry, dispatch loss, door-assignment loss — and each carries its own
+transitions, timeout and recovery path. **I exercised every one of them on physical
+hardware**: 92 of 164 test parcels were routed deliberately down an exception branch.
+Calls between the two services failed at a measured rate of **12.47%**, a property of the
+deployment rather than of the test design. What this repository contains is
+the state-management layer that stayed consistent under those conditions — a
+single-writer parcel state machine, a reconciliation loop that repairs the failure modes
+inferable from observable robot state, and an explicit operator path for the failure
+modes that are not. It contains no learned components.
 
 ---
 
 ![Full delivery cycle](docs/images/demo.gif)
 
-*Parcel creation → loading → dispatch → arrival → QR scan → pickup → return to standby.*
+*Parcel creation → assign doors → loading → dispatch → arrival → QR scan → pickup → return to standby.*
 
 ---
 
-## Key Numbers
+## Contribution
 
-Measured over 21 active days of testing with a physical robot
-(2026-07-14 to 2026-08-14). Every figure below is derived from the production
-PostgreSQL database; the derivation is documented in [`docs/metrics.md`](docs/metrics.md).
+Two interns built this system inside a six-person team at Aurotek during July and August
+2026. I co-led the project and held sole ownership of `line-backend`.
 
-| Measurement | Value | What it demonstrates |
+| Component | Scope |
+|---|---|
+| **Parcel state machine** | Eight states across delivery and return flows, covering every exception branch: refusal at the door, pickup timeout, resident decline, robot recall, 72-hour void countdown |
+| **LINE integration** | Messaging API v3 — webhook signature verification, Flex Messages, Rich Menu, push notification, 11 conversation entry points across text commands and postback actions |
+| **LIFF applications** | Two embedded web apps: QR pickup, which validates the LIFF ID token against the parcel's recipient set before actuating a door, and return request submission |
+| **Admin dashboard** | Four pages, 26 authenticated routes — parcel creation, live robot and cargo-door state, exception resolution, resident binding management, daily reporting with per-parcel event timelines |
+| **Scheduled automation** | Six APScheduler jobs: pickup timeout, door-assignment timeout, return timeout, collection reminder, return-state reconciliation, stuck-dispatch recovery |
+| **Data model** | Four tables, the grouping-key scheme for multi-parcel trips, and an append-only event log spanning 53 event types |
+| **Integration contract** | The HTTP interface between the two services, specified jointly with my teammate, and all 14 outbound calls into the robot service |
+
+My teammate owned `flashbot-robot`, the Flask service driving Pudu hardware.
+
+90 commits · 39 source files · 39 HTTP routes · 14 outbound robot calls · 11 LINE entry
+points · 6 scheduled jobs · 53 event types.
+
+---
+
+## Measurement Basis
+
+All figures derive from the production PostgreSQL databases of a live deployment, not
+from simulation. The observation window runs 2026-07-14 to 2026-08-14, comprising 21 days
+with recorded activity. The sampling frame is the complete `packages` table at snapshot
+time (164 rows) and the complete `task_logs` table (2,678 rows across 53 event types).
+`data/packages.json` contains the raw parcel export; every derivation appears in
+[`docs/metrics.md`](docs/metrics.md).
+
+| Measurement | Value | Nature |
 |---|---|---|
-| Logged events | **2,678** across **53 event types** | Every state transition is observable and reconstructable |
-| Packages on the happy path | **43.9%** (72 of 164) | Exception branches outnumber the nominal flow — the long tail *is* the system |
-| Robot API call failure rate | **12.47%** (334 of 2,678) | Concrete measure of real-hardware integration uncertainty |
-| Trip batching | **106 parcels → 83 trips (−21.7%)** | Measured effect of the multi-parcel grouping design |
-| Packages stuck in a non-terminal state | **0** | Achieved by automated compensation *and* operator intervention — see [Limitations](#known-limitations) |
-| Codebase | 90 commits, 39 HTTP routes, 6 scheduled jobs | — |
+| Parcels routed down an exception branch | 92 of 164 (56.1%) | Test design — deliberate branch coverage |
+| Parcels completing the nominal path | 72 of 164 (43.9%) | Test design |
+| Robot API call failure rate | 334 of 2,678 events (12.47%) | Observed, upper bound |
+| Trip batching effect | 106 parcels dispatched as 83 trips (−21.7%) | Observed, this arrival pattern only |
+| Parcels remaining in a non-terminal state | 0 | Observed, confounded — see below |
 
-Two caveats stated up front, because they affect how these numbers should be read:
+Two qualifications govern how these should be read.
 
-- The 12.47% failure rate is an **upper bound**. A portion of `*_failed` events are
-  false negatives — the robot call succeeded but the response handling or a connection
-  timeout recorded it as a failure. The true failure rate is lower and was not isolated.
-- "0 packages stuck" is **not** evidence of full autonomy. It is the combined result of
-  a compensating scheduler and 42 manual task deletions by an operator. The distinction
-  is unpacked in [Limitations](#known-limitations).
+**The failure rate is an upper bound, not a point estimate.** A subset of `*_failed`
+events record calls the robot executed successfully but whose response handling or
+connection timeout logged a failure. The instrumentation does not distinguish a genuine
+failure from an artifact of how it was recorded, so the true rate lies below 12.47% by an
+unquantified margin.
 
----
-
-## The Problem
-
-A delivery robot in a residential building spends most of its operational life in
-states that are not "successfully delivering a package."
-
-The resident is not home. The resident refuses the package at the door. The cargo
-door reports full when the backend believes it is empty. The robot returns to standby
-but the API call announcing this is lost. A parcel sits for 72 hours and must be voided.
-
-In this deployment, **56.1% of all packages terminated on an exception branch**
-(refused at door, pickup timeout, or resident declined). The nominal path was the
-minority case. Designing for the happy path first and adding error handling afterward
-would have produced a system that worked in demos and failed in the building.
-
-The core engineering problem was therefore not delivery. It was **maintaining a single
-consistent view of parcel state across two independently deployed services when the
-link between them is unreliable.**
+**Zero parcels in a non-terminal state is a joint result, not evidence of autonomy.** It
+follows from a reconciliation loop and 42 manual task deletions acting together. The
+ratio between the two is reported in full under [Evaluation](#evaluation).
 
 ---
 
-## Architecture
+## Problem Statement
+
+A delivery robot in a residential building can fail in more ways than it can succeed.
+The resident is absent. The resident refuses the parcel
+at the door. The cargo door reports occupied while the back end records it empty. The
+robot reaches standby but the call announcing arrival is lost in transit. A parcel sits
+untouched past its 72-hour window and must be voided.
+
+Each of those outcomes is a separate branch with its own state transitions, its own
+timeout, and its own recovery path, and there are more of them than there are ways for a
+delivery to succeed. An implementation that established the nominal path first and
+appended error handling afterward would have produced a system that demonstrates
+successfully and fails in deployment. I therefore built the exception branches as
+first-class flows and verified each against physical hardware.
+
+The problem I addressed is therefore state consistency: maintaining a single authoritative
+view of parcel state across two services that deploy independently, own separate
+databases, and communicate over a link with a measured 12.47% failure rate.
+
+---
+
+## System Architecture
 
 ![System Architecture](docs/images/architecture.png)
-
-Two services, deployed separately, each with its own PostgreSQL database,
-communicating over HTTP:
 
 | Service | Stack | Responsibility |
 |---|---|---|
 | `line-backend` | FastAPI · SQLAlchemy · PostgreSQL · APScheduler | Business logic, parcel state machine, LINE Messaging API, two LIFF apps, admin dashboard, scheduled automation |
 | `flashbot-robot` | Flask · PostgreSQL | Pudu AMR hardware control, cargo door management, mission dispatch |
 
-The split is deliberate. Hardware control has different failure characteristics and
-a different deployment cadence than business logic. Keeping them separate meant the
-robot layer could be restarted or replaced without touching parcel state.
+The two services are separated because hardware control exhibits different failure
+characteristics and a different deployment cadence from business logic. Isolating them
+permits restarting or replacing the robot layer without touching parcel state. The cost
+is structural: two databases, and no database-level mechanism to keep them agreed.
 
-It also created the central design constraint: **two databases, one truth.**
+Communication between them is deliberately asymmetric. `line-backend` invokes the robot
+service through a single function. The robot initiates contact on exactly one path —
+arrival at a resident waypoint. All other state, return detection included, the back end
+obtains by polling.
 
----
-
-## Design Decisions
-
-### 1. The LINE backend is the sole authority on parcel state
-
-The robot service reports hardware events — arrived at destination, cargo door opened,
-returned to standby. It does not hold or mutate business state. All state transitions
-are decided and written by `line-backend`.
-
-**Why.** With two independent databases, allowing both sides to write state means a
-network partition or a retry produces a divergence that cannot be reconciled — neither
-side can tell which version is correct. A single authority means every anomaly has one
-place to look, and any compensating mechanism has an unambiguous target to repair.
-
-The cost is that the robot service cannot act on its own during a partition. That
-tradeoff was accepted: a stalled robot is recoverable, an inconsistent parcel record is not.
-
-### 2. Trip grouping via a three-part key
-
-Packages are grouped into a single robot mission by a `door_task_id` derived from
-`line_user_id + unit + task_type`.
-
-**Why.** The robot can carry several parcels and open several cargo doors in one trip.
-Issuing one dispatch call per parcel would send it back and forth for deliveries to the
-same destination.
-
-**Measured effect.** 106 grouped parcels were delivered in 83 trips — 23 fewer robot
-round-trips than per-parcel dispatch, a 21.7% reduction. 21 of the 83 trips carried
-more than one parcel.
-
-### 3. A single exit point for all robot API calls
-
-Every HTTP call from `line-backend` to the robot service passes through one function,
-`call_robot_api`.
-
-**Why.** With a 12.47% observed failure rate, timeout handling, retry policy, and error
-logging cannot be reimplemented at 14 different call sites. Funnelling them through one
-function means every failure is guaranteed to produce a `task_log` entry, which is what
-made the failure analysis in this README possible at all.
-
-This was a refactor, not the original design. The first implementation called the robot
-directly from each handler, and the inconsistent error handling that produced is what
-motivated the change.
-
-### 4. Compensating polling, plus an explicit manual path
-
-When the robot returns to standby but the reporting call is lost, a scheduled job polls
-`/api/dashboard/status`, detects the position change, and writes the missing state itself.
-
-On 2026-07-20 this mechanism recovered 13 packages in a single pass after a sustained
-connection failure to the robot service.
-
-**But this covers exactly one failure mode.** When a dispatch or door-assignment call
-fails, the package stops in a non-terminal state and does not recover on its own. For
-those cases the dashboard provides single-step operator actions — release door, force
-resolve, redispatch, delete task — each of which writes a `task_log` entry.
-
-**Why this shape.** The initial goal was full automatic recovery. Implementation made
-it clear that failure modes are not homogeneous: "robot returned but didn't say so" is
-inferable from observable facts, while "dispatch call vanished" is not. The final
-position was to automate what is inferable and give every remaining case an explicit,
-single-step, auditable manual exit — rather than pursue an autonomy guarantee the system
-could not honor.
-
-### 5. Row-level locking with `nowait` for cargo door allocation
-
-Concurrent package assignments contend for a finite set of cargo doors. Allocation uses
-`with_for_update(nowait=True)`, failing immediately rather than waiting for the lock.
-
-**Why.** Under contention, a caller that waits holds a connection and delays every
-downstream request. Returning "no door available" immediately lets the caller retry or
-surface the condition to the operator, and keeps the failure visible instead of latent.
+The asymmetry is a delivery-semantics choice. A callback provides at-most-once semantics:
+if the message is lost, neither side detects the loss. Polling provides an idempotent
+reconciliation channel — a failed cycle is visible on the next one and retries without
+coordination between the services. Return detection runs on a poll for precisely this
+reason, and that decision is what makes the recovery mechanism described below feasible.
 
 ---
 
-## Results
+## Design
 
-### Terminal state distribution (164 packages)
+### Single-writer state authority
+
+The robot service reports hardware events — arrival, door actuation, return to standby.
+It neither holds nor mutates parcel status. Every state transition is decided and
+persisted by `line-backend`.
+
+The initial implementation did not have this property. Both services maintained parallel
+state machines, with the robot holding its own copy of parcel status. Code review
+identified this as a split-brain hazard and the duplicate logic was removed from the
+robot side.
+
+The justification is that with two independent databases and no distributed transaction,
+permitting both sides to write means a partition or a retry yields two divergent records
+with no basis for reconciliation. A single writer gives every anomaly one authoritative
+location and gives any repair mechanism an unambiguous target.
+
+The accepted cost is that the robot cannot act autonomously during a partition. I judged
+a stalled robot recoverable in a way an inconsistent parcel record is not.
+
+### Trip grouping under a composite key
+
+Parcels bound for the same stop share a `door_task_id` derived from
+`line_user_id + unit + task_type`. All parcels under one key transition as a unit —
+arrival, verification, completion, refusal, timeout.
+
+The robot carries multiple parcels and actuates multiple doors per trip, so per-parcel
+dispatch would return it repeatedly to the same unit. Grouping reduced 106 parcels to 83
+trips, eliminating 23 round trips, a 21.7% reduction. Twenty-one trips carried more than
+one parcel.
+
+`task_type` is load-bearing in the key. Omitting it merges a delivery and a return
+addressed to the same resident into a single stop, coupling two transition sequences that
+differ.
+
+### A single egress point for robot invocation
+
+All 14 outbound HTTP calls to the robot service route through `call_robot_api`, which
+owns timeout, a single retry, and failure logging.
+
+The first implementation invoked the robot directly from each handler, and error handling
+diverged between call sites. At a 12.47% failure rate, reimplementing timeout policy,
+retry behaviour, and failure logging at 14 sites makes divergence a certainty rather than
+a risk.
+
+Consolidating them guarantees that every failure produces a `task_log` entry. That
+property is a precondition for the failure analysis reported here.
+
+### Reconciliation bounded by observability
+
+When the robot reaches standby and the reporting call is lost, a scheduled job polls
+`/api/dashboard/status`, detects the position change, and writes the missing state. On
+2026-07-20 this mechanism repaired 13 parcels in a single pass following a sustained
+connection failure.
+
+It covers one failure mode. A dispatch or door-assignment call that fails leaves the
+parcel in a non-terminal state from which nothing recovers it. For those cases the
+dashboard exposes single-step operator actions — release door, force resolve, redispatch,
+delete task — each writing to the event log.
+
+The design objective was full automatic recovery. Implementation established that failure
+modes are not homogeneous with respect to observability. "The robot returned without
+reporting" is inferable, because robot position is an observable state variable. "The
+dispatch call was lost" is not, because no observable variable distinguishes a lost call
+from a call never issued. The resulting position was to automate the inferable class and
+give the remainder an explicit, auditable manual path, rather than assert a recovery
+guarantee the system could not satisfy.
+
+### Fail-fast admission control on cargo doors
+
+Cargo doors are a bounded resource under concurrent contention. Allocation acquires a row
+lock with `with_for_update(nowait=True)` and aborts immediately rather than queueing.
+
+A waiting caller holds a database connection and introduces head-of-line blocking for
+every request behind it. Immediate refusal permits the caller to retry or surface the
+condition to an operator, and keeps the failure observable rather than latent.
+
+---
+
+## Evaluation
+
+### Terminal state distribution
 
 | Outcome | Count | Share |
 |---|---|---|
@@ -169,8 +218,9 @@ surface the condition to the operator, and keeps the failure visible instead of 
 | Pickup timeout | 33 | 20.1% |
 | Declined by resident | 9 | 5.5% |
 
-Every branch above was exercised with the physical robot, not simulated. The high
-exception share reflects deliberate coverage testing rather than operational failure.
+Every branch was exercised against the physical robot. The exception share reflects
+deliberate coverage of the exception paths, not an operational failure rate under normal
+use.
 
 ### Failure distribution
 
@@ -182,11 +232,12 @@ exception share reflects deliberate coverage testing rather than operational fai
 | `dispatch_failed` | 36 | 2026-07-27 |
 | `robot_recall_failed` | 34 | 2026-08-07 |
 
-Errors clustered on three days (2026-07-20, 07-24, 07-27: 41, 119, and 60 errors
-respectively), almost entirely HTTP 404 responses from a robot service that was not
-running. Daily error counts fell to 0–8 after August 1.
+Failures are temporally clustered rather than uniformly distributed. Three days —
+2026-07-20, 07-24 and 07-27 — account for 220 of 334 errors, predominantly HTTP 404
+responses from a robot service that was not running. Daily error counts fall to between 0
+and 8 after 1 August.
 
-### Operator interventions
+### Operator intervention
 
 | Action | Count |
 |---|---|
@@ -196,53 +247,75 @@ running. Daily error counts fell to 0–8 after August 1.
 | Force resolve | 25 |
 | Redispatch | 6 |
 
-These counts are the honest denominator behind "0 packages stuck." They are reported
-here rather than omitted because the ratio of automated to manual recovery is the
-actual finding.
+This distribution is the denominator behind the zero-stuck-parcel figure. The ratio of
+automated repair to manual intervention is reported rather than omitted because it
+constitutes the substantive result.
 
 ---
 
-## Known Limitations
+## Threats to Validity
 
-Documented in full in [`docs/known-issues.md`](docs/known-issues.md), classified by
-whether each has been verified against source or database.
+[`docs/known-issues.md`](docs/known-issues.md) contains the complete set, each classified
+by whether it was verified against source or against the database.
 
-**Recovery is not fully automated.** Compensating polling handles one failure mode.
-Dispatch-stage failures require an operator to delete the task. A principled fix would
-return the package to `pending` and release the door after a retry ceiling, but this
-was not implemented.
+**Construct validity — the failure rate measures logging, not failure.** A subset of
+`*_failed` events record calls the robot executed successfully but whose response handling
+or connection timeout registered failure. The instrumentation cannot separate the two
+classes, so 12.47% bounds the true rate from above by an unquantified margin.
 
-**Reported failure rate overstates true failures.** Some `*_failed` events record calls
-that actually succeeded. The events were not instrumented finely enough to separate
-genuine failures from reporting artifacts, so 12.47% should be read as a ceiling.
+**Internal validity — the zero-stuck result confounds two mechanisms.** Reconciliation and
+manual operator intervention both contribute, and the design does not isolate their
+individual contributions. The reported intervention counts are the closest available
+decomposition.
 
-**Timestamp basis is not self-describing.** Both services strip timezone information
-before persisting (`.replace(tzinfo=None)`), so a stored timestamp does not indicate
-whether its basis is UTC or local time. No cross-service time comparison exists today,
-so this causes no failure — but it cost significant time during one debugging session,
-when timezone was the first suspect for a set of apparently inverted timestamps.
-The actual cause was the compensating scheduler backfilling 13 records at once.
+**External validity — the test distribution is severely skewed.** A single unit accounts
+for 123 of 164 parcels. Behaviour under many concurrent distinct destinations is
+uncharacterised, and the trip-batching figure in particular reflects one arrival pattern
+rather than a general efficiency claim.
 
-**Test distribution is heavily skewed.** One test unit accounts for 123 of 164 packages
-(79%). Behavior under many concurrent distinct destinations is not characterized.
+**Instrumentation — stored timestamps do not encode their own basis.** Both services strip
+timezone information before persisting (`.replace(tzinfo=None)`), one storing UTC and one
+storing local time. No cross-service comparison exists in current logic, so nothing fails.
+The cost was diagnostic: timezone was the leading hypothesis for a set of apparently
+inverted timestamps, and the actual cause proved to be the reconciliation loop backfilling
+13 records within one second.
 
-**Silent configuration degradation.** If the door-mapping environment variable fails to
-parse, the robot service logs a warning and continues with a fallback mapping rather
-than refusing to start. A misconfiguration would silently disable one cargo door.
+**Configuration — degradation is silent.** A door-mapping environment variable that fails
+to parse produces a warning and a fallback mapping rather than a startup failure. A
+malformed value would disable one cargo door without raising.
 
 ---
 
-## Why This Matters for Robotics Work
+## Open Problems
 
-The events in this system form a complete, structured, timestamped record of a physical
-robot operating in an uncontrolled environment: 2,678 entries, 53 distinct event types,
-every state transition and every failure. That schema was designed for debugging, but it
-is also the raw material for anomaly detection or imitation learning on failure recovery.
+Three questions arose from this work that fall outside what I could resolve within it.
 
-No learning component was built. The contribution here is the layer underneath one —
-the part that has to be correct before a policy has anything reliable to act on, and
-the part that determines whether a robot deployment survives contact with residents
-who are not home, refuse packages, and press buttons in the wrong order.
+The first concerns the boundary between recoverable and unrecoverable failure. The
+reconciliation loop repairs a lost return report because robot position is an observable
+state variable; it cannot repair a lost dispatch call because no observable variable
+distinguishes that case from a call never issued. I established this boundary
+case-by-case, by inspection. Whether it admits systematic characterisation — what is
+recoverable under partial observability across an unreliable service boundary — is the
+problem I would most want to pursue.
+
+The second concerns predictability. The event log holds 2,678 timestamped entries across
+53 types, recording every state transition, every failure, and every operator intervention
+that followed. Failures are temporally clustered, with three days accounting for two
+thirds of them. Whether that record carries sufficient signal to anticipate failure, or to
+learn a recovery policy from the interventions operators selected, is a question the data
+could plausibly support and that I lack the background to pose rigorously.
+
+The third concerns measurement itself. Integration failure rates for robot systems are
+rarely reported. This deployment measured 12.47% against physical hardware, and that
+figure remains contaminated by logging artifacts I could not isolate. Designing
+instrumentation that separates genuine failure from artifacts of its recording is a
+methodological problem I want to learn to address properly.
+
+These questions are the reason I am applying to graduate study in AI and robotics. The
+system described here occupies the layer beneath a learned policy: the component that must
+be correct before a policy has dependable state to act on, and the component that
+determines whether a robot deployment survives contact with residents who are absent,
+refuse parcels, and actuate controls out of order.
 
 ---
 
@@ -253,23 +326,29 @@ who are not home, refuse packages, and press buttons in the wrong order.
 ├── line-backend/          FastAPI service — business logic, LINE, dashboard
 │   ├── app/
 │   │   ├── models.py      SQLAlchemy models, TaskLog event definitions
-│   │   ├── routers/       39 HTTP routes
-│   │   ├── scheduler/     6 APScheduler jobs
-│   │   └── static/        Dashboard frontend
+│   │   ├── main.py        39 HTTP routes, 6 APScheduler jobs
+│   │   └── static/        Dashboard front end
 │   └── .env.example
 ├── flashbot-robot/        Flask service — Pudu AMR hardware control
 │   ├── src/aurobox/
 │   └── .env.example
+├── data/
+│   └── packages.json      Raw parcel export backing docs/metrics.md
+├── render.yaml            Deployment blueprint for both services
 └── docs/
-    ├── architecture.md
-    ├── known-issues.md
-    ├── metrics.md
+    ├── architecture.md    Service topology and communication properties
+    ├── state-machines.md  Delivery, return, and robot mission flows
+    ├── database.md        Data dictionary for all six tables
+    ├── api.md             Route inventory grouped by caller
+    ├── metrics.md         Derivation of every figure in this README
+    ├── known-issues.md    Verified defects and open questions
+    ├── diagrams/          Editable draw.io sources
     └── images/
 ```
 
 ## Tech Stack
 
-**Backend** Python · FastAPI · SQLAlchemy · PostgreSQL · APScheduler · Flask
+**Back end** Python · FastAPI · SQLAlchemy · PostgreSQL · APScheduler · Flask
 **Messaging** LINE Messaging API v3 SDK · LIFF
 **Robot** Pudu Open Platform API
 **Infrastructure** Render · Docker
@@ -278,23 +357,19 @@ who are not home, refuse packages, and press buttons in the wrong order.
 
 ```bash
 cd line-backend
-cp .env.example .env        # fill in your own credentials
+cp .env.example .env        # supply your own credentials
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
 The robot service requires Pudu Open Platform credentials, which are not included.
-`flashbot-robot` will start without them but cannot dispatch missions.
+`flashbot-robot` starts without them but cannot dispatch a mission.
 
 ---
 
 ## Author
 
 **Stephanie Lin, Yen Yu** — AI Development Dept. Intern, Aurotek
+July – August 2026
 
 Shared for portfolio purposes with permission from Aurotek. Not licensed for reuse.
-
-Built with one other intern over [2026/07/01-2026/08/31]. I owned `line-backend` end to end —
-the parcel state machine, LINE integration, admin dashboard, scheduled automation,
-and the integration contract with the robot service. My teammate owned
-`flashbot-robot`. The HTTP interface between them was designed jointly.
