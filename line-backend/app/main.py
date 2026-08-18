@@ -141,7 +141,7 @@ async def line_webhook(request: Request):
                         db.commit()
                         log_event(
                             db, "user_unfollowed",
-                            detail=f"unit={binding.unit} name={binding.name} 已設為inactive",
+                            detail=f"門牌 {binding.unit}，住戶 {binding.name}，已停用其綁定",
                         )
                     else:
                         # 查不到對應的綁定資料——常見於：這個user_id屬於舊的LINE channel，
@@ -507,6 +507,111 @@ def get_package_or_404(db: Session, package_id: str) -> Package:
     return package
 
 
+# 包裹狀態的中文說法，寫進事件說明時用，避免報表出現英文狀態碼
+STATUS_LABELS = {
+    "pending": "待住戶回應",
+    "pickup_now": "待放置",
+    "delivering": "配送中",
+    "arrived": "已抵達門牌",
+    "completed": "已完成",
+    "rejected_at_door": "住戶當面拒收",
+    "returned_timeout": "逾時未取",
+    "voided": "已作廢",
+}
+
+
+def status_text(status: str) -> str:
+    return STATUS_LABELS.get(status, status)
+
+
+# ========== 任務事件的中文說明（給管理員看的每日報表用） ==========
+# 格式：event_type -> (標籤, 說明, 是否需要管理員處理)
+# 標籤用管理員的語言，不用程式碼裡的英文事件名。
+# 說明只寫「發生什麼事」跟「要不要動作」，技術細節留在 detail 欄位。
+
+EVENT_LABELS = {
+    # ── 正常流程，不需處理 ──
+    "created":                  ("登記到貨", "已建立包裹並發出到貨通知", False),
+    "queued":                   ("等待派送", "包裹已就緒，等候安排配送", False),
+    "pickup_requested":         ("住戶選擇取貨", "住戶按下取貨，等待放入艙門", False),
+    "pickup_scheduled":         ("住戶預約取貨", "住戶指定了取貨時段，時間到才會派送", False),
+    "door_assigned":            ("分配艙門", "艙門已開啟，請將包裹放入", False),
+    "door_joined":              ("併入同一趟", "與同門牌其他包裹共用一趟配送", False),
+    "dispatched":               ("出發配送", "機器人已前往門牌", False),
+    "arrived":                  ("抵達門牌", "機器人已到達，已通知住戶前來取貨", False),
+    "pickup_opened":            ("住戶掃碼開門", "身分驗證通過，艙門已開啟", False),
+    "completed":                ("取貨完成", "住戶已取走包裹", False),
+    "trip_wait":                ("等待其他站", "這趟還有其他門牌尚未完成", False),
+    "trip_completed":           ("整趟結束", "所有站點完成，機器人開始返航", False),
+    "returned":                 ("機器人返回", "機器人已回到管理室", False),
+    "schedule_reminder_sent":   ("已發預約提醒", "預約時段前 2 小時的提醒已送出", False),
+
+    # ── 住戶端的例外，通常會產生後續工作 ──
+    "rejected":                 ("住戶不收", "住戶在到貨通知直接拒收，包裹已作廢", True),
+    "rejected_at_door":         ("住戶當面拒收", "機器人抵達後住戶拒收，包裹將帶回管理室", True),
+    "returned_timeout":         ("逾時未取", "超過 8 分鐘未取貨，包裹將帶回管理室", True),
+    "pending_pickup_notified":  ("已發退回通知", "住戶已收到通知，72 小時內未處理將自動作廢", True),
+    "user_unfollowed":          ("住戶封鎖帳號", "此住戶已封鎖官方帳號，將收不到任何通知", True),
+
+    # ── 退貨流程 ──
+    "return_requested":         ("住戶申請退貨", "等待安排機器人前往收件", False),
+    "return_cancelled":         ("住戶取消退貨", "住戶在機器人抵達後取消，無需處理", False),
+    "return_door_opened":       ("開啟退貨艙門", "請取出退回的包裹", True),
+    "return_retrieved":         ("已取出退貨件", "退貨件已確認取出", False),
+    "return_timeout":           ("退貨艙門逾時", "開門後 8 分鐘未關閉，系統已自動關門", True),
+
+    # ── 管理員操作紀錄 ──
+    "door_released_manually":   ("手動釋放艙門", "管理員釋放了艙門，包裹退回待放置", False),
+    "assign_timeout":           ("艙門逾時釋放", "分配後久未放入包裹，系統自動釋放艙門", False),
+    "manual_door_opened":       ("手動開啟艙門", "管理員從後台開門", False),
+    "manual_door_closed":       ("手動關閉艙門", "管理員從後台關門", False),
+    "door_closed":              ("關閉艙門", "艙門已關閉", False),
+    "case_closed":              ("銷案", "管理員將此案件結案", False),
+    "force_resolved":           ("強制結案", "管理員手動補齊流程並結案", False),
+    "redispatched":             ("重新派送", "已建立新包裹重新配送", False),
+    "package_deleted":          ("刪除包裹", "管理員刪除了這筆包裹紀錄", False),
+    "voided_acknowledged":      ("確認作廢", "管理員已確認知悉此筆作廢", False),
+    "task_recalled":            ("任務召回", "配送任務已被中止", False),
+    "robot_recall_requested":   ("請求機器人返回", "已送出召回指令", False),
+    "robot_recharge_requested": ("請求機器人回充", "已送出回充電站指令", False),
+    "line_binding_updated":     ("更新住戶綁定", "住戶的門牌或姓名已變更", False),
+    "line_binding_deleted":     ("刪除住戶綁定", "此住戶的綁定已移除，將收不到通知", False),
+
+    # ── 失敗事件，需要管理員介入 ──
+    "notify_failed":            ("通知發送失敗", "住戶沒有收到通知，建議改用電話聯絡", True),
+    "door_assign_failed":       ("艙門分配失敗", "艙門可能已滿或機器人未連線，請確認後重試", True),
+    "dispatch_failed":          ("派送失敗", "機器人未回應派送指令，請確認機器人狀態後重試", True),
+    "pickup_open_failed":       ("開門失敗", "住戶掃碼後艙門沒有開啟，請至現場協助", True),
+    "complete_failed":          ("結束取貨失敗", "關門指令未成功，請確認艙門是否已關閉", True),
+    "cancel_task_failed":       ("取消任務失敗", "機器人可能仍在執行原任務，請確認機器人狀態", True),
+    "return_failed":            ("返航確認失敗", "無法確認機器人是否已返回，請至現場查看", True),
+    "assign_timeout_failed":    ("艙門釋放失敗", "自動釋放時機器人未回應，該艙門可能仍被佔用", True),
+    "return_timeout_failed":    ("退貨逾時處理失敗", "自動關門未成功，請至現場確認艙門狀態", True),
+    "manual_door_open_failed":  ("手動開門失敗", "機器人未回應開門指令，請確認機器人狀態", True),
+    "manual_door_close_failed": ("手動關門失敗", "機器人未回應關門指令，請確認艙門是否敞開", True),
+    "poll_returned_failed":     ("機器人狀態查詢失敗", "暫時連不上機器人，系統會自動重試", False),
+    "robot_recall_failed":      ("召回失敗", "機器人未回應召回指令，請至現場處理", True),
+    "robot_recharge_failed":    ("回充失敗", "機器人未回應回充指令，請確認機器人狀態", True),
+}
+
+
+def describe_event(event_type: str, detail: str = None, level: str = "info") -> dict:
+    """
+    把資料庫裡的事件代碼翻成管理員看得懂的說明。
+    沒有對照的事件（例如日後新增卻忘了加進表裡）回傳原始代碼，
+    報表不會出現空白，也方便發現漏掉的項目。
+    """
+    label, note, needs_action = EVENT_LABELS.get(
+        event_type, (event_type, "尚未定義說明的事件", level == "error")
+    )
+    return {
+        "label": label,
+        "note": note,
+        "needs_action": needs_action or level == "error",
+    }
+
+
+
 def log_event(db: Session, event_type: str, detail: str = None, package_id=None, level: str = "info"):
     """
     記錄任務事件，給每日報表用。
@@ -601,7 +706,7 @@ def advance_trip_or_return(db: Session):
     if still_pending_at_station:
         log_event(
             db, "trip_wait",
-            detail=f"unit={still_pending_at_station.unit} 還有任務尚未結束（狀態={still_pending_at_station.status}），"
+            detail=f"門牌 {still_pending_at_station.unit} 還有任務尚未結束（{status_text(still_pending_at_station.status)}），"
                    f"暫不前往下一站或返航，等機器人真的回報才會繼續",
         )
         return
@@ -835,7 +940,7 @@ def try_assign_door(package_id: str, door_id: str, door_task_id, db: Session) ->
 
     log_event(
         db, "door_assigned",
-        detail=f"door_id={door_id} door_task_id={door_task_id} quantity={quantity} task_type={task_type}",
+        detail=f"艙門 {door_id}，共 {quantity} 件",
         package_id=package_id,
     )
 
@@ -1360,7 +1465,7 @@ async def create_package(payload: CreatePackageRequest, db: Session = Depends(ge
 
     log_event(
         db, "created",
-        detail=f"unit={payload.unit} quantity={payload.quantity} notified_count={len(targets)}"
+        detail=f"門牌 {payload.unit}，共 {payload.quantity} 件，已通知 {len(targets)} 位收件人"
         + (f" 通知失敗: {', '.join(notify_failed)}" if notify_failed else ""),
         package_id=primary.id,
     )
@@ -1492,7 +1597,7 @@ async def delete_packages(payload: DeletePackagesRequest, db: Session = Depends(
 
         log_event(
             db, "package_deleted",
-            detail=f"unit={package.unit} status={package.status} 管理員手動刪除此筆紀錄",
+            detail=f"門牌 {package.unit}，刪除時狀態為「{status_text(package.status)}」",
             package_id=package.id,
         )
         db.query(PackageRecipient).filter(PackageRecipient.package_id == package.id).delete()
@@ -1667,7 +1772,7 @@ async def admin_delete_line_binding(line_user_id: str, db: Session = Depends(get
     db.delete(binding)
     db.commit()
 
-    log_event(db, "line_binding_deleted", detail=f"unit={unit} name={name} line_user_id={line_user_id}")
+    log_event(db, "line_binding_deleted", detail=f"門牌 {unit}，住戶 {name}，該住戶將不再收到任何通知")
 
     return {"status": "ok", "unit": unit, "name": name}
 
@@ -1985,7 +2090,9 @@ async def admin_daily_report(date: str, db: Session = Depends(get_db)):
                 "package_id": str(log.package_id) if log.package_id else None,
                 "event_type": log.event_type,
                 "level": log.level,
+                # detail 保留原始訊息供排查用，前端預設收合；管理員平常看 label/note 即可
                 "detail": log.detail,
+                **describe_event(log.event_type, log.detail, log.level),
                 "created_at": log.created_at.isoformat() if log.created_at else None,
             }
             for log in logs_today
@@ -2440,7 +2547,7 @@ async def pickup_verify(door_task_id: str, payload: PickupVerifyRequest = None, 
     try:
         log_event(
             db, "pickup_opened",
-            detail=f"scanned_by={scanning_user_id} door_ids={door_ids_opened}",
+            detail=f"已開啟艙門 {door_ids_opened}",
             package_id=locked_group[0].id,
         )
     except Exception as e:
