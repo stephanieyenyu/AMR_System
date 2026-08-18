@@ -150,7 +150,7 @@ async def line_webhook(request: Request):
                         print(f"[unfollow] 查無對應綁定, user_id={event.source.user_id}")
                         log_event(
                             db, "user_unfollowed",
-                            detail=f"查無對應的LineBinding, user_id={event.source.user_id}",
+                            detail="收到封鎖通知，但查無對應的住戶綁定紀錄",
                             level="warning",
                         )
                 finally:
@@ -358,7 +358,7 @@ def _push_to_recipients(db: Session, package: Package, message: str, log_context
             push_status_update(line_user_id, message)
         except Exception as e:
             notify_failed_count += 1
-            log_event(db, "notify_failed", detail=f"{log_context}: {e}", package_id=package.id, level="error")
+            log_event(db, "notify_failed", detail=f"{log_context}：{e}", package_id=package.id, level="error")
 
     notified_count = len(recipients) - notify_failed_count
     return {"sent": notified_count > 0, "notified_count": notified_count, "notify_failed_count": notify_failed_count}
@@ -429,7 +429,7 @@ def send_pending_pickup_notification(db: Session, package: Package) -> dict:
     else:
         log_event(
             db, "notify_failed",
-            detail="全部收件人推播皆失敗，未記錄pending_pickup_notified_at，保留給管理員手動補發",
+            detail="所有收件人都沒收到通知，作廢倒數尚未開始，請手動補發或改以電話聯絡",
             package_id=package.id, level="error",
         )
 
@@ -728,7 +728,7 @@ def advance_trip_or_return(db: Session):
         )
     except OperationalError:
         db.rollback()
-        log_event(db, "dispatch_failed", detail="下一站包裹正被其他並發請求鎖住，本次跳過交給對方處理", level="warning")
+        log_event(db, "dispatch_failed", detail="下一站正由另一個處理程序接手，本次略過", level="warning")
         return
 
     if next_package:
@@ -747,7 +747,7 @@ def advance_trip_or_return(db: Session):
             )
         except OperationalError:
             db.rollback()
-            log_event(db, "dispatch_failed", detail="下一站包裹正被其他並發請求鎖住，本次跳過交給對方處理", level="warning")
+            log_event(db, "dispatch_failed", detail="下一站正由另一個處理程序接手，本次略過", level="warning")
             return
 
         # 先呼叫機器人、確認真的派送成功了才把stop_dispatched_at寫進DB——
@@ -832,7 +832,7 @@ def advance_trip_or_return(db: Session):
         total = len(pending_return) + len(pending_return_items)
         log_event(
             db, "trip_completed",
-            detail=f"這趟結束，機器人帶回 {total} 件拒收/逾時包裹或待取回的退貨件返回管理室",
+            detail=f"這趟結束，機器人帶回 {total} 件（拒收、逾時或待取回的退貨件）",
         )
 
 
@@ -927,7 +927,7 @@ def try_assign_door(package_id: str, door_id: str, door_task_id, db: Session) ->
         no_door_available = resp is not None and resp.status_code in (400, 409)
         log_event(
             db, "door_assign_failed",
-            detail=(f"指定艙門 {door_id} 目前無法使用" if no_door_available else error),
+            detail=(f"指定艙門 {door_id} 目前無法使用" if no_door_available else f"艙門分配失敗：{error}"),
             package_id=package_id,
             level="warning" if no_door_available else "error",
         )
@@ -1148,7 +1148,7 @@ def handle_postback(data: str, reply_token: str, triggered_by: str, postback_par
                 p.scheduled_pickup_at = selected_dt
                 log_event(
                     db, "pickup_scheduled",
-                    detail=f"預約時段={selected_dt.strftime('%Y-%m-%d %H:%M')}",
+                    detail=f"預約時段 {selected_dt.strftime('%Y-%m-%d %H:%M')}",
                     package_id=p.id,
                 )
             db.commit()
@@ -1296,7 +1296,7 @@ def handle_reject_at_door(door_task_id: str, reply_token: str, triggered_by: str
             "POST", f"/api/door-tasks/{door_task_id}/cancel", retries=1
         )
         if not ok:
-            log_event(db, "cancel_task_failed", detail=error, package_id=group[0].id, level="error")
+            log_event(db, "cancel_task_failed", detail=f"取消機器人任務失敗：{error}", package_id=group[0].id, level="error")
 
         # 這一站處理完了（拒收），但同一趟裡可能還有其他包裹在排隊等機器人送過去，
         # 不能在這裡就直接叫機器人返航——要不要返航、還是去下一站，交給下面統一判斷
@@ -1376,7 +1376,7 @@ def handle_cancel_return(door_task_id: str, reply_token: str):
             "POST", f"/api/door-tasks/{door_task_id}/cancel", retries=1
         )
         if not ok:
-            log_event(db, "cancel_task_failed", detail=error, package_id=group[0].id, level="error")
+            log_event(db, "cancel_task_failed", detail=f"取消機器人任務失敗：{error}", package_id=group[0].id, level="error")
 
         advance_trip_or_return(db)
     finally:
@@ -1875,7 +1875,7 @@ async def admin_robot_recall(db: Session = Depends(get_db)):
     """
     ok, resp, error = call_robot_api("POST", "/api/robot/recall", retries=1)
     if not ok:
-        log_event(db, "robot_recall_failed", detail=error, level="error")
+        log_event(db, "robot_recall_failed", detail=f"召回機器人失敗：{error}", level="error")
         raise HTTPException(status_code=502, detail=f"呼叫機器人叫回失敗: {error}")
 
     candidate_ids = [
@@ -1904,7 +1904,7 @@ async def admin_robot_recall(db: Session = Depends(get_db)):
 
         log_event(
             db, "task_recalled",
-            detail=f"機器人緊急叫回，從 {package.status} 重置為 pickup_now，原艙門 {package.door_id} 已清空",
+            detail=f"機器人緊急叫回，包裹從「{status_text(package.status)}」重置為待放置，原艙門 {package.door_id} 已清空",
             package_id=package.id,
         )
         package.status = "pickup_now"
@@ -1928,7 +1928,7 @@ async def admin_robot_recharge(db: Session = Depends(get_db)):
     """管理員在Dashboard按「叫機器人回充電」，呼叫機器人回充電站"""
     ok, resp, error = call_robot_api("POST", "/api/robot/recharge", retries=1)
     if not ok:
-        log_event(db, "robot_recharge_failed", detail=error, level="error")
+        log_event(db, "robot_recharge_failed", detail=f"機器人回充失敗：{error}", level="error")
         raise HTTPException(status_code=502, detail=f"呼叫機器人回充電站失敗: {error}")
 
     log_event(db, "robot_recharge_requested")
@@ -1959,7 +1959,7 @@ async def admin_manual_open_doors(db: Session = Depends(get_db)):
 
     ok, resp, error = call_robot_api("POST", "/api/doors/return-open", retries=1)
     if not ok:
-        log_event(db, "manual_door_open_failed", detail=error, level="error")
+        log_event(db, "manual_door_open_failed", detail=f"管理員手動開門失敗：{error}", level="error")
         raise HTTPException(status_code=502, detail=f"呼叫機器人開門失敗: {error}")
 
     now = now_taipei()
@@ -1979,7 +1979,7 @@ async def admin_manual_open_doors(db: Session = Depends(get_db)):
 
     log_event(
         db, "manual_door_opened",
-        detail=f"管理員開門，同時補上{len(waiting_packages)}筆等待中包裹的return_door_opened_at",
+        detail=f"管理員開門，同時補記 {len(waiting_packages)} 筆等待中包裹的開門時間",
     )
     return {"status": "ok", "updated_count": len(waiting_packages)}
 
@@ -1997,7 +1997,7 @@ async def admin_manual_close_doors(db: Session = Depends(get_db)):
 
     ok, resp, error = call_robot_api("POST", "/api/doors/return-complete", retries=1)
     if not ok:
-        log_event(db, "manual_door_close_failed", detail=error, level="error")
+        log_event(db, "manual_door_close_failed", detail=f"管理員手動關門失敗：{error}", level="error")
         raise HTTPException(status_code=502, detail=f"呼叫機器人關門失敗: {error}")
 
     now = now_taipei()
@@ -2017,7 +2017,7 @@ async def admin_manual_close_doors(db: Session = Depends(get_db)):
 
     log_event(
         db, "manual_door_closed",
-        detail=f"管理員關門，同時補上{len(open_packages)}筆包裹的door_closed_at",
+        detail=f"管理員關門，同時補記 {len(open_packages)} 筆包裹的關門時間",
     )
     return {"status": "ok", "updated_count": len(open_packages)}
 
@@ -2152,7 +2152,7 @@ def resolve_door_choice(db: Session, package: Package, door_id: str) -> dict:
         db.commit()
         log_event(
             db, "door_joined",
-            detail=f"加入同收件人已開啟的艙門 {door_id}（door_task_id={join_target.door_task_id}），未呼叫機器人",
+            detail=f"併入同一位收件人已開啟的艙門 {door_id}，共用同一趟配送",
             package_id=package.id,
         )
         return {"status": "ok", "package_id": str(package.id), "door_id": door_id, "joined": True}
@@ -2296,7 +2296,7 @@ async def release_door(package_id: str, db: Session = Depends(get_db)):
     else:
         log_event(
             db, "door_released_manually",
-            detail=f"艙門 {old_door_id} 還有同收件人其他包裹共用，只把這筆移出，不呼叫機器人",
+            detail=f"艙門 {old_door_id} 還有同一位收件人的其他包裹，僅將這筆移出",
             package_id=package.id,
         )
 
@@ -2369,7 +2369,7 @@ async def admin_dispatch_batch(db: Session = Depends(get_db)):
             if package.door_task_id == first_package.door_task_id:
                 log_event(
                     db, "dispatched",
-                    detail=f"批次派送第一站（共{len(packages)}件已裝載），前往 {first_package.unit}",
+                    detail=f"出發前往第一站 {first_package.unit}，本趟共 {len(packages)} 件",
                     package_id=package.id,
                 )
                 dispatched_unit.append(package.unit)
@@ -2378,7 +2378,7 @@ async def admin_dispatch_batch(db: Session = Depends(get_db)):
             else:
                 log_event(
                     db, "queued",
-                    detail="已標記delivering、排入這一趟批次，等前面的站處理完才會真的呼叫機器人派送過去",
+                    detail="已排入這一趟配送，等前面的門牌處理完才會出發",
                     package_id=package.id,
                 )
         else:
@@ -2536,7 +2536,7 @@ async def pickup_verify(door_task_id: str, payload: PickupVerifyRequest = None, 
         "POST", f"/api/door-tasks/{door_task_id}/pickup-complete", retries=1
     )
     if not ok:
-        log_event(db, "pickup_open_failed", detail=error, package_id=locked_group[0].id, level="error")
+        log_event(db, "pickup_open_failed", detail=f"住戶掃碼後開門失敗：{error}", package_id=locked_group[0].id, level="error")
         raise HTTPException(status_code=502, detail="機器人開門失敗，請聯繫管理員協助取件")
 
     door_ids_opened = [p.door_id for p in locked_group]
@@ -2720,7 +2720,7 @@ def check_pickup_timeout():
             )
             if not ok:
                 for p in group:
-                    log_event(db, "cancel_task_failed", detail=f"逾時退回時: {error}", package_id=p.id, level="error")
+                    log_event(db, "cancel_task_failed", detail=f"逾時退回時取消機器人任務失敗：{error}", package_id=p.id, level="error")
 
             # 這一站處理完了（逾時），但同一趟裡可能還有其他包裹在排隊，
             # 不能在這裡就直接叫機器人返航——要不要返航、還是去下一站，交給下面統一判斷
@@ -2831,13 +2831,13 @@ def check_assign_timeout():
                 "POST", f"/api/door-tasks/{package.door_task_id}/assign-timeout", retries=1
             )
             if not ok:
-                log_event(db, "assign_timeout_failed", detail=error, package_id=package.id, level="error")
+                log_event(db, "assign_timeout_failed", detail=f"艙門逾時自動釋放時，機器人未回應：{error}", package_id=package.id, level="error")
                 db.rollback()
                 continue
 
             log_event(
                 db, "assign_timeout",
-                detail=f"door_id={package.door_id} 超過8分鐘未派送，機器人已自動關門釋放",
+                detail=f"艙門 {package.door_id} 超過 8 分鐘未派送，機器人已自動關門釋放",
                 package_id=package.id,
             )
             package.door_id = None
@@ -2902,7 +2902,7 @@ def check_return_timeout():
                 "POST", "/api/doors/return-timeout", retries=1
             )
             if not ok:
-                log_event(db, "return_timeout_failed", detail=error, package_id=package.id, level="error")
+                log_event(db, "return_timeout_failed", detail=f"退貨艙門逾時自動關閉失敗：{error}", package_id=package.id, level="error")
                 db.rollback()
                 continue
 
@@ -2944,7 +2944,7 @@ def poll_robot_returned():
 
         ok, resp, error = call_robot_api("GET", "/api/dashboard/status")
         if not ok:
-            log_event(db, "poll_returned_failed", detail=error, level="error")
+            log_event(db, "poll_returned_failed", detail=f"查詢機器人狀態失敗：{error}", level="error")
             return
 
         try:
@@ -2959,7 +2959,7 @@ def poll_robot_returned():
             package.returned_at = now_taipei()
             log_event(
                 db, "returned",
-                detail=f"輪詢/api/dashboard/status偵測到機器人已回到{current_location}，自行補上returned_at",
+                detail=f"系統偵測到機器人已回到 {current_location}，自動補記返回時間",
                 package_id=package.id,
             )
         db.commit()
@@ -3055,7 +3055,7 @@ def check_schedule_reminder():
                 db.commit()
                 log_event(
                     db, "schedule_reminder_sent",
-                    detail=f"通知 {result['notified_count']} 位收件人，預約時段={schedule_text}",
+                    detail=f"通知 {result['notified_count']} 位收件人，預約時段 {schedule_text}",
                     package_id=primary.id,
                 )
 
@@ -3144,7 +3144,7 @@ async def robot_returned(package_id: str, db: Session = Depends(get_db)):
     package.returned_at = now_taipei()
     db.commit()
 
-    log_event(db, "returned", detail=f"status={package.status}", package_id=package.id)
+    log_event(db, "returned", detail=f"機器人已返回管理室，包裹狀態為「{status_text(package.status)}」", package_id=package.id)
 
     return {"status": "ok", "package_id": str(package.id)}
 
@@ -3242,7 +3242,7 @@ async def force_resolve_package(package_id: str, db: Session = Depends(get_db)):
     db.commit()
     log_event(
         db, "force_resolved",
-        detail="管理員手動處理機器人硬體後，直接標記為已解決（未呼叫機器人API）",
+        detail="管理員在現場手動處理後，直接標記為已解決",
         package_id=package.id,
     )
 
@@ -3317,7 +3317,7 @@ async def submit_return_request(payload: ReturnRequestPayload, db: Session = Dep
     for package in packages:
         log_event(
             db, "return_requested",
-            detail=f"住戶申請退貨，unit={binding.unit} quantity={payload.quantity}",
+            detail=f"住戶申請退貨，門牌 {binding.unit}，共 {payload.quantity} 件",
             package_id=package.id,
         )
 
@@ -3486,12 +3486,12 @@ async def redispatch_package(package_id: str, db: Session = Depends(get_db)):
     old_package.redispatched_to = new_package.id
     db.commit()
 
-    log_event(db, "redispatched", detail=f"重新派送為新包裹 {new_package.id}", package_id=old_package.id)
+    log_event(db, "redispatched", detail="已建立新包裹重新配送", package_id=old_package.id)
     log_event(
         db, "created",
-        detail=f"unit={old_package.unit} 重新派送自舊包裹 {old_package.id}，"
-               f"notified_count={len(old_recipients) - len(notify_failed)}"
-               + (f" 通知失敗: {', '.join(notify_failed)}" if notify_failed else ""),
+        detail=f"門牌 {old_package.unit}，重新派送自舊包裹，"
+               f"已通知 {len(old_recipients) - len(notify_failed)} 位收件人"
+               + (f"，通知失敗：{', '.join(notify_failed)}" if notify_failed else ""),
         package_id=new_package.id,
     )
 
@@ -3582,7 +3582,7 @@ async def notify_completed_leftover(package_id: str, db: Session = Depends(get_d
     db.commit()
     log_event(
         db, "pending_pickup_notified",
-        detail=f"管理員手動聯繫住戶(已完成任務疑似有遺漏包裹)，通知{notified_count}/{len(recipients)}人",
+        detail=f"管理員手動聯繫住戶（已完成但疑似有遺漏包裹），通知 {notified_count}/{len(recipients)} 位",
         package_id=package.id,
     )
 

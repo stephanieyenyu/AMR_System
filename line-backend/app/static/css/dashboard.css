@@ -20,3 +20,83 @@
 .door-EMPTY { background: #e9ecef; color: #666; }
 .door-ASSIGNED { background: #fff3cd; color: #856404; }
 .door-FULL { background: #f8d7da; color: #721c24; }
+
+/* 每日報表：事件說明樣式，加在 dashboard.css 末尾 */
+.log-note {
+  color: #333;
+  line-height: 1.5;
+}
+.log-detail {
+  margin-top: 4px;
+}
+.log-detail summary {
+  cursor: pointer;
+  color: #888;
+  font-size: 12px;
+  user-select: none;
+}
+.log-detail code {
+  display: block;
+  margin-top: 4px;
+  padding: 6px 8px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #666;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.log-flag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  background: #d9534f;
+  color: #fff;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: normal;
+  vertical-align: middle;
+}
+.row-action {
+  background: #fff8f7;
+}
+
+/* 每日報表：事件說明樣式，加在 dashboard.css 末尾 */
+.log-note {
+  color: #333;
+  line-height: 1.5;
+}
+.log-detail {
+  margin-top: 4px;
+}
+.log-detail summary {
+  cursor: pointer;
+  color: #888;
+  font-size: 12px;
+  user-select: none;
+}
+.log-detail code {
+  display: block;
+  margin-top: 4px;
+  padding: 6px 8px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #666;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.log-flag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  background: #d9534f;
+  color: #fff;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: normal;
+  vertical-align: middle;
+}
+.row-action {
+  background: #fff8f7;
+}

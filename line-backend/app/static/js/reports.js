@@ -1,3 +1,21 @@
+// 包裹狀態的中文說法，與後端 STATUS_LABELS 一致
+const STATUS_TEXT = {
+  pending: '待住戶回應',
+  pickup_now: '待放置',
+  delivering: '配送中',
+  arrived: '已抵達門牌',
+  completed: '已完成',
+  rejected_at_door: '住戶當面拒收',
+  returned_timeout: '逾時未取',
+  voided: '已作廢',
+};
+const statusText = s => STATUS_TEXT[s] || s;
+
+function escapeHtml(str) {
+  return String(str ?? '').replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
 // 預設帶入今天日期，方便直接查詢
 const today = new Date();
 const yyyy = today.getFullYear();
@@ -44,7 +62,7 @@ function renderSummary(summary, total) {
   }
   el.innerHTML = `
     <div class="summary-box"><b>${total}</b><span>當日異動總數</span></div>
-    ${keys.map(k => `<div class="summary-box"><b>${summary[k]}</b><span>${k}</span></div>`).join('')}
+    ${keys.map(k => `<div class="summary-box"><b>${summary[k]}</b><span>${statusText(k)}</span></div>`).join('')}
   `;
 }
 
@@ -97,7 +115,7 @@ function renderLogGroup() {
 
   if (group.packageId) {
     infoEl.textContent = pkg
-      ? `門牌：${pkg.unit}　狀態：${pkg.status}　包裹ID：${group.packageId}`
+      ? `門牌：${pkg.unit}　狀態：${statusText(pkg.status)}　包裹ID：${group.packageId}`
       : `包裹ID：${group.packageId}（非當天建立/更新的包裹，門牌資訊未顯示）`;
   } else {
     infoEl.textContent = '系統事件（無對應特定包裹）';
@@ -107,14 +125,24 @@ function renderLogGroup() {
   setPagerLinkState(prevBtn, currentGroupIndex === 0);
   setPagerLinkState(nextBtn, currentGroupIndex === logGroups.length - 1);
 
-  tbody.innerHTML = group.logs.map(log => `
-    <tr>
-      <td>${log.created_at ? log.created_at.replace('T', ' ').slice(0, 19) : '-'}</td>
+  tbody.innerHTML = group.logs.map(log => {
+    const time = log.created_at ? log.created_at.replace('T', ' ').slice(0, 19) : '-';
+    // label/note 由後端提供；舊資料或未定義的事件退回顯示原始代碼，不會空白
+    const label = escapeHtml(log.label || log.event_type);
+    const note = log.note ? `<div class="log-note">${escapeHtml(log.note)}</div>` : '';
+    // detail 是給工程排查用的原始訊息，預設收合
+    const detail = log.detail
+      ? `<details class="log-detail"><summary>技術細節</summary><code>${escapeHtml(log.detail)}</code></details>`
+      : '';
+    const flag = log.needs_action ? '<span class="log-flag">需處理</span>' : '';
+    return `
+    <tr class="${log.needs_action ? 'row-action' : ''}">
+      <td>${time}</td>
       <td class="level-${log.level}">${log.level}</td>
-      <td>${log.event_type}</td>
-      <td>${log.detail || ''}</td>
-    </tr>
-  `).join('');
+      <td><b>${label}</b>${flag}</td>
+      <td>${note}${detail}</td>
+    </tr>`;
+  }).join('');
 }
 
 function prevLogGroup() {
