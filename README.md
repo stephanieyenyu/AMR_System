@@ -42,11 +42,7 @@ The test objective was to cover all branches, not throughput. A test package is 
 
 ## Measurement Basis
 
-All figures derive from the PostgreSQL databases backing the test system. The observation
-window runs 2026-07-14 to 2026-08-14, comprising 21 days with recorded activity. The
-sampling frame is the complete `packages` table at snapshot time (164 rows) and the
-complete `task_logs` table (2,678 rows across 53 event types). `data/packages.json`
-contains the raw package export; every derivation appears in
+All data comes from the PostgreSQL databases supporting the test system. The observation window runs July 14, 2026 to August 14, 2026, a total of 21 days, during which activity was recorded. The sampling framework consists of the complete `packages` table (164 rows) at the time of the snapshot and the complete `task_logs` table (covering 53 event types, 2,678 rows). `data/packages.json` contains the raw package export; all derived results appears in
 [`docs/metrics.md`](docs/metrics.md).
 
 | Measurement | Value | Nature |
@@ -59,9 +55,7 @@ contains the raw package export; every derivation appears in
 
 Three qualifications govern how these should be read.
 
-**The exception share is a test parameter, not an outcome rate.** 56.1% of packages ended
-on a non-nominal branch because that is how they were assigned. It carries no information
-about how often a delivery would be refused or time out in service.
+**The exception share is a test parameter, not an outcome rate.** 56.1% of packages were ultimately delivered to non-nominal branches because they were assigned that way. This data does not include any information about how often a delivery would be refused or timeout in service.
 
 **The failure rate characterises the test environment, not the system.** It is also an
 upper bound: a subset of `*_failed` events record calls the robot executed successfully but
