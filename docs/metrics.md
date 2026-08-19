@@ -1,8 +1,9 @@
 # Metrics
 
-Every figure quoted in the README derives from the production PostgreSQL databases of a
-live deployment. This document records the source and derivation of each so that the
-numbers can be checked rather than accepted.
+Every figure quoted in the README derives from the PostgreSQL databases backing the test
+system, exercised in-house at Aurotek against the physical robot. This document records
+the source and derivation of each so that the numbers can be checked rather than
+accepted.
 
 **Snapshot date** 2026-08-14
 **Observation window** 2026-07-14 to 2026-08-14 (21 days with activity)
@@ -85,15 +86,22 @@ Parcels are grouped into robot missions by `door_task_id`.
 | Distinct trips | 83 | `COUNT(DISTINCT door_task_id)` |
 | Trips carrying more than one parcel | 21 | Groups with `HAVING COUNT(*) > 1` |
 | Largest single trip | 3 parcels | `MAX` group size |
-| Trips saved | 23 | 106 − 83 |
-| **Reduction** | **21.7%** | 23 ÷ 106 |
+| Dispatches avoided by grouping | 23 | 106 − 83 |
 
 The 58 records without a group key break down as 9 `voided` parcels (never assigned a
 cargo door, expected) and 49 records predating the grouping mechanism.
 
-**What this figure does not claim.** It is the reduction in dispatch calls given the
-observed parcel mix, not a projected efficiency gain for a production building. A
-different arrival pattern would produce a different number.
+**What this figure does not claim.** It confirms the grouping mechanism engaged; it is
+not an efficiency result. Every trip in this window was run to exercise a function, so
+the arrival pattern was set by what needed testing rather than by anything
+representative. A different pattern would produce a different number.
+
+**What grouping is actually for.** Two properties, at two layers. Dispatch: the trip
+rather than the parcel becomes the unit of assignment, so a resident with several
+parcels is visited once. Pickup identity: because the QR payload carries `door_task_id`
+rather than `package_id`, one scan releases every door under that key at that stop.
+`task_type` is load-bearing — a delivery and a return to the same resident stay separate
+by design.
 
 ---
 
