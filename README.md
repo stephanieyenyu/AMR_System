@@ -1,12 +1,11 @@
 # Flashbot — Autonomous Parcel Delivery for Residential Buildings
 
 A parcel delivery system built on a Pudu autonomous mobile robot, developed and exercised
-against physical hardware at Aurotek across 21 days of recorded testing. The
-resident-facing flow runs through LINE: arrival notice, collection scheduling, and cargo
+against physical hardware at Aurotek across 21 days of recorded testing. The residents' interface runs through LINE: arrival notice, collection scheduling, and cargo
 door release by scanning the QR code on the robot's screen. Building staff register
-parcels, monitor the robot, and resolve exceptions from a web dashboard.
+packages, monitor the robot, and resolve exceptions on the dashboard.
 
-The engineering problem is not delivery. A parcel in this system has more distinct ways to
+The engineering problem is not about delivery. A parcel in this system has more distinct ways to
 end than the nominal one — refusal at the door, collection timeout, resident decline,
 emergency recall, expiry, dispatch loss, door-assignment loss — and each carries its own
 transitions, timeout and recovery path. A run succeeds when the parcel reaches a terminal
