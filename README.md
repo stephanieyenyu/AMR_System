@@ -1,21 +1,20 @@
 # Flashbot — Autonomous Parcel Delivery for Residential Buildings
 
 A parcel delivery system built on a Pudu autonomous mobile robot, developed and exercised
-against physical hardware at Aurotek across 21 days of recorded testing. The residents' interface runs through LINE: arrival notice, collection scheduling, and cargo
-door release by scanning the QR code on the robot's screen. Building staff register
-packages, monitor the robot, and resolve exceptions on the dashboard.
+against physical hardware at Aurotek across 21 days of recorded testing. Residents may take actions to arrange their packages via LINE, including receiving arrival notice, scheduling parcels, and scanning the QR code on the robot's screen to unlock the cargo
+door. Building staff register parcels, monitor the robot, and resolve exceptions from a web dashboard.
 
-The engineering problem is not about delivery. A parcel in this system has more distinct ways to
-end than the nominal one — refusal at the door, collection timeout, resident decline,
-emergency recall, expiry, dispatch loss, door-assignment loss — and each carries its own
+The engineering problem is not delivery. A package in this system has more distinct ways to
+end than the nominal one, including refusal at the door, collection timeout, resident decline,
+emergency recall, expiry, dispatch loss, door-assignment loss, and each carries its own
 transitions, timeout and recovery path. A run succeeds when the parcel reaches a terminal
-state and the robot returns to standby, whichever branch it took; a refused parcel that
+state and the robot returns to standby, regardless of the path they took; a refused parcel that
 completes its return flow is as successful as a collected one. **I exercised every branch
-on physical hardware**: 92 of 164 test parcels were routed deliberately down a non-nominal
+on physical hardware**, and 92 of 164 test parcels were routed deliberately down a non-nominal
 path.
 
 What this repository contains is the state-management layer that stayed consistent under
-those conditions — a single-writer parcel state machine, a reconciliation loop that repairs
+those conditions. A single-writer parcel state machine, a reconciliation loop that repairs
 the failure modes inferable from observable robot state, and an explicit operator path for
 the failure modes that are not. It contains no learned components.
 
