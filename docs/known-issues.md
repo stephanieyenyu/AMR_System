@@ -1,7 +1,7 @@
 # Known Issues
 
-Each entry below records whether it was verified against source code or against the
-production database, and what remains unconfirmed. Entries are retained rather than
+Each entry below records whether it was verified against source code or against the test
+database, and what remains unconfirmed. Entries are retained rather than
 silently resolved: the classification itself — verified, unverified, accepted — is the
 substance of the document.
 
