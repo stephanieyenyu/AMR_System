@@ -414,3 +414,5 @@ The robot service requires Pudu Open Platform credentials, which are not include
 
 **Stephanie Lin, Yen Yu** — AI Development Dept. Intern, Aurotek
 July – August 2026
+
+Shared for portfolio purposes with permission from Aurotek. Not licensed for reuse.
