@@ -17,7 +17,7 @@ waypoints.
 
 | Table | Rows | What it holds |
 |---|---|---|
-| `packages` | 164 | Current parcel records with 25 columns of state and timestamps |
+| `packages` | 164 | Current package records with 25 columns of state and timestamps |
 | `task_logs` | 2,678 | Append-only event log; every state transition and every failure |
 | `line_binding` | 2 | Resident-to-unit bindings active at snapshot time |
 | `package_recipients` | 218 package IDs | Notification fan-out records |
@@ -75,17 +75,17 @@ distinction; any claim of "164 packages created" would be wrong.
 
 ## Trip batching
 
-Parcels are grouped into robot missions by `door_task_id`.
+packages are grouped into robot missions by `door_task_id`.
 
 | Figure | Value | Derivation |
 |---|---|---|
-| Parcels carrying a group key | 106 | `COUNT(*) WHERE door_task_id IS NOT NULL` |
+| packages carrying a group key | 106 | `COUNT(*) WHERE door_task_id IS NOT NULL` |
 | Distinct trips | 83 | `COUNT(DISTINCT door_task_id)` |
-| Trips carrying more than one parcel | 21 | Groups with `HAVING COUNT(*) > 1` |
-| Largest single trip | 3 parcels | `MAX` group size |
+| Trips carrying more than one package | 21 | Groups with `HAVING COUNT(*) > 1` |
+| Largest single trip | 3 packages | `MAX` group size |
 | Dispatches avoided by grouping | 23 | 106 − 83 |
 
-The 58 records without a group key break down as 9 `voided` parcels (never assigned a
+The 58 records without a group key break down as 9 `voided` packages (never assigned a
 cargo door, expected) and 49 records predating the grouping mechanism.
 
 **What this figure does not claim.** It confirms the grouping mechanism engaged; it is
@@ -111,8 +111,8 @@ SELECT event_type, level, COUNT(*) FROM task_logs GROUP BY event_type, level;
 | `error` | 334 | 12.5% |
 | `warning` | 46 | 1.7% |
 
-The 284 distinct package IDs exceed the 230 `created` events because a multi-parcel
-batch logs `created` once against the primary parcel while each parcel in the batch
+The 284 distinct package IDs exceed the 230 `created` events because a multi-package
+batch logs `created` once against the primary package while each package in the batch
 generates its own downstream events.
 
 ### Highest-frequency events
@@ -211,7 +211,7 @@ WHERE event_type IN (...) GROUP BY event_type;
 | `multi_package_assigned` | 7 |
 | `redispatched` | 6 |
 
-All 6 redispatched parcels ended in `returned_timeout`, `rejected_at_door`, or `voided` —
+All 6 redispatched packages ended in `returned_timeout`, `rejected_at_door`, or `voided` —
 none reached `completed`. These were deliberate exception-path tests, not production
 delivery attempts.
 
@@ -224,7 +224,7 @@ delivery attempts.
 At the time of the snapshot, no packages were in a non-terminal state. This is the result of two mechanisms working together, not a single mechanism:
 
 **Automated.** `poll_robot_returned` polls `/api/dashboard/status` every 20 seconds. When
-the robot reports a location that becomes idle, but no `returned` event is received, the scheduler automatically writes the missing status. On 2026-07-20 at 15:58:52 it fixed 13 parcels in one pass, after a connection failure. Every record it backfilled carries a `task_log` entry saying so.
+the robot reports a location that becomes idle, but no `returned` event is received, the scheduler automatically writes the missing status. On 2026-07-20 at 15:58:52 it fixed 13 packages in one pass, after a connection failure. Every record it backfilled carries a `task_log` entry saying so.
 
 **Manual.** A failed dispatch call leaves no trace in the robot's position, so nothing detects it and nothing recovers it. Those took operator action: 42 task deletions, 33 manual door releases, 25 force-resolves.
 
@@ -233,7 +233,7 @@ misrepresent what the system does.
 
 ### Durations from timestamps do not work
 
-`returned_at` is written after the fact by the reconciliation loop. For parcels whose doors were opened by hand earlier, that puts `returned_at` later than `door_closed_at`, and any duration calculated from the pair comes out negative. **No timing or latency figure appears anywhere in this project.** The data does not support such metrics.
+`returned_at` is written after the fact by the reconciliation loop. For packages whose doors were opened by hand earlier, that puts `returned_at` later than `door_closed_at`, and any duration calculated from the pair comes out negative. **No timing or latency figure appears anywhere in this project.** The data does not support such metrics.
 
 ### The test set is lopsided
 
@@ -241,5 +241,5 @@ One unit received 123 of 164 packages (75%). Counting standby-point records too,
 
 ### Pending Issues
 
-`package_recipients` points at 218 package IDs, but only 164 parcels still exist. Deleting a parcel is supposed to delete its recipient rows with it, so the extra ones are probably left over from an older delete path. Not checked before the snapshot; recorded in
+`package_recipients` points at 218 package IDs, but only 164 packages still exist. Deleting a package is supposed to delete its recipient rows with it, so the extra ones are probably left over from an older delete path. Not checked before the snapshot; recorded in
 [`known-issues.md`](known-issues.md). This issue only affects notification count aggregation.
