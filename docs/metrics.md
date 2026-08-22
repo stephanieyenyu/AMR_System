@@ -224,22 +224,22 @@ delivery attempts.
 At the time of the snapshot, no packages were in a non-terminal state. This is the result of two mechanisms working together, not a single mechanism:
 
 **Automated.** `poll_robot_returned` polls `/api/dashboard/status` every 20 seconds. When
-the robot reports a location that becomes idle, but no `returned` event is received, the scheduler automatically writes the missing status. On 2026-07-20 at 15:58:52 after a persistent connection failure, it searched for 13 packages at once, following a sustained connection failure. Each backfilled record carries a `task_log` entry naming the mechanism.
+the robot reports a location that becomes idle, but no `returned` event is received, the scheduler automatically writes the missing status. On 2026-07-20 at 15:58:52 it fixed 13 parcels in one pass, after a connection failure. Every record it backfilled carries a `task_log` entry saying so.
 
-**Manual.** Faults during the scheduling phase cannot be inferred from the robot's location and will not recover automatically. Faults requiring operator intervention include: 42 task deletions, 33 manual door openings, 25 forced resolutions.
+**Manual.** A failed dispatch call leaves no trace in the robot's position, so nothing detects it and nothing recovers it. Those took operator action: 42 task deletions, 33 manual door releases, 25 force-resolves.
 
 The README states this explicitly. Reporting "0 stuck" as evidence of autonomy would
 misrepresent what the system does.
 
-### Timestamp-derived durations are unreliable
+### Durations from timestamps do not work
 
-Time differences based on `returned_at` will produce negative values ​​and unreasonable values ​​because the coordination loop will backfill this column afterward—later than the `door_closed_at` values ​​for packages whose doors were manually opened. **Duration or delay metrics are not mentioned anywhere in this project.** The data does not support such metrics.
+`returned_at` is written after the fact by the reconciliation loop. For parcels whose doors were opened by hand earlier, that puts `returned_at` later than `door_closed_at`, and any duration calculated from the pair comes out negative. **No timing or latency figure appears anywhere in this project.** The data does not support such metrics.
 
-### Test distribution is skewed
+### The test set is lopsided
 
-One cell contained 123 of 164 packages (75%); the highest-ranking cell covered 79% of the activity, including backup point records. Behavioral characteristics across multiple concurrent destination scenarios are unclear.
+One unit received 123 of 164 packages (75%). Counting standby-point records too, the top account covers 79% of all activity. Nothing here shows how the system behaves with many different destinations arriving at once.
 
 ### Pending Issues
 
-`package_recipients` references 218 different package IDs, corresponding to 164 still existing packages. The `delete_packages` operation cascades to `PackageRecipient`, so the extra data is likely orphaned lines left over from previous deletion paths. This was not verified at the time of the snapshot; it has been documented in
+`package_recipients` points at 218 package IDs, but only 164 parcels still exist. Deleting a parcel is supposed to delete its recipient rows with it, so the extra ones are probably left over from an older delete path. Not checked before the snapshot; recorded in
 [`known-issues.md`](known-issues.md). This issue only affects notification count aggregation.
