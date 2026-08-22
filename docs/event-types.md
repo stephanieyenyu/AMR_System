@@ -1,88 +1,115 @@
-# event_type 完整清單（D-1 用）
+# Event Types
 
-來源：`task_logs` 實際資料，2026-08-14 快照，共 53 種、2,678 筆事件。
-可直接取代 `models.py` 中過期的註解區塊。
+Every state transition, operator action and failure in the system writes a row to
+`task_logs`. This document lists all 53 event types observed in the database, grouped by
+the part of the flow they belong to.
 
----
-
-## 可貼進 models.py 的版本
-
-```python
-# ── TaskLog.event_type 一覽（依 2026-08-14 資料庫實際紀錄，共 53 種）──
-#
-# 【建立與派送】
-#   created                    包裹建立
-#   queued                     排入佇列等待派送
-#   door_assigned              艙門分配成功
-#   door_joined                併入既有趟次（一趟多包裹）
-#   multi_package_assigned     一次分配多個艙門
-#   dispatched                 派送指令已送出
-#   arrived                    機器人抵達門牌
-#   trip_wait                  趟次等待中
-#   trip_completed             整趟結束
-#
-# 【住戶取貨】
-#   pickup_requested           住戶按下取貨
-#   pickup_scheduled           住戶預約取貨
-#   pickup_opened              掃碼開艙門成功
-#   completed                  取貨完成
-#   pending_pickup_notified    逾時未取提醒（排程）
-#   schedule_reminder_sent     預約前提醒（排程）
-#
-# 【住戶拒收與作廢】
-#   rejected                   住戶事前表示不收
-#   rejected_at_door           住戶在機器人抵達後拒收
-#   voided_acknowledged        作廢已確認
-#
-# 【退貨流程】
-#   return_requested           住戶申請退貨
-#   return_cancelled           住戶取消退貨
-#   return_door_opened         退貨艙門開啟
-#   return_retrieved           管理員確認取出退貨
-#   returned                   機器人帶回
-#   returned_and_opened        帶回並開門
-#   returned_timeout           退貨逾時（排程）
-#
-# 【管理員操作】
-#   door_closed                關閉艙門
-#   manual_door_opened         手動開門
-#   manual_door_closed         手動關門
-#   door_released_manually     手動釋放艙門
-#   case_closed                銷案
-#   force_resolved             強制解決
-#   redispatched               重新派送
-#   package_deleted            刪除包裹
-#   task_recalled              任務召回
-#   robot_recall_requested     請求機器人召回
-#   robot_recharge_requested   請求機器人回充
-#
-# 【LINE 綁定】
-#   line_binding_updated       綁定資料更新
-#   line_binding_deleted       綁定刪除
-#   user_unfollowed            使用者封鎖／取消追蹤
-#
-# 【錯誤事件】（level=error 或 warning）
-#   assign_timeout             艙門分配逾時
-#   assign_timeout_failed      艙門分配逾時處理失敗
-#   door_assign_failed         艙門分配失敗
-#   dispatch_failed            派送失敗
-#   cancel_task_failed         取消任務失敗
-#   complete_failed            完成處理失敗
-#   pickup_open_failed         取貨開門失敗
-#   poll_returned_failed       返回輪詢失敗
-#   return_failed              帶回失敗
-#   return_open_failed         退貨開門失敗
-#   return_door_open_failed    退貨艙門開啟失敗
-#   robot_recall_failed        機器人召回失敗
-#   show_qr_failed             QR Code 顯示失敗
-#   notify_failed              推播失敗
-```
+**Source** `task_logs`, 2026-08-14 snapshot — 53 distinct types across 2,678 rows.
+This list supersedes the outdated comment block in `models.py` (see
+[`known-issues.md`](known-issues.md) D-1).
 
 ---
 
-## 原註解漏掉的 9 種
+## Grouped by flow
 
-實際出現在資料庫、但舊註解沒列到的：
+### Creation and dispatch
+
+| Event | Meaning |
+|---|---|
+| `created` | Parcel registered |
+| `queued` | Queued, waiting for dispatch |
+| `door_assigned` | Cargo door assigned |
+| `door_joined` | Joined an existing trip — several parcels, one trip |
+| `multi_package_assigned` | Several doors assigned in one operation |
+| `dispatched` | Dispatch command sent to the robot |
+| `arrived` | Robot reached the unit |
+| `trip_wait` | Trip waiting |
+| `trip_completed` | Trip finished |
+
+### Resident pickup
+
+| Event | Meaning |
+|---|---|
+| `pickup_requested` | Resident asked to collect now |
+| `pickup_scheduled` | Resident booked a collection time |
+| `pickup_opened` | QR scan released the door |
+| `completed` | Collection completed |
+| `pending_pickup_notified` | Overdue-collection reminder sent by scheduler |
+| `schedule_reminder_sent` | Pre-booking reminder sent by scheduler |
+
+### Refusal and expiry
+
+| Event | Meaning |
+|---|---|
+| `rejected` | Resident declined before the robot set off |
+| `rejected_at_door` | Resident refused after the robot arrived |
+| `voided_acknowledged` | Expiry acknowledged |
+
+### Return flow
+
+| Event | Meaning |
+|---|---|
+| `return_requested` | Resident requested a return |
+| `return_cancelled` | Resident cancelled the return |
+| `return_door_opened` | Return door opened |
+| `return_retrieved` | Building staff confirmed collection of the returned item |
+| `returned` | Robot carried the parcel back |
+| `returned_and_opened` | Carried back, door opened |
+| `returned_timeout` | Return timed out — written by scheduler |
+
+### Operator actions
+
+| Event | Meaning |
+|---|---|
+| `door_closed` | Door closed |
+| `manual_door_opened` | Door opened by an operator |
+| `manual_door_closed` | Door closed by an operator |
+| `door_released_manually` | Door released by an operator |
+| `case_closed` | Case closed |
+| `force_resolved` | Parcel force-resolved |
+| `redispatched` | Parcel redispatched |
+| `package_deleted` | Parcel record deleted |
+| `task_recalled` | Robot task recalled |
+| `robot_recall_requested` | Recall requested |
+| `robot_recharge_requested` | Return-to-charge requested |
+
+### LINE account binding
+
+| Event | Meaning |
+|---|---|
+| `line_binding_updated` | Binding details changed |
+| `line_binding_deleted` | Binding removed |
+| `user_unfollowed` | User blocked or unfollowed the channel |
+
+### Failures
+
+Logged at `level=error` or `level=warning`. Every outbound robot call routes through one
+egress function, so a failed call always produces a row here — this is what makes the
+failure analysis in [`metrics.md`](metrics.md) possible.
+
+| Event | Meaning |
+|---|---|
+| `assign_timeout` | Door assignment timed out |
+| `assign_timeout_failed` | Handling of an assignment timeout itself failed |
+| `door_assign_failed` | Door assignment failed |
+| `dispatch_failed` | Dispatch call failed |
+| `cancel_task_failed` | Task cancellation failed |
+| `complete_failed` | Completion handling failed |
+| `pickup_open_failed` | Pickup door failed to open |
+| `poll_returned_failed` | Return poll failed |
+| `return_failed` | Carry-back failed |
+| `return_open_failed` | Return door failed to open |
+| `return_door_open_failed` | Return cargo door failed to open |
+| `robot_recall_failed` | Recall call failed |
+| `show_qr_failed` | QR code failed to display on the robot screen |
+| `notify_failed` | Push notification failed |
+
+---
+
+## Missing from the previous `models.py` comment
+
+Nine types appear in the database but were absent from the comment block this document
+replaces:
 
 ```
 trip_completed          trip_wait               queued
@@ -92,7 +119,9 @@ schedule_reminder_sent  return_open_failed      show_qr_failed
 
 ---
 
-## 純字母排序版（給 D-3 的前端對照表用）
+## Alphabetical
+
+For cross-referencing against front-end display labels.
 
 ```
 arrived                    pickup_scheduled
@@ -126,7 +155,7 @@ pickup_requested
 
 ---
 
-**備註**
-中文說明是依事件名稱與實際使用情境推得，
-貼進 `models.py` 前請對照程式碼確認語意無誤，特別是
-`trip_wait`、`queued`、`task_recalled`、`returned_and_opened` 這幾個。
+**On the descriptions.** These were derived from the event names and their observed usage
+rather than read off a specification, since none exists. Four are worth confirming
+against source before relying on them: `trip_wait`, `queued`, `task_recalled`, and
+`returned_and_opened`.
