@@ -1,9 +1,6 @@
 # Metrics
 
-Every figure quoted in the README derives from the PostgreSQL databases backing the test
-system, exercised in-house at Aurotek against the physical robot. This document records
-the source and derivation of each so that the numbers can be checked rather than
-accepted.
+All information referenced in the README file comes from the PostgreSQL database supporting the testing system. This system is used internally by Aurotek for testing physical robots. This document documents the source and derivation process of each piece of information to verify its authenticity, rather than simply accepting it outright.
 
 **Snapshot date** 2026-08-14
 **Observation window** 2026-07-14 to 2026-08-14 (21 days with activity)
@@ -96,12 +93,7 @@ not an efficiency result. Every trip in this window was run to exercise a functi
 the arrival pattern was set by what needed testing rather than by anything
 representative. A different pattern would produce a different number.
 
-**What grouping is actually for.** Two properties, at two layers. Dispatch: the trip
-rather than the parcel becomes the unit of assignment, so a resident with several
-parcels is visited once. Pickup identity: because the QR payload carries `door_task_id`
-rather than `package_id`, one scan releases every door under that key at that stop.
-`task_type` is load-bearing — a delivery and a return to the same resident stay separate
-by design.
+**What grouping is actually for.** Two attributes, two levels. Delivery: The journey, not the package, becomes the distribution unit, so residents with multiple packages only need to visit once. Pickup identification: Because the QR code payload carries `door_task_id` instead of `package_id`, a single scan unlocks all doors under that key on the website. `task_type` carries crucial information – packages delivered and returned to the same resident are separated by design.
 
 ---
 
@@ -167,10 +159,7 @@ GROUP BY event_type ORDER BY COUNT(*) DESC;
 
 ### The 12.47% figure is a ceiling
 
-Some `*_failed` events are false negatives: the robot call succeeded, but response
-handling or a connection timeout recorded a failure. The logging was not instrumented
-finely enough to separate these from genuine failures, so the true rate is lower by an
-unquantified margin. The README states this alongside the number.
+Some `*_failed` events are false alarms: the robot call succeeds, but the response processing or connection timeout is logged as a failure. The logging is not granular enough to distinguish these false alarms from genuine failures; therefore, the actual failure rate is lower than the reported failure rate, the exact extent of which needs to be quantified. This is explained in the README file.
 
 Two further caveats:
 
@@ -232,38 +221,25 @@ delivery attempts.
 
 ### "0 packages stuck" is a joint result
 
-No parcel sits in a non-terminal state at snapshot time. This is the product of two
-mechanisms, not one:
+At the time of the snapshot, no packages were in a non-terminal state. This is the result of two mechanisms working together, not a single mechanism:
 
 **Automated.** `poll_robot_returned` polls `/api/dashboard/status` every 20 seconds. When
-the robot's reported position changes to the standby point but no `returned` event
-arrived, the scheduler writes the missing state itself. On 2026-07-20 at 15:58:52 it
-recovered 13 parcels in a single pass, following a sustained connection failure. Each
-backfilled record carries a `task_log` entry naming the mechanism.
+the robot reports a location that becomes idle, but no `returned` event is received, the scheduler automatically writes the missing status. On 2026-07-20 at 15:58:52 after a persistent connection failure, it searched for 13 packages at once, following a sustained connection failure. Each backfilled record carries a `task_log` entry naming the mechanism.
 
-**Manual.** Dispatch-stage failures are not inferable from robot position and do not
-self-recover. Those required operator action: 42 task deletions, 33 manual door releases,
-25 force-resolves.
+**Manual.** Faults during the scheduling phase cannot be inferred from the robot's location and will not recover automatically. Faults requiring operator intervention include: 42 task deletions, 33 manual door openings, 25 forced resolutions.
 
 The README states this explicitly. Reporting "0 stuck" as evidence of autonomy would
 misrepresent what the system does.
 
 ### Timestamp-derived durations are unreliable
 
-Time deltas anchored on `returned_at` produce negative and implausible values because the
-reconciliation loop backfills that column after the fact — later than the
-`door_closed_at` of parcels whose doors were manually opened earlier. **No duration or
-latency metric is quoted anywhere in this project.** The data does not support one.
+Time differences based on `returned_at` will produce negative values ​​and unreasonable values ​​because the coordination loop will backfill this column afterward—later than the `door_closed_at` values ​​for packages whose doors were manually opened. **Duration or delay metrics are not mentioned anywhere in this project.** The data does not support such metrics.
 
 ### Test distribution is skewed
 
-One unit accounts for 123 of 164 parcels (75%); across all units the top account covers
-79% of activity including standby-point records. Behaviour under many concurrent distinct
-destinations is uncharacterised.
+One cell contained 123 of 164 packages (75%); the highest-ranking cell covered 79% of the activity, including backup point records. Behavioral characteristics across multiple concurrent destination scenarios are unclear.
 
-### Open item
+### Pending Issues
 
-`package_recipients` references 218 distinct package IDs against 164 surviving parcels.
-`delete_packages` cascades to `PackageRecipient`, so the excess is likely orphaned rows
-from an earlier deletion path. Unverified at snapshot time; noted in
-[`known-issues.md`](known-issues.md). This affects notification-count aggregates only.
+`package_recipients` references 218 different package IDs, corresponding to 164 still existing packages. The `delete_packages` operation cascades to `PackageRecipient`, so the extra data is likely orphaned lines left over from previous deletion paths. This was not verified at the time of the snapshot; it has been documented in
+[`known-issues.md`](known-issues.md). This issue only affects notification count aggregation.
