@@ -1,22 +1,15 @@
 # Data Dictionary
 
-**Source** `line-backend/app/models.py`, `flashbot-robot/src/aurobox/models.py` @ `4231f68`
+**Source** `line-backend/app/models.py`, `flashbot-robot/src/aurobox/models.py`
 **Diagram** [`images/er-diagram.png`](images/er-diagram.png)
 
 ## Conventions that apply throughout
 
-**No physical foreign keys exist.** None of the six tables declares a `ForeignKey`.
-Every relationship is maintained by application code and marked `REF` on the ER diagram.
-Deleting a parcel requires explicitly clearing `package_recipients`; the database will not
-cascade.
+**No physical foreign keys exist.** No `ForeignKey` is declared in any of the six tables. Every relationship is maintained by application code and marked `REF` on the ER diagram. Deleting a package requires explicitly clearing `package_recipients`; the database will not cascade.
 
-**Two independent databases.** `line-backend` and `flashbot-robot` each connect to their
-own PostgreSQL instance and communicate only over HTTP.
+**Two independent databases.** `line-backend` and `flashbot-robot` each connect to their own PostgreSQL instance and communicate only via HTTP.
 
-**Timestamp bases differ.** `line-backend` stores naive datetimes in Taipei local time
-(`now_taipei()` with tzinfo stripped); `flashbot-robot` stores naive UTC
-(`_utc_now_naive()`). **An eight-hour conversion is required before comparing timestamps
-across the two databases.** See [`known-issues.md`](known-issues.md#c-2-cross-service-timestamp-basis-differs-invisibly).
+**Timestamp bases differ.** `line-backend` stores the raw datetimes in Taipei local time (`now_taipei()` with tzinfo stripped); `flashbot-robot` stores UTC time (`_utc_now_naive()`). **An eight-hour conversion is required before comparing timestamps across the two databases.** See [`known-issues.md`](known-issues.md#c-2-cross-service-timestamp-basis-differs-invisibly).
 
 ---
 
@@ -24,8 +17,8 @@ across the two databases.** See [`known-issues.md`](known-issues.md#c-2-cross-se
 
 ## `packages`
 
-The core table and the sole source of truth for parcel state. Deliveries and returns
-share it, distinguished by `task_type`.
+The core table and the sole true source of package status. Deliveries and returns
+share this table, and are distinguished by `task_type`.
 
 ### Identity and state
 
@@ -174,9 +167,7 @@ Full event inventory: [`event-types.md`](event-types.md). The comment block in
 | `current_task_id` | VARCHAR(100) | | Mission currently executing |
 | `updated_at` | DATETIME | | `onupdate`, UTC |
 
-`last_point` is what `poll_robot_returned` compares against `ROBOT_HOME_POINT_NAME` to
-decide whether the robot has returned. The entire reconciliation loop rests on this one
-column.
+`last_point` is what `poll_robot_returned` compares against `ROBOT_HOME_POINT_NAME` to decide whether the robot has returned. The entire reconciliation loop rests on this one column.
 
 ---
 
@@ -199,21 +190,16 @@ column.
 |---|---|---|
 | `packages` → `doors` | 1..N | `door_task_id` |
 
-**This is the most consequential aspect of the data model.** The two database instances
-are fully independent and nothing at the database layer enforces this relationship:
+**This is the most consequential aspect of the data model.** The two database instances are completely independent, and there is no mechanism at the database layer to enforce this relationship:
 
 - The backend assigns a door and passes `door_task_id` (UUID) to the robot
 - The robot stores it in `doors.door_task_id` (VARCHAR(100), a string)
 - Neither side has a foreign key, a trigger, or a consistency check
 
-If either side is edited manually, or an API call fails without rollback, the two diverge
-**with no error raised anywhere**. The divergence surfaces only when the robot opens the
-wrong door or fails to open one at all.
+If either side is manually edited, or if an API call fails and is not rolled back, they will diverge, **without triggering any errors**. This divergence only becomes apparent if the bot opens the wrong door or cannot open any doors at all.
 
 This is the structural reason for the design decision described in
-[`architecture.md`](architecture.md#design-principle-one-authority-for-state): with no
-database-level guarantee available, correctness comes instead from a single-writer authority plus an idempotent
-reconciliation loop.
+[`architecture.md`](architecture.md#design-principle-one-authority-for-state): due to the lack of guarantees at the database level, correctness is guaranteed by a single writer authority plus an idempotent coordination loop.
 
 ---
 
