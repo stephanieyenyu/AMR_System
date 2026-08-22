@@ -1,11 +1,9 @@
 # API Reference
 
 **Source** `line-backend/app/main.py`
-**Totals** 39 HTTP routes · 14 outbound robot calls · 11 LINE conversation entry points · 6 scheduled jobs
+**Totals** 39 HTTP routes, 14 outbound robot calls, 11 LINE conversation entry points, 6 scheduled jobs
 
-Routes are grouped by caller rather than by path. A single path prefix carries different
-callers under different authentication schemes, so ordering by path would obscure the
-trust boundaries this inventory exists to make visible.
+Routes are grouped by who calls them, not by URL. Two routes may share the same URL prefix, but needs different permissions: one for residents, one for admins only. Sorting by URL would hide that.
 
 ---
 
@@ -19,13 +17,9 @@ trust boundaries this inventory exists to make visible.
 | Robot service | **none** | 2 |
 | Health check | none | 1 |
 
-Three categories are intentionally unauthenticated, with the rationale in `main.py`
-L44–55: `/webhook` verifies LINE's own signature; `/liff/*` and QR pickup serve residents
-who hold no credentials; robot callbacks carry no credentials and adding a requirement
-would break the callback outright.
+Three types of services intentionally neglect identity verification, the reasons for which are explained in `main.py` L44–55: `/webhook` verifies LINE's own signature; `/liff/*` and QR pickup services are for residents without credentials; robot callbacks do not require credentials, adding credentials would directly disable the callback function.
 
-The grouping was applied by caller rather than by effect, which has consequences
-documented in [`known-issues.md`](known-issues.md#c-3authentication-is-uneven-across-the-resident-facing-surface).
+The grouping was done by caller rather than effect, which has several consequences, documented in [`known-issues.md`](known-issues.md#c-3authentication-is-uneven-across-the-resident-facing-surface).
 
 ---
 
@@ -48,9 +42,7 @@ documented in [`known-issues.md`](known-issues.md#c-3authentication-is-uneven-ac
 | POST | `/door-tasks/{door_task_id}/pickup-complete` | ID Token **+ recipient match** | Scan to open door, body `{scanned_content, id_token}` | status unchanged (`arrived`); calls robot to open |
 | POST | `/door-tasks/{door_task_id}/complete` | **none** | "Pickup done" / "Return placed" — close door | `arrived → completed` |
 
-`pickup-complete` checks three things: the scanned content must equal the `door_task_id`,
-the ID Token must pass LINE verification, and the token's `sub` must appear in that task's
-`package_recipients`. Verification coverage across this surface is uneven; see
+`pickup-complete` checks three things: the scanned content must be equal to the `door_task_id`;  the ID Token must be verified via LINE; and the token's `sub` must appear in that task's 'package_recipients`. This verification coverage is uneven; please refer to
 [`known-issues.md`](known-issues.md#c-3authentication-is-uneven-across-the-resident-facing-surface).
 
 ---
@@ -62,8 +54,7 @@ the ID Token must pass LINE verification, and the token's `sub` must appear in t
 | POST | `/door-tasks/{door_task_id}/arrived` | none | Robot reached the resident waypoint | `delivering → arrived` for the whole group |
 | POST | `/packages/{package_id}/returned` | none | Robot back at the operations room | writes `returned_at` — superseded by polling, see below |
 
-These two are the only paths on which the robot initiates contact. Every other state
-check is a backend-initiated poll.
+The robot only initiates contact on these two paths. All the other status checks are initiated by polling from the backend.
 
 ---
 
@@ -194,7 +185,7 @@ Not HTTP routes — all arrive through `/webhook`.
 
 ## H. Scheduled jobs
 
-Not APIs, but they mutate state.
+Not APIs, but they changes state.
 
 | Job | Interval | Effect |
 |---|---|---|
@@ -207,23 +198,15 @@ Not APIs, but they mutate state.
 
 ---
 
-## Notes on this surface
+## Caveats
 
-Full treatment in [`known-issues.md`](known-issues.md).
+For a full explanation, please refer to [`known-issues.md`](known-issues.md).
 
 **`POST /packages/{package_id}/returned` is superseded.** Its docstring says the robot
-module calls it, but `poll_robot_returned` (L2813) states that the robot performs no
-return reporting, which is why the backend polls every 20 seconds instead. The two
-statements contradict each other; polling is what runs. The route should be removed.
+module calls it, but `poll_robot_returned` (L2813) states that the robot does not perform return reports, therefore the backend polls every 20 seconds instead. The two
+statements contradict each other; polling is actually in operation. The route should be removed.
 
-**`/admin/robot-status` accepts GET only.** If the robot service posts status here it
-receives 405. The robot's `_push_dashboard_status_loop` is currently commented out, so the
-two sides agree today — but enabling it would fail silently.
-
-**Two notification endpoints write one column with different semantics.**
-`notify-pending-pickup` fires once, guarded by a null check; `notify-completed-leftover`
-overwrites the same column on every call, restarting the 72-hour countdown. Any report or
-countdown treating that column as a single source will disagree with itself.
+**`/admin/robot-status` accepts GET only.** The robot's `_push_dashboard_status_loop` would POST status here, but it is commented out. Uncomment it and the robot gets a 405 with no visible failure.
 
 **Authentication requirements are not uniform** across the resident-reachable routes in
 section B. Reviewed in [`known-issues.md`](known-issues.md#c-3authentication-is-uneven-across-the-resident-facing-surface).
