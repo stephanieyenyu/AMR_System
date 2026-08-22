@@ -36,10 +36,10 @@ share this table, and are distinguished by `task_type`.
 | Column | Type | Notes |
 |---|---|---|
 | `door_id` | VARCHAR(10) | Assigned door number, NULL when unassigned |
-| `door_task_id` | UUID | **Shared by all parcels at the same stop.** Grouped on `line_user_id + unit + task_type`. Reusing the same physical door later produces a different ID |
-| `creation_batch_id` | UUID | **Shared by parcels created together** (`quantity > 1`). The arrival notice fires once, but a resident's pickup / schedule / decline applies to the whole batch |
+| `door_task_id` | UUID | **Shared by all packages at the same stop.** Grouped on `line_user_id + unit + task_type`. Reusing the same physical door later produces a different ID |
+| `creation_batch_id` | UUID | **Shared by packages created together** (`quantity > 1`). The arrival notice fires once, but a resident's pickup / schedule / decline applies to the whole batch |
 
-`door_task_id` is the most important key in the system. Every parcel under one
+`door_task_id` is the most important key in the system. Every package under one
 `door_task_id` transitions together — arrival, verification, completion, refusal, timeout.
 **The grouping condition must include `task_type`**, otherwise a unit's delivery and
 return would incorrectly merge into a single stop.
@@ -53,17 +53,17 @@ return would incorrectly merge into a single stop.
 | `arrived_at` | DATETIME | Robot arrival; used by `check_pickup_timeout` |
 | `returned_at` | DATETIME | Robot back at the operations room (door still closed at this point) |
 | `return_door_opened_at` | DATETIME | Staff pressed open and the door actually opened; used by `check_return_timeout` |
-| `door_closed_at` | DATETIME | Staff removed the parcel and closed the door |
+| `door_closed_at` | DATETIME | Staff removed the package and closed the door |
 
 ### Case closure and redelivery
 
 | Column | Type | Notes |
 |---|---|---|
-| `acknowledged_at` | DATETIME | Staff acknowledged a `voided` parcel |
+| `acknowledged_at` | DATETIME | Staff acknowledged a `voided` package |
 | `case_closed_at` | DATETIME | Case closed |
 | `return_retrieved_at` | DATETIME | Return item confirmed removed from the door |
 | `redispatched_at` | DATETIME | Redelivery triggered from the exceptions page |
-| `redispatched_to` | UUID | Points at the newly created parcel's `packages.id` |
+| `redispatched_to` | UUID | Points at the newly created package's `packages.id` |
 
 ### Notification and scheduling
 
@@ -97,7 +97,7 @@ return would incorrectly merge into a single stop.
 
 ## `package_recipients`
 
-Which LINE users a given parcel notifies. The fan-out is determined by `solo_notify`.
+Which LINE users a given package notifies. The fan-out is determined by `solo_notify`.
 
 | Column | Type | Constraint |
 |---|---|---|
@@ -105,7 +105,7 @@ Which LINE users a given parcel notifies. The fan-out is determined by `solo_not
 | `line_user_id` | VARCHAR(100) | **PK (composite)** |
 | `unit` | VARCHAR(50) | NOT NULL |
 
-Composite primary key on `(package_id, line_user_id)` — one parcel may notify several users.
+Composite primary key on `(package_id, line_user_id)` — one package may notify several users.
 
 ---
 
@@ -117,7 +117,7 @@ on restart, making history unrecoverable.
 | Column | Type | Constraint | Notes |
 |---|---|---|---|
 | `id` | UUID | PK | |
-| `package_id` | UUID | **nullable** | Some events (e.g. robot connection failure) belong to no parcel |
+| `package_id` | UUID | **nullable** | Some events (e.g. robot connection failure) belong to no package |
 | `event_type` | VARCHAR(50) | NOT NULL | 53 distinct values observed in production |
 | `level` | VARCHAR(10) | NOT NULL | `info` / `warning` / `error`, defaults `info` |
 | `detail` | VARCHAR(500) | | |
@@ -151,7 +151,7 @@ Full event inventory: [`event-types.md`](event-types.md). The comment block in
 | `empty` | Unoccupied |
 | `assigned` | Allocated, nothing loaded yet |
 | `loading` | Staff loading, door open |
-| `full` | Parcel loaded |
+| `full` | package loaded |
 | `picking` | Resident collecting, door open |
 | `putting` | Resident depositing, door open |
 
