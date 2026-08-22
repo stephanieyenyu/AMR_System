@@ -16,10 +16,10 @@ This list supersedes the outdated comment block in `models.py` (see
 
 | Event | Meaning |
 |---|---|
-| `created` | Parcel registered |
+| `created` | package registered |
 | `queued` | Queued, waiting for dispatch |
 | `door_assigned` | Cargo door assigned |
-| `door_joined` | Joined an existing trip — several parcels, one trip |
+| `door_joined` | Joined an existing trip — several packages, one trip |
 | `multi_package_assigned` | Several doors assigned in one operation |
 | `dispatched` | Dispatch command sent to the robot |
 | `arrived` | Robot reached the unit |
@@ -53,7 +53,7 @@ This list supersedes the outdated comment block in `models.py` (see
 | `return_cancelled` | Resident cancelled the return |
 | `return_door_opened` | Return door opened |
 | `return_retrieved` | Building staff confirmed collection of the returned item |
-| `returned` | Robot carried the parcel back |
+| `returned` | Robot carried the package back |
 | `returned_and_opened` | Carried back, door opened |
 | `returned_timeout` | Return timed out — written by scheduler |
 
@@ -66,9 +66,9 @@ This list supersedes the outdated comment block in `models.py` (see
 | `manual_door_closed` | Door closed by an operator |
 | `door_released_manually` | Door released by an operator |
 | `case_closed` | Case closed |
-| `force_resolved` | Parcel force-resolved |
-| `redispatched` | Parcel redispatched |
-| `package_deleted` | Parcel record deleted |
+| `force_resolved` | package force-resolved |
+| `redispatched` | package redispatched |
+| `package_deleted` | package record deleted |
 | `task_recalled` | Robot task recalled |
 | `robot_recall_requested` | Recall requested |
 | `robot_recharge_requested` | Return-to-charge requested |
