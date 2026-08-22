@@ -69,7 +69,7 @@ return would incorrectly merge into a single stop.
 
 | Column | Type | Notes |
 |---|---|---|
-| `pending_pickup_notified_at` | DATETIME | Return notice sent. **Once only** — starts the 72-hour void countdown |
+| `pending_pickup_notified_at` | DATETIME | Return notice sent. Starts the 72-hour void countdown |
 | `scheduled_pickup_at` | DATETIME | Resident's scheduled slot, rounded to the hour or half hour. Placement and dispatch are blocked until then |
 | `schedule_reminder_sent_at` | DATETIME | Whether the 2-hour-ahead reminder fired. **Once only** |
 
