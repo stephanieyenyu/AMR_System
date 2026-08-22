@@ -24,11 +24,11 @@ classification is the point of the document.
 
 ### A-1　`returned_at` timestamps appear inverted
 
-**Symptom.** Some parcels carry a `returned_at` later than their `door_closed_at`.
+**Symptom.** Some packages carry a `returned_at` later than their `door_closed_at`.
 Thirteen `returned` events share one timestamp: `2026-07-20 15:58:52`.
 
 **Cause.** The robot service's return call died with a connection error
-(`return_failed`, `HTTPSConnectionPool` unreachable), so those parcels never got marked
+(`return_failed`, `HTTPSConnectionPool` unreachable), so those packages never got marked
 returned. Later the `poll_robot_returned` scheduler saw via `/api/dashboard/status` that
 the robot had reached its standby point, and backfilled all thirteen at once. Each
 `task_log` entry says so in its detail field.
@@ -139,7 +139,7 @@ deployment. This is an audit result, not a reproduction guide.
 identity checks inconsistent inside a single flow. One endpoint runs three independent
 verifications: the scanned payload has to match the task identifier, the LIFF ID Token has
 to verify against LINE, and the token subject has to appear in that task's recipient list.
-Another endpoint in the same flow mutates parcel state and runs none of them.
+Another endpoint in the same flow mutates package state and runs none of them.
 
 There is also a legacy callback that accepts unauthenticated writes to a state column.
 Nothing calls it any more; backend polling replaced it. Its docstring and the polling
@@ -165,7 +165,7 @@ an identifier they were never meant to have.
 > unknown share of the recorded failures are reporting artifacts rather than real
 > failures. Kept as an operational note.
 
-**Symptom.** A dispatch or door-assignment call to the robot fails, the parcel halts
+**Symptom.** A dispatch or door-assignment call to the robot fails, the package halts
 mid-flow, and it blocks the tasks behind it. Someone has to delete the task by hand before
 anything moves.
 
@@ -184,11 +184,11 @@ Dispatch-stage failures give it nothing to work with, because no observable fact
 **Observed manual intervention.** `package_deleted` 42 · `door_released_manually` 33 ·
 `force_resolved` 25 · `redispatched` 6
 
-**Reading the "0 stuck" figure.** No parcel sits mid-flow at snapshot time, but automated
+**Reading the "0 stuck" figure.** No package sits mid-flow at snapshot time, but automated
 compensation and manual cleanup produced that together. It is not evidence the system
 converges on its own, and it is not presented that way.
 
-**Fix, if adopted.** After a retry ceiling, put the parcel back to `pending` and release its
+**Fix, if adopted.** After a retry ceiling, put the package back to `pending` and release its
 cargo door automatically instead of leaving it halted.
 
 ---
