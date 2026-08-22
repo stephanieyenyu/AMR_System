@@ -71,15 +71,15 @@ The robot only initiates contact on these two paths. All the other status checks
 
 ## E. Dashboard API (Basic Auth, 26 routes)
 
-### E-1　Parcel creation and listing
+### E-1　package creation and listing
 
 | Method | Path | Params | Purpose | Transition |
 |---|---|---|---|---|
 | POST | `/packages` | `{unit, recipient_name?, quantity:1–4}` | Register arrival, push notification | creates N rows `status=pending` sharing a `creation_batch_id` |
 | GET | `/admin/packages` | `page, page_size, date_from, date_to, unit` | Main table, server-side paging and filtering | read-only |
-| GET | `/admin/packages/live` | — | Only in-flight parcels, for alert banners, dispatch buttons, door mapping | read-only |
+| GET | `/admin/packages/live` | — | Only in-flight packages, for alert banners, dispatch buttons, door mapping | read-only |
 | GET | `/admin/packages/by-unit` | `unit` | Single-unit lookup, statuses collapsed into 4 groups | read-only |
-| POST | `/admin/packages/delete` | `{package_ids[]}` | Hard delete; blocks parcels occupying a door | removes from `packages` + `package_recipients` |
+| POST | `/admin/packages/delete` | `{package_ids[]}` | Hard delete; blocks packages occupying a door | removes from `packages` + `package_recipients` |
 
 ### E-2　Dispatch flow
 
@@ -87,7 +87,7 @@ The robot only initiates contact on these two paths. All the other status checks
 |---|---|---|---|---|
 | POST | `/packages/{package_id}/place` | `{door_id}` | Assign a door, call robot to open | writes `door_id` / `door_task_id` / `door_assigned_at`; status stays `pickup_now` |
 | POST | `/packages/{package_id}/release-door` | — | Release door, return to "awaiting placement" | clears `door_id` / `door_task_id` |
-| POST | `/admin/dispatch-batch` | — | Dispatch every loaded parcel at once | `pickup_now → delivering`, writes `stop_dispatched_at` |
+| POST | `/admin/dispatch-batch` | — | Dispatch every loaded package at once | `pickup_now → delivering`, writes `stop_dispatched_at` |
 
 ### E-3　Robot and cargo doors
 
@@ -103,12 +103,12 @@ The robot only initiates contact on these two paths. All the other status checks
 
 | Method | Path | Purpose | Transition |
 |---|---|---|---|
-| GET | `/admin/packages/exceptions` | Pending refused / timed-out / declined parcels | read-only |
-| POST | `/packages/{package_id}/acknowledge` | Acknowledge a declined parcel | writes `acknowledged_at` |
+| GET | `/admin/packages/exceptions` | Pending refused / timed-out / declined packages | read-only |
+| POST | `/packages/{package_id}/acknowledge` | Acknowledge a declined package | writes `acknowledged_at` |
 | POST | `/packages/{package_id}/confirm-return-retrieved` | Confirm return item removed from door | writes `return_retrieved_at` |
 | POST | `/packages/{package_id}/force-resolve` | Manual close when robot hardware was bypassed | backfills `returned_at` / `return_door_opened_at` / `door_closed_at` or `acknowledged_at` |
 | POST | `/admin/packages/close-case-batch` | Batch case closure | writes `case_closed_at` |
-| POST | `/packages/{package_id}/redispatch` | Redeliver | creates new parcel `status=pending`; old row gets `redispatched_at` / `redispatched_to` |
+| POST | `/packages/{package_id}/redispatch` | Redeliver | creates new package `status=pending`; old row gets `redispatched_at` / `redispatched_to` |
 | POST | `/packages/{package_id}/notify-pending-pickup` | Resend return notice (once only) | writes `pending_pickup_notified_at` |
 | POST | `/packages/{package_id}/notify-completed-leftover` | Completed but items possibly left behind | updates `pending_pickup_notified_at` (repeatable) |
 
@@ -116,7 +116,7 @@ The robot only initiates contact on these two paths. All the other status checks
 
 | Method | Path | Purpose |
 |---|---|---|
-| GET | `/admin/bindings` | Dropdown for the parcel creation form (active bindings only) |
+| GET | `/admin/bindings` | Dropdown for the package creation form (active bindings only) |
 | GET | `/admin/line-bindings` | All binding records |
 | POST | `/admin/line-bindings/{line_user_id}/delete` | Remove mistaken or malicious bindings |
 | POST | `/admin/line-bindings/{line_user_id}/update` | Change unit or name, body `{unit, name}` |
@@ -136,7 +136,7 @@ logging to `TaskLog`. Target set by `ROBOT_API_BASE_URL`.
 
 | Robot endpoint | Triggered by | When |
 |---|---|---|
-| `POST /api/door-tasks/{id}/assign` | `try_assign_door` | Staff clicks "place parcel" |
+| `POST /api/door-tasks/{id}/assign` | `try_assign_door` | Staff clicks "place package" |
 | `POST /api/door-tasks/{id}/assign-timeout` | `check_assign_timeout`, `release_door` | Assignment timed out, or manual release |
 | `POST /api/doors/load` | `/admin/dispatch-batch` | Batch close before departure |
 | `POST /api/robot/dispatch` | `/admin/dispatch-batch`, `advance_trip_or_return` | Depart for this stop |
