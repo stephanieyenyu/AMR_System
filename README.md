@@ -76,7 +76,7 @@ was specified jointly, which is the one boundary in this repository that is not 
 | **Data model** | Four tables, the grouping-key scheme for multi-package trips, and an append-only event log spanning 53 event types |
 | **Integration contract** | The HTTP interface between the two services, and all 14 outbound calls into the robot service |
 
-90 commits · 39 source files · 39 HTTP routes · 14 outbound robot calls · 11 LINE entry points ·
+39 source files · 39 HTTP routes · 14 outbound robot calls · 11 LINE entry points ·
 6 scheduled jobs · 53 event types · 4 tables.
 
 Figures count both services. Route and job counts come from `line-backend/app/main.py`; the 53
