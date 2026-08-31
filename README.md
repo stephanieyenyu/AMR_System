@@ -64,7 +64,7 @@ countdown starts from it.
 Two interns built this system inside a six-person team at Aurotek during July and August 2026.
 I co-led the project and held sole ownership of `line-backend`; my teammate owned
 `flashbot-robot`, the Flask service driving Pudu hardware. The HTTP interface between the two
-was specified jointly, which is the one boundary in this repository that is not solely mine.
+was specified jointly.
 
 | Component | Scope |
 |---|---|
