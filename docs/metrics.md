@@ -28,7 +28,7 @@ waypoints.
 
 | Figure | Value | Derivation |
 |---|---|---|
-| Commits | 90 | `git log --oneline \| wc -l` |
+| Commits | 2026/07/29-08/31 | `git log --oneline \| wc -l` |
 | Source files | 39 | `git ls-files "*.py" "*.js" "*.html" \| wc -l` |
 | HTTP routes | 39 | Route inventory in `docs/api.md` |
 | Outbound robot API calls | 14 | Call sites routed through `call_robot_api` |
