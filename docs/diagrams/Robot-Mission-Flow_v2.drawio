@@ -1,0 +1,421 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="第 1 页" id="oYswKIEb-8iPYebsNZtL">
+    <mxGraphModel dx="4760" dy="2485" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <UserObject label="" mermaidData="{&#xa;  &quot;data&quot;: &quot;flowchart LR\n    %% 定義全局樣式\n    classDef state fill:#f7f9fc,stroke:#333,stroke-width:2px,color:#000\n    classDef note fill:#fff5ad,stroke:#d4c374,stroke-width:1px,stroke-dasharray: 5 5,color:#333\n\n    %% 1. 定義起始點與機器人實體狀態 (圓角矩形)\n    Start((( )))\n    style Start fill:#000,stroke:#000\n    \n    Idle([\&quot;idle&lt;br&gt;管理室待命中\&quot;]):::state\n    Assign_Return([\&quot;assign_return&lt;br&gt;回管理室接收任務&lt;br&gt;送貨時開啟艙門\&quot;]):::state\n    Moving([\&quot;moving&lt;br&gt;移動中\&quot;]):::state\n    Dispatch([\&quot;dispatch&lt;br&gt;全部派送&lt;br&gt;關閉艙門\&quot;]):::state\n    Arrived([\&quot;arrived&lt;br&gt;已抵達座標&lt;br&gt;顯示QR CODE\&quot;]):::state\n    DoorOpen([\&quot;door_open&lt;br&gt;艙門已開啟\&quot;]):::state\n    RemoveQR([\&quot;romove_qr&lt;br&gt;消除QR CODE\&quot;]):::state\n    WaitingUser([\&quot;waiting_user&lt;br&gt;等待住戶操作\&quot;]):::state\n    DoorClose([\&quot;door_close&lt;br&gt;艙門已關閉\&quot;]):::state\n    Returning([\&quot;returning&lt;br&gt;返航\&quot;]):::state\n    Return_Open([\&quot;return_open&lt;br&gt;返航開門檢查\&quot;]):::state\n    Return_Close([\&quot;return_close&lt;br&gt;檢查完關門\&quot;]):::state\n    Stuck([\&quot;stuck&lt;br&gt;無法移動\&quot;]):::state\n    Charging([\&quot;charging&lt;br&gt;充電中\&quot;]):::state\n\n    %% 2. 機器人主流程連線\n    Start --&gt; Idle\n    Idle --&gt;|\&quot;管理員分配艙門\&quot;| Assign_Return\n\n    Assign_Return --&gt;|\&quot;派送多個任務\&quot;| Assign_Return\n    Assign_Return --&gt;|\&quot;任務派送後全部配送\&quot;| Dispatch\n    \n    Idle --&gt;|\&quot;返回後管理員開門檢查\&quot;| Return_Open\n    Return_Open --&gt;|\&quot;拿出遺留的包裹\&quot;| Return_Close\n    Return_Close --&gt;|\&quot;檢查結束後關閉艙門\&quot;| Idle\n    \n    Dispatch --&gt;|\&quot;移動到任務地點\&quot;| Moving\n    Moving --&gt;|\&quot;抵達指定門牌座標\&quot;| Arrived\n    Moving --&gt;|\&quot;遇到障礙物 / 迷失方向\&quot;| Stuck\n    Arrived --&gt;|\&quot;住戶掃碼成功\&quot;| DoorOpen\n    DoorOpen --&gt;|\&quot;艙門釋放\&quot;| WaitingUser\n    Arrived --&gt;|\&quot;超過8分鐘無動作&lt;br&gt;或住戶選擇拒收\&quot;| RemoveQR\n    WaitingUser --&gt;|\&quot;住戶完成放入/取出 &lt;br&gt; 或系統判定逾時\&quot;| DoorClose\n    DoorClose --&gt;|\&quot;尚有其他任務\&quot;| Moving\n    DoorClose --&gt;|\&quot;所有任務結束，返回管理室\&quot;| Returning\n    RemoveQR --&gt;|\&quot;尚有其他任務\&quot;| Moving\n    RemoveQR --&gt;|\&quot;所有任務結束，返回管理室\&quot;| Returning\n    Returning --&gt;|\&quot;機器人返回管理室\&quot;| Idle\n    Returning --&gt;|\&quot;遇到障礙物 / 迷失方向\&quot;| Stuck\n    Idle --&gt;|\&quot;艙門全空時&lt;br&gt;可呼叫前往充電站\&quot;| Charging\n    Charging --&gt;|\&quot;管理員分配艙門\&quot;| Assign_Return\n    \n    Stuck --&gt;|\&quot;管理員重置機器人&lt;br&gt;手動推回管理室\&quot;| Idle\n    Stuck --&gt;|\&quot;手動排除障礙&lt;br&gt;繼續進行任務\&quot;| Moving\n    Moving --&gt;|\&quot;管理員強制召回\&quot;| Returning\n\n    %% 3. 備註區塊與虛線相連\n    Note_Return_Close[\&quot;所有艙門轉為empty\&quot;]:::note\n    Note_Arrived[\&quot;此時機器人不允許移動&lt;br&gt;不中斷取/放貨\&quot;]:::note\n    Note_Assign_Return[\&quot;所有被選取的艙門轉為assign&lt;br&gt;送貨的艙門開啟後轉為loading\&quot;]:::note\n    Note_Dispatch[\&quot;放入貨物的艙門轉為full&lt;br&gt;等待退貨的艙門維持assign\&quot;]:::note\n    Note_DoorOpen[\&quot;正在取貨的艙門轉為picking&lt;br&gt;正在退貨的艙門轉為putting\&quot;]:::note\n    Note_RemoveQR[\&quot;等待取貨的艙門維持full&lt;br&gt;等待退貨的艙門轉為empty\&quot;]:::note\n    Note_DoorClose[\&quot;取貨完成的艙門轉為empty&lt;br&gt;退貨完成的艙門轉為full\&quot;]:::note\n    \n\n    %% 將備註與對應的狀態節點掛鉤\n    Assign_Return -.- Note_Assign_Return\n    Dispatch -.- Note_Dispatch\n    Arrived -.- Note_Arrived\n    DoorOpen -.- Note_DoorOpen\n    RemoveQR -.- Note_RemoveQR\n    DoorClose -.- Note_DoorClose\n    Return_Close -.- Note_Return_Close&quot;,&#xa;  &quot;config&quot;: null&#xa;}" id="Nu7ANZGfRiXXNqxukv-z-1">
+          <mxCell connectable="0" parent="1" style="group;transparentBounds=1;editIcon=1;lockedGroup=0;groupPadding=10;" vertex="1">
+            <mxGeometry height="833" width="2506" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="" mermaidId="n:Start" mermaidBaseStyle="ellipse;html=1;shape=doubleEllipse;aspect=fixed;strokeWidth=1;whiteSpace=wrap;fillColor=#000;strokeColor=default;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="" id="Nu7ANZGfRiXXNqxukv-z-2">
+          <mxCell parent="Nu7ANZGfRiXXNqxukv-z-1" style="ellipse;html=1;shape=doubleEllipse;aspect=fixed;strokeWidth=1;whiteSpace=wrap;fillColor=#000;strokeColor=default;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="20" width="20" x="140" y="496.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="idle&#xa;管理室待命中" mermaidId="n:Idle" mermaidBaseStyle="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="idle&#xa;管理室待命中" id="Nu7ANZGfRiXXNqxukv-z-3">
+          <mxCell parent="Nu7ANZGfRiXXNqxukv-z-1" style="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="53" width="120" x="249" y="480" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="assign_return&#xa;回管理室接收任務&#xa;送貨時開啟艙門" mermaidId="n:Assign_Return" mermaidBaseStyle="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="assign_return&#xa;回管理室接收任務&#xa;送貨時開啟艙門" id="Nu7ANZGfRiXXNqxukv-z-4">
+          <mxCell parent="Nu7ANZGfRiXXNqxukv-z-1" style="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="73" width="152" x="680" y="470" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="moving&#xa;移動中" mermaidId="n:Moving" mermaidBaseStyle="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="moving&#xa;移動中" id="Nu7ANZGfRiXXNqxukv-z-5">
+          <mxCell parent="Nu7ANZGfRiXXNqxukv-z-1" style="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="53" width="75" x="1332" y="480" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="dispatch&#xa;全部派送&#xa;關閉艙門" mermaidId="n:Dispatch" mermaidBaseStyle="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="dispatch&#xa;全部派送&#xa;關閉艙門" id="Nu7ANZGfRiXXNqxukv-z-6">
+          <mxCell parent="Nu7ANZGfRiXXNqxukv-z-1" style="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="73" width="88" x="1063" y="470" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="arrived&#xa;已抵達座標&#xa;顯示QR CODE" mermaidId="n:Arrived" mermaidBaseStyle="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="arrived&#xa;已抵達座標&#xa;顯示QR CODE" id="Nu7ANZGfRiXXNqxukv-z-7">
+          <mxCell parent="Nu7ANZGfRiXXNqxukv-z-1" style="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="73" width="120" x="1675" y="359" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="door_open&#xa;艙門已開啟" mermaidId="n:DoorOpen" mermaidBaseStyle="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="door_open&#xa;艙門已開啟" id="Nu7ANZGfRiXXNqxukv-z-8">
+          <mxCell parent="Nu7ANZGfRiXXNqxukv-z-1" style="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="53" width="104" x="2027" y="369" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="romove_qr&#xa;消除QR CODE" mermaidId="n:RemoveQR" mermaidBaseStyle="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="romove_qr&#xa;消除QR CODE" id="Nu7ANZGfRiXXNqxukv-z-9">
+          <mxCell parent="Nu7ANZGfRiXXNqxukv-z-1" style="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="53" width="120" x="2019" y="538" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="waiting_user&#xa;等待住戶操作" mermaidId="n:WaitingUser" mermaidBaseStyle="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="waiting_user&#xa;等待住戶操作" id="Nu7ANZGfRiXXNqxukv-z-10">
+          <mxCell parent="Nu7ANZGfRiXXNqxukv-z-1" style="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="53" width="120" x="2400" y="369" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="door_close&#xa;艙門已關閉" mermaidId="n:DoorClose" mermaidBaseStyle="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="door_close&#xa;艙門已關閉" id="Nu7ANZGfRiXXNqxukv-z-11">
+          <mxCell parent="Nu7ANZGfRiXXNqxukv-z-1" style="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="53" width="104" x="2810" y="369" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="returning&#xa;返航" mermaidId="n:Returning" mermaidBaseStyle="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="returning&#xa;返航" id="Nu7ANZGfRiXXNqxukv-z-12">
+          <mxCell parent="Nu7ANZGfRiXXNqxukv-z-1" style="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="53" width="90" x="3100" y="533" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="return_open&#xa;返航開門檢查" mermaidId="n:Return_Open" mermaidBaseStyle="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="return_open&#xa;返航開門檢查" id="Nu7ANZGfRiXXNqxukv-z-13">
+          <mxCell parent="Nu7ANZGfRiXXNqxukv-z-1" style="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="53" width="120" x="249" y="252" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="return_close&#xa;檢查完關門" mermaidId="n:Return_Close" mermaidBaseStyle="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="return_close&#xa;檢查完關門" id="Nu7ANZGfRiXXNqxukv-z-14">
+          <mxCell parent="Nu7ANZGfRiXXNqxukv-z-1" style="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="53" width="114" x="550" y="359" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="stuck&#xa;無法移動" mermaidId="n:Stuck" mermaidBaseStyle="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="stuck&#xa;無法移動" id="Nu7ANZGfRiXXNqxukv-z-15">
+          <mxCell parent="Nu7ANZGfRiXXNqxukv-z-1" style="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="53" width="88" x="2416" y="767" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="charging&#xa;充電中" mermaidId="n:Charging" mermaidBaseStyle="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="charging&#xa;充電中" id="Nu7ANZGfRiXXNqxukv-z-16">
+          <mxCell parent="Nu7ANZGfRiXXNqxukv-z-1" style="html=1;rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#f7f9fc;strokeColor=#333;fontColor=default;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="53" width="85" x="480" y="627" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="所有艙門轉為empty" mermaidId="n:Note_Return_Close" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=1;fillColor=#fff5ad;strokeColor=#d4c374;fontColor=#333;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;dashed=1;dashPattern=5 5;fixDash=1;" mermaidBaseValue="所有艙門轉為empty" id="Nu7ANZGfRiXXNqxukv-z-17">
+          <mxCell parent="Nu7ANZGfRiXXNqxukv-z-1" style="html=1;whiteSpace=wrap;strokeWidth=1;fillColor=#fff5ad;strokeColor=#d4c374;fontColor=#333;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;dashed=1;dashPattern=5 5;fixDash=1;" vertex="1">
+            <mxGeometry height="54" width="201" x="506.5" y="198" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="此時機器人不允許移動&#xa;不中斷取/放貨" mermaidId="n:Note_Arrived" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=1;fillColor=#fff5ad;strokeColor=#d4c374;fontColor=#333;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;dashed=1;dashPattern=5 5;fixDash=1;" mermaidBaseValue="此時機器人不允許移動&#xa;不中斷取/放貨" id="Nu7ANZGfRiXXNqxukv-z-18">
+          <mxCell parent="Nu7ANZGfRiXXNqxukv-z-1" style="html=1;whiteSpace=wrap;strokeWidth=1;fillColor=#fff5ad;strokeColor=#d4c374;fontColor=#333;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;dashed=1;dashPattern=5 5;fixDash=1;" vertex="1">
+            <mxGeometry height="73" width="220" x="1870" y="202" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="所有被選取的艙門轉為assign&#xa;送貨的艙門開啟後轉為loading" mermaidId="n:Note_Assign_Return" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=1;fillColor=#fff5ad;strokeColor=#d4c374;fontColor=#333;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;dashed=1;dashPattern=5 5;fixDash=1;" mermaidBaseValue="所有被選取的艙門轉為assign&#xa;送貨的艙門開啟後轉為loading" id="Nu7ANZGfRiXXNqxukv-z-19">
+          <mxCell parent="Nu7ANZGfRiXXNqxukv-z-1" style="html=1;whiteSpace=wrap;strokeWidth=1;fillColor=#fff5ad;strokeColor=#d4c374;fontColor=#333;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;dashed=1;dashPattern=5 5;fixDash=1;" vertex="1">
+            <mxGeometry height="73" width="272" x="791" y="337" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="放入貨物的艙門轉為full&#xa;等待退貨的艙門維持assign" mermaidId="n:Note_Dispatch" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=1;fillColor=#fff5ad;strokeColor=#d4c374;fontColor=#333;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;dashed=1;dashPattern=5 5;fixDash=1;" mermaidBaseValue="放入貨物的艙門轉為full&#xa;等待退貨的艙門維持assign" id="Nu7ANZGfRiXXNqxukv-z-20">
+          <mxCell parent="Nu7ANZGfRiXXNqxukv-z-1" style="html=1;whiteSpace=wrap;strokeWidth=1;fillColor=#fff5ad;strokeColor=#d4c374;fontColor=#333;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;dashed=1;dashPattern=5 5;fixDash=1;" vertex="1">
+            <mxGeometry height="73" width="247" x="1160" y="591" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="正在取貨的艙門轉為picking&#xa;正在退貨的艙門轉為putting" mermaidId="n:Note_DoorOpen" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=1;fillColor=#fff5ad;strokeColor=#d4c374;fontColor=#333;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;dashed=1;dashPattern=5 5;fixDash=1;" mermaidBaseValue="正在取貨的艙門轉為picking&#xa;正在退貨的艙門轉為putting" id="Nu7ANZGfRiXXNqxukv-z-21">
+          <mxCell parent="Nu7ANZGfRiXXNqxukv-z-1" style="html=1;whiteSpace=wrap;strokeWidth=1;fillColor=#fff5ad;strokeColor=#d4c374;fontColor=#333;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;dashed=1;dashPattern=5 5;fixDash=1;" vertex="1">
+            <mxGeometry height="73" width="256" x="2220" y="242" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="等待取貨的艙門維持full&#xa;等待退貨的艙門轉為empty" mermaidId="n:Note_RemoveQR" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=1;fillColor=#fff5ad;strokeColor=#d4c374;fontColor=#333;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;dashed=1;dashPattern=5 5;fixDash=1;" mermaidBaseValue="等待取貨的艙門維持full&#xa;等待退貨的艙門轉為empty" id="Nu7ANZGfRiXXNqxukv-z-22">
+          <mxCell parent="Nu7ANZGfRiXXNqxukv-z-1" style="html=1;whiteSpace=wrap;strokeWidth=1;fillColor=#fff5ad;strokeColor=#d4c374;fontColor=#333;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;dashed=1;dashPattern=5 5;fixDash=1;" vertex="1">
+            <mxGeometry height="73" width="249" x="2200" y="442" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="取貨完成的艙門轉為empty&#xa;退貨完成的艙門轉為full" mermaidId="n:Note_DoorClose" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=1;fillColor=#fff5ad;strokeColor=#d4c374;fontColor=#333;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;dashed=1;dashPattern=5 5;fixDash=1;" mermaidBaseValue="取貨完成的艙門轉為empty&#xa;退貨完成的艙門轉為full" id="Nu7ANZGfRiXXNqxukv-z-23">
+          <mxCell parent="Nu7ANZGfRiXXNqxukv-z-1" style="html=1;whiteSpace=wrap;strokeWidth=1;fillColor=#fff5ad;strokeColor=#d4c374;fontColor=#333;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;dashed=1;dashPattern=5 5;fixDash=1;" vertex="1">
+            <mxGeometry height="73" width="249" x="2941" y="242" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="" mermaidId="e:Start-&gt;Idle#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0;entryY=0.51;" mermaidBaseValue="" id="Nu7ANZGfRiXXNqxukv-z-24">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-2" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0;entryY=0.51;rounded=0;" target="Nu7ANZGfRiXXNqxukv-z-3">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="管理員分配艙門" mermaidId="e:Idle-&gt;Assign_Return#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.65;exitY=0;entryX=0;entryY=0.07;" mermaidBaseValue="管理員分配艙門" id="Nu7ANZGfRiXXNqxukv-z-25">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-3" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0;entryY=0.5;rounded=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;" target="Nu7ANZGfRiXXNqxukv-z-4">
+            <mxGeometry relative="1" x="-0.0289" y="-10" as="geometry">
+              <mxPoint y="1" as="offset" />
+              <Array as="points" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="派送多個任務" mermaidId="e:Assign_Return-&gt;Assign_Return#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);" mermaidBaseValue="派送多個任務" id="Nu7ANZGfRiXXNqxukv-z-26">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-4" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);rounded=0;edgeStyle=orthogonalEdgeStyle;innerLoopWaypoints=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" target="Nu7ANZGfRiXXNqxukv-z-4">
+            <mxGeometry relative="1" x="-0.5911" y="38" as="geometry">
+              <mxPoint as="offset" />
+              <Array as="points">
+                <mxPoint x="718" y="637.06" />
+                <mxPoint x="794" y="637.06" />
+              </Array>
+              <mxPoint x="832" y="591" as="sourcePoint" />
+              <mxPoint x="908.0000000000002" y="591" as="targetPoint" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="任務派送後全部配送" mermaidId="e:Assign_Return-&gt;Dispatch#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.88;exitY=0;entryX=0;entryY=0.51;" mermaidBaseValue="任務派送後全部配送" id="Nu7ANZGfRiXXNqxukv-z-27">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-4" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0;entryY=0.51;rounded=0;exitDx=0;exitDy=0;" target="Nu7ANZGfRiXXNqxukv-z-6">
+            <mxGeometry relative="1" x="-0.0647" y="-10" as="geometry">
+              <mxPoint as="offset" />
+              <Array as="points" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="返回後管理員開門檢查" mermaidId="e:Idle-&gt;Return_Open#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.38;entryX=0;entryY=0.51;" mermaidBaseValue="返回後管理員開門檢查" id="Nu7ANZGfRiXXNqxukv-z-28">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-3" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=0;entryX=0.5;entryY=1;rounded=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" target="Nu7ANZGfRiXXNqxukv-z-13">
+            <mxGeometry relative="1" x="0.1604" as="geometry">
+              <mxPoint y="-1" as="offset" />
+              <Array as="points" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="拿出遺留的包裹" mermaidId="e:Return_Open-&gt;Return_Close#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.51;entryX=0;entryY=0.28;" mermaidBaseValue="拿出遺留的包裹" id="Nu7ANZGfRiXXNqxukv-z-29">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-13" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.51;entryX=0;entryY=0.5;rounded=0;entryDx=0;entryDy=0;" target="Nu7ANZGfRiXXNqxukv-z-14">
+            <mxGeometry relative="1" x="-0.0824" y="5" as="geometry">
+              <mxPoint x="1" as="offset" />
+              <Array as="points" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="檢查結束後關閉艙門" mermaidId="e:Return_Close-&gt;Idle#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.06;exitY=1;entryX=0.88;entryY=1;" mermaidBaseValue="檢查結束後關閉艙門" id="Nu7ANZGfRiXXNqxukv-z-30">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-14" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0;exitY=0.5;entryX=0.75;entryY=0;rounded=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;" target="Nu7ANZGfRiXXNqxukv-z-3">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="移動到任務地點" mermaidId="e:Dispatch-&gt;Moving#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.19;entryX=0;entryY=0.51;" mermaidBaseValue="移動到任務地點" id="Nu7ANZGfRiXXNqxukv-z-31">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-6" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0;entryY=0.51;rounded=0;exitDx=0;exitDy=0;" target="Nu7ANZGfRiXXNqxukv-z-5">
+            <mxGeometry relative="1" x="-0.0531" y="-6" as="geometry">
+              <mxPoint x="1" as="offset" />
+              <Array as="points" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="抵達指定門牌座標" mermaidId="e:Moving-&gt;Arrived#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.13;entryX=0;entryY=0.49;" mermaidBaseValue="抵達指定門牌座標" id="Nu7ANZGfRiXXNqxukv-z-32">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-5" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.75;exitY=0;entryX=0;entryY=0.49;rounded=0;exitDx=0;exitDy=0;" target="Nu7ANZGfRiXXNqxukv-z-7">
+            <mxGeometry relative="1" x="-0.1061" y="-27" as="geometry">
+              <mxPoint as="offset" />
+              <Array as="points">
+                <mxPoint x="1520" y="394.77" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="遇到障礙物 / 迷失方向" mermaidId="e:Moving-&gt;Stuck#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.7452830188679245;entryX=0;entryY=0.7452830188679245;curved=1;exitX=1;exitY=0.75;entryX=0;entryY=0.75;" mermaidBaseValue="遇到障礙物 / 迷失方向" id="Nu7ANZGfRiXXNqxukv-z-33">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-5" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.75;exitY=1;entryX=0;entryY=0.25;rounded=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" target="Nu7ANZGfRiXXNqxukv-z-15">
+            <mxGeometry relative="1" x="-0.1723" y="40" as="geometry">
+              <mxPoint as="offset" />
+              <Array as="points">
+                <mxPoint x="1840" y="802" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="住戶掃碼成功" mermaidId="e:Arrived-&gt;DoorOpen#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.18;entryX=0;entryY=0.51;" mermaidBaseValue="住戶掃碼成功" id="Nu7ANZGfRiXXNqxukv-z-34">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-7" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0;entryY=0.51;rounded=0;exitDx=0;exitDy=0;" target="Nu7ANZGfRiXXNqxukv-z-8">
+            <mxGeometry relative="1" x="-0.0086" as="geometry">
+              <mxPoint as="offset" />
+              <Array as="points" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="艙門釋放" mermaidId="e:DoorOpen-&gt;WaitingUser#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.64;exitY=1;entryX=0;entryY=0.51;" mermaidBaseValue="艙門釋放" id="Nu7ANZGfRiXXNqxukv-z-35">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-8" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0;entryY=0.51;rounded=0;exitDx=0;exitDy=0;" target="Nu7ANZGfRiXXNqxukv-z-10">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="超過8分鐘無動作&#xa;或住戶選擇拒收" mermaidId="e:Arrived-&gt;RemoveQR#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.84;exitY=1;entryX=0;entryY=0.28;" mermaidBaseValue="超過8分鐘無動作&#xa;或住戶選擇拒收" id="Nu7ANZGfRiXXNqxukv-z-36">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-7" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.84;exitY=1;entryX=0;entryY=0.28;rounded=0;" target="Nu7ANZGfRiXXNqxukv-z-9">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="1884" y="528" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="住戶完成放入/取出&#xa;或系統判定逾時" mermaidId="e:WaitingUser-&gt;DoorClose#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.51;entryX=0;entryY=0.32;" mermaidBaseValue="住戶完成放入/取出&#xa;或系統判定逾時" id="Nu7ANZGfRiXXNqxukv-z-37">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-10" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.51;entryX=0;entryY=0.5;rounded=0;entryDx=0;entryDy=0;" target="Nu7ANZGfRiXXNqxukv-z-11">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="尚有其他任務" mermaidId="e:DoorClose-&gt;Moving#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0;exitY=0.74;entryX=0.81;entryY=1;" mermaidBaseValue="尚有其他任務" id="Nu7ANZGfRiXXNqxukv-z-38">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-11" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.25;exitY=0;rounded=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="Nu7ANZGfRiXXNqxukv-z-5">
+            <mxGeometry relative="1" x="-0.0697" as="geometry">
+              <mxPoint as="offset" />
+              <Array as="points">
+                <mxPoint x="2640" y="152" />
+                <mxPoint x="2410" y="152" />
+                <mxPoint x="1820" y="152" />
+                <mxPoint x="1570" y="162" />
+                <mxPoint x="1420" y="332" />
+              </Array>
+              <mxPoint x="1390" y="522" as="targetPoint" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="所有任務結束，返回管理室" mermaidId="e:DoorClose-&gt;Returning#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.74;entryX=0.21;entryY=0;" mermaidBaseValue="所有任務結束，返回管理室" id="Nu7ANZGfRiXXNqxukv-z-39">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-11" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.74;entryX=0;entryY=0.5;rounded=0;entryDx=0;entryDy=0;" target="Nu7ANZGfRiXXNqxukv-z-12">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="尚有其他任務" mermaidId="e:RemoveQR-&gt;Moving#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0;exitY=0.62;entryX=1;entryY=0.75;" mermaidBaseValue="尚有其他任務" id="Nu7ANZGfRiXXNqxukv-z-40">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-9" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0;exitY=0.62;entryX=1;entryY=0.25;rounded=0;entryDx=0;entryDy=0;" target="Nu7ANZGfRiXXNqxukv-z-5">
+            <mxGeometry relative="1" x="0.168" y="-19" as="geometry">
+              <mxPoint as="offset" />
+              <Array as="points">
+                <mxPoint x="1670" y="577" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="所有任務結束，返回管理室" mermaidId="e:RemoveQR-&gt;Returning#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.68;exitY=1;entryX=0.14;entryY=0;" mermaidBaseValue="所有任務結束，返回管理室" id="Nu7ANZGfRiXXNqxukv-z-41">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-9" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0;entryY=0.5;rounded=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" target="Nu7ANZGfRiXXNqxukv-z-12">
+            <mxGeometry relative="1" x="-0.0383" as="geometry">
+              <mxPoint as="offset" />
+              <Array as="points" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="機器人返回管理室" mermaidId="e:Returning-&gt;Idle#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0;exitY=0.64;entryX=0.76;entryY=1;" mermaidBaseValue="機器人返回管理室" id="Nu7ANZGfRiXXNqxukv-z-42">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-12" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=1;entryX=0.25;entryY=1;rounded=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" target="Nu7ANZGfRiXXNqxukv-z-3">
+            <mxGeometry relative="1" x="-0.0066" y="-11" as="geometry">
+              <mxPoint as="offset" />
+              <Array as="points">
+                <mxPoint x="3030" y="817" />
+                <mxPoint x="1970" y="1017" />
+                <mxPoint x="290" y="917" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="遇到障礙物 / 迷失方向" mermaidId="e:Returning-&gt;Stuck#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.51;entryX=0;entryY=0.32;" mermaidBaseValue="遇到障礙物 / 迷失方向" id="Nu7ANZGfRiXXNqxukv-z-43">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-12" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.25;exitY=1;entryX=1;entryY=0.25;rounded=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;" target="Nu7ANZGfRiXXNqxukv-z-15">
+            <mxGeometry relative="1" x="0.1213" y="-31" as="geometry">
+              <mxPoint x="-1" as="offset" />
+              <Array as="points">
+                <mxPoint x="3030" y="807" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="艙門全空時&#xa;可呼叫前往充電站" mermaidId="e:Idle-&gt;Charging#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.8;exitY=0;entryX=0;entryY=0.51;" mermaidBaseValue="艙門全空時&#xa;可呼叫前往充電站" id="Nu7ANZGfRiXXNqxukv-z-44">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-3" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.75;entryX=0;entryY=0.51;rounded=0;exitDx=0;exitDy=0;" target="Nu7ANZGfRiXXNqxukv-z-16">
+            <mxGeometry relative="1" x="-0.2049" y="38" as="geometry">
+              <mxPoint as="offset" />
+              <Array as="points">
+                <mxPoint x="390" y="647" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="管理員分配艙門" mermaidId="e:Charging-&gt;Assign_Return#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.51;entryX=0;entryY=0.85;" mermaidBaseValue="管理員分配艙門" id="Nu7ANZGfRiXXNqxukv-z-45">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-16" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.51;entryX=0;entryY=0.5;rounded=0;entryDx=0;entryDy=0;" target="Nu7ANZGfRiXXNqxukv-z-4">
+            <mxGeometry relative="1" x="0.0165" y="19" as="geometry">
+              <mxPoint as="offset" />
+              <Array as="points">
+                <mxPoint x="640" y="627" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="管理員重置機器人&#xa;手動推回管理室" mermaidId="e:Stuck-&gt;Idle#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0;exitY=0.77;entryX=0.7;entryY=1;" mermaidBaseValue="管理員重置機器人&#xa;手動推回管理室" id="Nu7ANZGfRiXXNqxukv-z-46">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-15" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0;exitY=0.75;entryX=0.5;entryY=1;rounded=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" target="Nu7ANZGfRiXXNqxukv-z-3">
+            <mxGeometry relative="1" x="-0.1153" y="1" as="geometry">
+              <mxPoint x="1" as="offset" />
+              <Array as="points">
+                <mxPoint x="2180" y="947" />
+                <mxPoint x="360" y="901.75" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="手動排除障礙&#xa;繼續進行任務" mermaidId="e:Stuck-&gt;Moving#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0;exitY=0.25471698113207547;entryX=1;entryY=0.25471698113207547;curved=1;exitX=0;exitY=0.25;entryX=1;entryY=0.25;" mermaidBaseValue="手動排除障礙&#xa;繼續進行任務" id="Nu7ANZGfRiXXNqxukv-z-47">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-15" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);entryX=0.5;entryY=1;rounded=0;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" target="Nu7ANZGfRiXXNqxukv-z-5">
+            <mxGeometry relative="1" x="0.0962" y="-98" as="geometry">
+              <mxPoint as="offset" />
+              <Array as="points">
+                <mxPoint x="1730" y="888.5" />
+              </Array>
+              <mxPoint x="2500" y="891.75" as="sourcePoint" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="管理員強制召回" mermaidId="e:Moving-&gt;Returning#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.73;exitY=1;entryX=0.08;entryY=0;" mermaidBaseValue="管理員強制召回" id="Nu7ANZGfRiXXNqxukv-z-48">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-5" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.75;entryX=0;entryY=0.75;rounded=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" target="Nu7ANZGfRiXXNqxukv-z-12">
+            <mxGeometry relative="1" x="0.0069" as="geometry">
+              <mxPoint x="1" as="offset" />
+              <Array as="points">
+                <mxPoint x="1790" y="692" />
+                <mxPoint x="2050" y="712" />
+                <mxPoint x="2620" y="712" />
+                <mxPoint x="3010" y="712" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" mermaidId="e:Assign_Return-&gt;Note_Assign_Return#0" mermaidBaseStyle="curved=1;dashed=1;dashPattern=2 3;fixDash=1;startArrow=none;endArrow=none;strokeColor=light-dark(#333333,#cccccc);exitX=0.68;exitY=1;entryX=0;entryY=0.51;" mermaidBaseValue="" id="Nu7ANZGfRiXXNqxukv-z-49">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-4" style="curved=1;dashed=1;dashPattern=2 3;fixDash=1;startArrow=none;endArrow=none;strokeColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=0;entryX=0;entryY=0.51;rounded=0;exitDx=0;exitDy=0;" target="Nu7ANZGfRiXXNqxukv-z-19">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="740" y="407" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" mermaidId="e:Dispatch-&gt;Note_Dispatch#0" mermaidBaseStyle="curved=1;dashed=1;dashPattern=2 3;fixDash=1;startArrow=none;endArrow=none;strokeColor=light-dark(#333333,#cccccc);exitX=0.97;exitY=1;entryX=0;entryY=0.49;" mermaidBaseValue="" id="Nu7ANZGfRiXXNqxukv-z-50">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-6" style="curved=1;dashed=1;dashPattern=2 3;fixDash=1;startArrow=none;endArrow=none;strokeColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=1;entryX=0;entryY=0.49;rounded=0;exitDx=0;exitDy=0;" target="Nu7ANZGfRiXXNqxukv-z-20">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="1100" y="637" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" mermaidId="e:Arrived-&gt;Note_Arrived#0" mermaidBaseStyle="curved=1;dashed=1;dashPattern=2 3;fixDash=1;startArrow=none;endArrow=none;strokeColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.81;entryX=0;entryY=0.51;" mermaidBaseValue="" id="Nu7ANZGfRiXXNqxukv-z-51">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-7" style="curved=1;dashed=1;dashPattern=2 3;fixDash=1;startArrow=none;endArrow=none;strokeColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=0;entryX=0;entryY=0.51;rounded=0;exitDx=0;exitDy=0;" target="Nu7ANZGfRiXXNqxukv-z-18">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="1730" y="239.23" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" mermaidId="e:DoorOpen-&gt;Note_DoorOpen#0" mermaidBaseStyle="curved=1;dashed=1;dashPattern=2 3;fixDash=1;startArrow=none;endArrow=none;strokeColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.51;entryX=0;entryY=0.51;" mermaidBaseValue="" id="Nu7ANZGfRiXXNqxukv-z-52">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-8" style="curved=1;dashed=1;dashPattern=2 3;fixDash=1;startArrow=none;endArrow=none;strokeColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=0;entryX=0;entryY=0.51;rounded=0;exitDx=0;exitDy=0;" target="Nu7ANZGfRiXXNqxukv-z-21">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="2090" y="297" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" mermaidId="e:RemoveQR-&gt;Note_RemoveQR#0" mermaidBaseStyle="curved=1;dashed=1;dashPattern=2 3;fixDash=1;startArrow=none;endArrow=none;strokeColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.51;entryX=0;entryY=0.51;" mermaidBaseValue="" id="Nu7ANZGfRiXXNqxukv-z-53">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-9" style="curved=1;dashed=1;dashPattern=2 3;fixDash=1;startArrow=none;endArrow=none;strokeColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=0;entryX=0;entryY=0.51;rounded=0;exitDx=0;exitDy=0;" target="Nu7ANZGfRiXXNqxukv-z-22">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="2090" y="487" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" mermaidId="e:DoorClose-&gt;Note_DoorClose#0" mermaidBaseStyle="curved=1;dashed=1;dashPattern=2 3;fixDash=1;startArrow=none;endArrow=none;strokeColor=light-dark(#333333,#cccccc);exitX=0.71;exitY=0;entryX=0;entryY=0.49;" mermaidBaseValue="" id="Nu7ANZGfRiXXNqxukv-z-54">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-11" style="curved=1;dashed=1;dashPattern=2 3;fixDash=1;startArrow=none;endArrow=none;strokeColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=0;entryX=0;entryY=0.49;rounded=0;exitDx=0;exitDy=0;" target="Nu7ANZGfRiXXNqxukv-z-23">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="2890" y="277.77" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" mermaidId="e:Return_Close-&gt;Note_Return_Close#0" mermaidBaseStyle="curved=1;dashed=1;dashPattern=2 3;fixDash=1;startArrow=none;endArrow=none;strokeColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.08;entryX=0;entryY=0.5;" mermaidBaseValue="" id="Nu7ANZGfRiXXNqxukv-z-55">
+          <mxCell edge="1" parent="Nu7ANZGfRiXXNqxukv-z-1" source="Nu7ANZGfRiXXNqxukv-z-14" style="curved=1;dashed=1;dashPattern=2 3;fixDash=1;startArrow=none;endArrow=none;strokeColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=0;entryX=0.5;entryY=1;rounded=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" target="Nu7ANZGfRiXXNqxukv-z-17">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

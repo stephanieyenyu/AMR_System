@@ -1,0 +1,98 @@
+{% extends "_base.html" %}
+
+{% block title %}FlashBot Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/dashboard.css" />
+{% endblock %}
+
+{% block page_actions %}
+<div class="page-actions">
+  <button class="secondary" onclick="withButtonFeedback(this, refreshAll)">重新整理</button>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="card">
+  <h2>建立包裹</h2>
+  <div class="create-package-row">
+    <div class="create-package-selects">
+      <select id="unitSelect"><option value="">請選擇門牌</option></select>
+      <select id="nameSelect"><option value="">請先選擇門牌</option></select>
+      <select id="qtySelect">
+        <option value="1">1件</option>
+        <option value="2">2件</option>
+        <option value="3">3件</option>
+        <option value="4">4件</option>
+      </select>
+    </div>
+    <button id="createBtn" onclick="createPackage()">建立包裹並通知</button>
+  </div>
+  <div id="createMsg"></div>
+</div>
+
+<div class="card">
+  <div class="robot-status-header">
+    <h2>機器人狀態</h2>
+    <div id="robotInfo" class="robot-info">載入中...</div>
+    <div style="margin-left:auto;display:flex;gap:10px;align-items:center;">
+      <button class="danger" style="margin-left:0;" onclick="robotRecall(this)" title="強制中斷機器人目前的任務並返回管理室">返回管理室</button>
+      <button class="secondary" style="margin-left:0;" onclick="robotRecharge(this)">機器人充電</button>
+    </div>
+  </div>
+  <div style="border-top:1px solid #eee;margin-bottom:10px;padding-top:16px;display:flex;gap:12px;align-items:center;">
+    <div id="doorInfo" class="doors" style="flex:1;border-top:none;padding-top:0;"></div>
+    <div style="display:flex;gap:10px;align-items:center;flex-shrink:0;">
+      <button id="manualOpenBtn" class="secondary" style="margin-left:0;" onclick="manualOpenDoors(this)" title="打開所有艙門">開啟艙門</button>
+      <button id="manualCloseBtn" class="secondary" style="margin-left:0;" onclick="manualCloseDoors(this)" title="請確認所有艙門皆空再關閉艙門">關閉艙門</button>
+    </div>
+  </div>
+</div>
+
+<div id="rejectAlert" class="alert-box alert-danger" style="display:none;"></div>
+<div id="returnPendingAlert" class="alert-box alert-info" style="display:none;"></div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>包裹清單</h2>
+    <div style="margin-left:auto;display:flex;gap:10px;align-items:center;">
+      <button id="dispatchBatchBtn" class="danger" style="margin-left:0;" onclick="dispatchBatch()">全部派送（<span id="pendingDispatchCount">0</span>）</button>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+    <button id="selectModeBtn" class="secondary" style="margin-left:0;" onclick="toggleSelectMode()">選取</button>
+    <button id="deleteSelectedBtn" class="danger" style="display:none;margin-left:0;" onclick="deleteSelectedPackages()" disabled>刪除已選（0）</button>
+    <input type="text" id="unitFilterInput" placeholder="輸入門牌篩選"
+      style="width:150px;height:42px;padding:0 10px;border-radius:6px;border:1px solid #ccc;font-size:16px;box-sizing:border-box;" />
+    <label style="font-size:15px;color:#888;margin-left:4px;">建立時間：</label>
+    <input type="date" id="packageDateFrom" style="height:42px;padding:0 8px;border-radius:6px;border:1px solid #ccc;font-size:16px;box-sizing:border-box;" />
+    <span style="color:#888;">至</span>
+    <input type="date" id="packageDateTo" style="height:42px;padding:0 8px;border-radius:6px;border:1px solid #ccc;font-size:16px;box-sizing:border-box;" />
+    <button id="filterApplyBtn" style="margin-left:0;" onclick="applyFilters()">套用</button>
+    <button id="filterClearBtn" class="secondary" style="margin-left:0;" onclick="clearFilters()">清除全部</button>
+    <span id="filterInfo" style="font-size:15px;color:#888;"></span>
+    <span id="pendingRequestHint" style="margin-left:auto;font-size:15px;color:#E2231A;font-weight:bold;">目前有 0 筆任務尚未處理派送，請盡速處理</span>
+  </div>
+  <table>
+    <thead><tr>
+      <th id="selectColHeader" style="display:none;width:30px;"><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)" /></th>
+      <th>門牌</th><th>狀態</th><th>艙門</th><th>建立時間</th><th>預約時間</th><th>操作</th>
+    </tr></thead>
+    <tbody id="packageTableBody"><tr><td colspan="6">載入中...</td></tr></tbody>
+  </table>
+  <div style="display:flex;align-items:center;justify-content:flex-end;gap:16px;margin-top:10px;font-size:15px;color:#888;">
+    <span id="packagePagerInfo"></span>
+    <a id="packagePrevBtn" href="javascript:void(0)" onclick="prevPackagePage()" style="font-size:16px;color:#444;cursor:pointer;">← 上一頁</a>
+    <a id="packageNextBtn" href="javascript:void(0)" onclick="nextPackagePage()" style="font-size:16px;color:#444;cursor:pointer;">下一頁 →</a>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const ROBOT_HOME_POINT_NAME = {{ robot_home_point_name|tojson }};
+</script>
+<script src="/static/js/dashboard.js"></script>
+{% endblock %}

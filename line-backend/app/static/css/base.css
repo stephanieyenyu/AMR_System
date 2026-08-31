@@ -1,0 +1,338 @@
+/* ============================================================
+ * base.css — Admin Dashboard 四個頁面共用樣式
+ *
+ * 這份檔案取代了原本四個頁面各自內嵌、彼此已經長歪的 <style> 區塊。
+ * 以後要調整顏色、字級、間距，只要改這一份，四頁會一起套用。
+ *
+ * 視覺方向：
+ * - 品牌紅（#E2231A）收斂到「危險/會動硬體/不可逆」的操作（.danger）、
+ *   以及頁首標題文字，不再是預設按鈕色。
+ * - 一般操作按鈕改用中性深灰，降低紅色的出現頻率，讓紅色保留警示作用。
+ * - 卡片拿掉陰影，改細邊框，視覺更扁平。
+ * - 字級與可點擊區域整體放大（不用 zoom，直接調整 font-size/padding），
+ *   避免不同瀏覽器對 zoom 支援度不一致的問題。
+ * ============================================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, "PingFang TC", "Microsoft JhengHei", sans-serif;
+  background: #f5f5f5;
+  margin: 0;
+  padding: 20px;
+  color: #222;
+  font-size: 16px;
+}
+
+/* ---------- 頁首（標題 + 導覽列），四頁統一用同一種排版 ---------- */
+.page-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.page-header h1 {
+  color: #E2231A;
+  font-size: 26px;
+  font-weight: 500;
+  margin: 0;
+  white-space: nowrap;
+}
+.page-header .admin-nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+.page-header .admin-nav a {
+  font-size: 16px;
+  font-weight: normal;
+  color: #666;
+  text-decoration: none;
+}
+.page-header .admin-nav a:hover {
+  color: #222;
+  text-decoration: underline;
+}
+.page-header .admin-nav .admin-nav-current {
+  font-size: 16px;
+  font-weight: bold;
+  color: #222;
+}
+.page-header .page-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+h2 {
+  font-size: 19px;
+  margin: 0 0 14px 0;
+  color: #333;
+}
+
+.card {
+  background: white;
+  border: 1px solid #e3e3e0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 22px;
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 14px;
+}
+.card-header h2 {
+  margin: 0;
+  white-space: nowrap;
+}
+.card-header button {
+  margin-left: auto;
+  margin-right: 0;
+  margin-bottom: 0;
+  flex-shrink: 0;
+}
+
+/* ---------- 表單元件（字級與可點擊範圍都比原本大，方便點擊） ---------- */
+input,
+select,
+button {
+  padding: 10px 18px;
+  font-size: 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
+
+/* 一般操作（查詢、儲存、建立、確認…）：中性深灰，不再是品牌紅 */
+button {
+  background: #2c2c2a;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+button:hover {
+  background: #1a1a19;
+}
+button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+button.secondary {
+  background: white;
+  color: #444;
+  border: 1px solid #d0d0cc;
+}
+button.secondary:hover {
+  background: #f2f2f0;
+}
+/* 會直接驅動硬體、或不可逆的操作（全部派送、召回機器人、刪除、銷案），
+   統一用這個 class 標示，跟一般操作在視覺上明顯區隔——整份系統裡，
+   紅色只留給這一種按鈕，看到紅色就代表要停下來想一下再按 */
+button.danger {
+  background: #E2231A;
+  color: white;
+  border: 1px solid #E2231A;
+  font-weight: bold;
+}
+button.danger:hover {
+  background: #c41c14;
+}
+
+/* ---------- 表格 ---------- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+}
+th,
+td {
+  text-align: left;
+  padding: 12px 10px;
+  border-bottom: 1px solid #eee;
+}
+th {
+  color: #888;
+  font-weight: normal;
+}
+tr.selectable-row {
+  cursor: pointer;
+}
+tr.selectable-row:hover {
+  background: #f7f7f5;
+}
+tr.needs-attention-row {
+  background: #fff0f0;
+}
+
+/* ---------- 狀態徽章（維持原本語意色，字級/間距放大） ---------- */
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  background: #eee;
+}
+.status-pickup_now { background: #fff3cd; color: #856404; }
+.status-delivering { background: #cce5ff; color: #004085; }
+.status-arrived { background: #d4edda; color: #155724; }
+.status-completed { background: #e2e3e5; color: #383d41; }
+.status-voided { background: #f8d7da; color: #721c24; }
+.status-rejected_at_door { background: #dc3545; color: white; font-weight: bold; }
+.status-returned_timeout { background: #dc3545; color: white; font-weight: bold; }
+.status-active { background: #d4edda; color: #155724; }
+.status-inactive { background: #e2e3e5; color: #383d41; }
+
+.pill { padding: 4px 10px; border-radius: 10px; font-size: 13px; }
+.pill-waiting { background: #fff3cd; color: #856404; }
+.pill-resolved { background: #d4edda; color: #155724; }
+.pill-redispatched { background: #cce5ff; color: #004085; }
+
+.action-buttons { display: inline-flex; gap: 8px; }
+
+/* ---------- 提示區塊 ---------- */
+.empty-hint {
+  color: #999;
+  font-size: 15px;
+  padding: 14px 0;
+}
+
+.alert-box {
+  color: white;
+  border-radius: 8px;
+  padding: 16px 18px;
+  margin-bottom: 22px;
+  font-size: 15px;
+}
+.alert-box b { display: block; font-size: 17px; margin-bottom: 8px; }
+.alert-box ul { margin: 0; padding-left: 20px; }
+.alert-box table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+.alert-box th,
+.alert-box td { text-align: left; padding: 8px 10px; font-size: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35); }
+.alert-box th { font-weight: normal; opacity: 0.85; }
+.alert-danger { background: #dc3545; }
+.alert-info { background: #004085; }
+
+/* ---------- 每日報表頁專屬（統計方塊、時間軸等級色） ---------- */
+.summary-grid { display: flex; gap: 18px; flex-wrap: wrap; }
+.summary-box { background: #f9f9f9; border-radius: 8px; padding: 14px 22px; text-align: center; min-width: 100px; }
+.summary-box b { display: block; font-size: 26px; color: #222; }
+.summary-box span { font-size: 13px; color: #888; }
+.level-error { color: #c41c14; font-weight: bold; }
+.level-warning { color: #b58105; }
+.level-info { color: #333; }
+
+/* ---------- 自訂 checkbox（包裹清單多選用），放大方便點擊 ---------- */
+.pkg-select-checkbox,
+#selectAllCheckbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 26px;
+  height: 26px;
+  border: 2px solid #ccc;
+  border-radius: 7px;
+  cursor: pointer;
+  position: relative;
+  vertical-align: middle;
+  margin: 0;
+}
+.pkg-select-checkbox:checked,
+#selectAllCheckbox:checked {
+  background: #2c2c2a;
+  border-color: #2c2c2a;
+}
+.pkg-select-checkbox:checked::after,
+#selectAllCheckbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 4px;
+  width: 6px;
+  height: 12px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* ---------- 通用 modal（修改綁定等共用同一種外觀） ---------- */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open {
+  display: flex;
+}
+.modal-box {
+  background: white;
+  border-radius: 10px;
+  padding: 26px;
+  width: 440px;
+  max-width: 90vw;
+}
+.modal-box h3 {
+  margin: 0 0 18px 0;
+  font-size: 18px;
+}
+.modal-box label {
+  font-size: 14px;
+  color: #888;
+  display: block;
+  margin-bottom: 6px;
+}
+.modal-box input[type="text"],
+.modal-box select {
+  width: 100%;
+  height: 42px;
+  padding: 0 12px;
+  margin-bottom: 14px;
+}
+.modal-box .modal-msg {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+.modal-box .modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+.modal-box .modal-actions button {
+  margin: 0;
+}
+
+/* ---------- 文字狀態色（成功/失敗訊息），取代 JS 手動塗色 ---------- */
+.text-error { color: #c41c14; }
+.text-success { color: #155724; }
+.text-muted { color: #888; }
+
+/* ---------- 窄螢幕（平板/手機）：表格允許橫向捲動，避免撐爆版面；
+   間距/字級略為收斂，其餘排版本來就有 flex-wrap，會自動換行 ---------- */
+@media (max-width: 640px) {
+  body {
+    padding: 12px;
+    font-size: 15px;
+  }
+  .card {
+    padding: 14px;
+  }
+  .page-header h1 {
+    font-size: 22px;
+  }
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}

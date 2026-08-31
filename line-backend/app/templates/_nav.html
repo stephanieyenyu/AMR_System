@@ -1,0 +1,15 @@
+{% set nav_items = [
+  {'key': 'dashboard', 'label': 'Dashboard', 'href': '/admin'},
+  {'key': 'reports', 'label': '每日報表', 'href': '/admin/reports'},
+  {'key': 'exceptions', 'label': '退回/作廢包裹處理', 'href': '/admin/exceptions'},
+  {'key': 'residents', 'label': '住戶綁定管理', 'href': '/admin/residents'},
+] %}
+<nav class="admin-nav">
+  {% for item in nav_items %}
+    {% if item.key == current_page %}
+      <span class="admin-nav-current">{{ item.label }}</span>
+    {% else %}
+      <a href="{{ item.href }}">{{ item.label }}</a>
+    {% endif %}
+  {% endfor %}
+</nav>

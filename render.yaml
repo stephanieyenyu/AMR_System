@@ -1,0 +1,81 @@
+# Render Blueprint（用 Render 原生 Python runtime）。
+# 放在 repo 根目錄，檔名必須是 render.yaml。
+#
+# 跟上一版最大差異：runtime改成python，不再需要任何Dockerfile——
+# Render自己準備Python環境，用buildCommand裝套件、startCommand啟動服務。
+# line-backend/Dockerfile、flashbot-robot/Dockerfile這兩個檔案這次用不到了，
+# 留著也沒關係（不會被讀取），或者可以直接刪掉。
+
+databases:
+  - name: aurobox-postgres
+    plan: starter
+    region: singapore
+
+services:
+  - type: web
+    name: line-backend
+    runtime: python
+    region: singapore
+    plan: starter
+    rootDir: line-backend
+    buildCommand: pip install -r requirements.txt
+    preDeployCommand: python migrate_add_schedule_reminder_sent_at_column.py
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /
+    envVars:
+      - key: LINE_CHANNEL_SECRET
+        sync: false
+      - key: LINE_CHANNEL_ACCESS_TOKEN
+        sync: false
+      - key: LIFF_ID
+        sync: false
+      - key: LIFF_ID_RETURN
+        sync: false
+      - key: LINE_LOGIN_CHANNEL_ID
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: aurobox-postgres
+          property: connectionString
+      - key: ROBOT_API_BASE_URL
+        sync: false
+        # [需手動填寫] 原因跟Docker版一樣：flashbot-robot的內部位址帶隨機
+        # 後綴，要等它第一次部署完成才知道實際值。去Render Dashboard的
+        # flashbot-robot服務、Connect分頁複製「Internal Address」，
+        # 前面加上 http://，貼到這裡，存檔後line-backend會自動重新部署。
+      - key: ROBOT_HOME_POINT_NAME
+        sync: false
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: APP_ENV
+        value: production
+
+  - type: pserv
+    name: flashbot-robot
+    runtime: python
+    region: singapore
+    plan: starter
+    rootDir: flashbot-robot
+    buildCommand: pip install .
+    startCommand: python run.py --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: Pd_key
+        sync: false
+      - key: Pd_secret
+        sync: false
+      - key: Aurotek_id
+        sync: false
+      - key: FLASHBOT_SN
+        sync: false
+      - key: DEFAULT_MAP_NAME
+        sync: false
+      - key: HOME_POINT_NAME
+        sync: false
+      - key: CHARGE_POINT_NAME
+        sync: false
+      - key: DOOR_MODE
+        value: 4_DOORS
+      - key: CENTRAL_API_BASE_URL
+        sync: false

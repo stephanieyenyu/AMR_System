@@ -1,0 +1,173 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="第 1 页" id="DvE7nUGp3de6iBzCieZK">
+    <mxGraphModel dx="2380" dy="1243" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <UserObject label="" mermaidData="{&#xa;  &quot;data&quot;: &quot;---\nconfig:\n  layout: dagre\n---\nstateDiagram-v2\n    direction LR\n\n    %% 1. 先定義所有的狀態，使用 &lt;br&gt; 讓中英文分上下兩行顯示\n    PickupNow : pickup_now&lt;br&gt;待派送\n    Delivering : delivering&lt;br&gt;配送中\n    Arrived : arrived&lt;br&gt;已抵達\n    Completed : completed&lt;br&gt;已完成\n    ReturnRejected : rejected_at_door&lt;br&gt;已取消退貨\n    Timeout : returned_timeout&lt;br&gt;逾時(作廢)\n\n    %% 2. 描述流程轉換\n    [*] --&gt; PickupNow: 住戶建立退貨包裹\n\n    PickupNow --&gt; Delivering: 管理員選擇艙門派送\n\n    Delivering --&gt; Arrived: 機器人抵達住戶點位\n\n    Arrived --&gt; Completed: 住戶掃碼開門並放入退貨包裹\n    Arrived --&gt; ReturnRejected: 住戶取消退貨\n    Arrived --&gt; Timeout: 8分鐘未完成掃碼\n\n    %% 3. 結束狀態與後續動作\n    Completed --&gt; [*]: 機器人回到管理室後&lt;br&gt;由管理員取出\n    ReturnRejected --&gt; [*]\n    Timeout --&gt; [*]\n\n    %% 4. 補充註解\n    note right of PickupNow\n        task_type = return\n        以 door_task_id\n        進行艙門分配\n    end note\n\n    note right of Delivering\n        退貨包裹正在運送\n        機器人前往住戶點位\n    end note\n\n    note right of Arrived\n        機器人已抵達\n        顯示 QR Code\n        等待住戶掃碼開門\n    end note&quot;,&#xa;  &quot;config&quot;: null&#xa;}" id="bXErjZmzxn8OdvJPvmJd-1">
+          <mxCell connectable="0" parent="1" style="group;transparentBounds=1;editIcon=1;lockedGroup=0;groupPadding=10;" vertex="1">
+            <mxGeometry height="465" width="1811" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="completed&#xa;已完成" mermaidId="n:Completed" mermaidBaseStyle="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;strokeWidth=1;fillColor=light-dark(#ECECFF,#1f2020);strokeColor=light-dark(#9370DB,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="completed&#xa;已完成" id="bXErjZmzxn8OdvJPvmJd-14">
+          <mxCell parent="bXErjZmzxn8OdvJPvmJd-1" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;strokeWidth=1;fillColor=light-dark(#ECECFF,#1f2020);strokeColor=light-dark(#9370DB,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="54" width="120" x="1276" y="664" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="" mermaidId="n:root_end" mermaidBaseStyle="ellipse;html=1;fillColor=light-dark(#ECECFF,#1f2020);strokeColor=light-dark(#333333,#cccccc);strokeWidth=2;centerRadius=4;centerColor=light-dark(#9370DB,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="" id="bXErjZmzxn8OdvJPvmJd-18">
+          <mxCell parent="bXErjZmzxn8OdvJPvmJd-1" style="ellipse;html=1;fillColor=light-dark(#ECECFF,#1f2020);strokeColor=light-dark(#333333,#cccccc);strokeWidth=2;centerRadius=4;centerColor=light-dark(#9370DB,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="14" width="14" x="1570" y="597.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="住戶掃碼開門並放入退貨包裹" mermaidId="e:Arrived-&gt;Completed#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=classic;endSize=9;fillColor=none;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=#E8E8E88D;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.98;entryX=0.32;entryY=0;" mermaidBaseValue="住戶掃碼開門並放入退貨包裹" id="bXErjZmzxn8OdvJPvmJd-22">
+          <mxCell edge="1" parent="bXErjZmzxn8OdvJPvmJd-1" source="bXErjZmzxn8OdvJPvmJd-11" style="curved=1;startArrow=none;endArrow=classic;endSize=9;fillColor=none;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=#E8E8E88D;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.75;entryX=0;entryY=0.5;rounded=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;" target="bXErjZmzxn8OdvJPvmJd-14">
+            <mxGeometry relative="1" x="0.0248" y="17" as="geometry">
+              <mxPoint as="offset" />
+              <Array as="points">
+                <mxPoint x="1140" y="684" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="機器人回到管理室後&#xa;由管理員取出" mermaidId="e:Completed-&gt;root_end#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=classic;endSize=9;fillColor=none;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=#E8E8E88D;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0;entryY=0.93;" mermaidBaseValue="機器人回到管理室後&#xa;由管理員取出" id="bXErjZmzxn8OdvJPvmJd-25">
+          <mxCell edge="1" parent="bXErjZmzxn8OdvJPvmJd-1" source="bXErjZmzxn8OdvJPvmJd-14" style="curved=1;startArrow=none;endArrow=classic;endSize=9;fillColor=none;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=#E8E8E88D;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0;entryY=0.93;rounded=0;" target="bXErjZmzxn8OdvJPvmJd-18">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="1520" y="684" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" mermaidId="e:ReturnRejected-&gt;root_end#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=classic;endSize=9;fillColor=none;strokeColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0;entryY=0.5;" mermaidBaseValue="" id="bXErjZmzxn8OdvJPvmJd-26">
+          <mxCell edge="1" parent="bXErjZmzxn8OdvJPvmJd-1" source="bXErjZmzxn8OdvJPvmJd-15" style="curved=1;startArrow=none;endArrow=classic;endSize=9;fillColor=none;strokeColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0;entryY=0.5;rounded=0;" target="bXErjZmzxn8OdvJPvmJd-18">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" mermaidId="e:Timeout-&gt;root_end#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=classic;endSize=9;fillColor=none;strokeColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0;entryY=0;" mermaidBaseValue="" id="bXErjZmzxn8OdvJPvmJd-27">
+          <mxCell edge="1" parent="bXErjZmzxn8OdvJPvmJd-1" source="bXErjZmzxn8OdvJPvmJd-16" style="curved=1;startArrow=none;endArrow=classic;endSize=9;fillColor=none;strokeColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0;entryY=0;rounded=0;" target="bXErjZmzxn8OdvJPvmJd-18">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="1530" y="564" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="退貨包裹正在運送&lt;br&gt;機器人前往住戶點位" mermaidId="n:_note_1" mermaidBaseStyle="rounded=0;whiteSpace=wrap;html=1;align=left;spacingLeft=8;spacingRight=8;fillColor=light-dark(#fff5ad,#2a2a2a);strokeColor=light-dark(#aaaa33,#cccccc);strokeWidth=1.3;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="退貨包裹正在運送&lt;br&gt;機器人前往住戶點位" id="bXErjZmzxn8OdvJPvmJd-8">
+          <mxCell parent="bXErjZmzxn8OdvJPvmJd-1" style="rounded=0;whiteSpace=wrap;html=1;align=left;spacingLeft=8;spacingRight=8;fillColor=light-dark(#fff5ad,#2a2a2a);strokeColor=light-dark(#aaaa33,#cccccc);strokeWidth=1.3;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="46" width="176" x="744" y="450" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="機器人已抵達&lt;br&gt;顯示 QR Code&lt;br&gt;等待住戶掃碼開門" mermaidId="n:_note_2" mermaidBaseStyle="rounded=0;whiteSpace=wrap;html=1;align=left;spacingLeft=8;spacingRight=8;fillColor=light-dark(#fff5ad,#2a2a2a);strokeColor=light-dark(#aaaa33,#cccccc);strokeWidth=1.3;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="機器人已抵達&lt;br&gt;顯示 QR Code&lt;br&gt;等待住戶掃碼開門" id="bXErjZmzxn8OdvJPvmJd-12">
+          <mxCell parent="bXErjZmzxn8OdvJPvmJd-1" style="rounded=0;whiteSpace=wrap;html=1;align=left;spacingLeft=8;spacingRight=8;fillColor=light-dark(#fff5ad,#2a2a2a);strokeColor=light-dark(#aaaa33,#cccccc);strokeWidth=1.3;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="66" width="160" x="1100" y="430" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="" mermaidId="e:Arrived-&gt;_note_2#0" mermaidBaseStyle="curved=1;dashed=1;dashed=1;startArrow=none;endArrow=none;fillColor=none;strokeColor=#aaaa33;exitX=1;exitY=0.09;entryX=0;entryY=0.5;" mermaidBaseValue="" id="bXErjZmzxn8OdvJPvmJd-13">
+          <mxCell edge="1" parent="bXErjZmzxn8OdvJPvmJd-1" source="bXErjZmzxn8OdvJPvmJd-11" style="curved=1;dashed=1;startArrow=none;endArrow=none;fillColor=none;strokeColor=#aaaa33;exitX=0.5;exitY=0;entryX=0;entryY=0.5;fixDash=1;rounded=0;exitDx=0;exitDy=0;" target="bXErjZmzxn8OdvJPvmJd-12">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="1000" y="464" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="rejected_at_door&#xa;已取消退貨" mermaidId="n:ReturnRejected" mermaidBaseStyle="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;strokeWidth=1;fillColor=light-dark(#ECECFF,#1f2020);strokeColor=light-dark(#9370DB,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="rejected_at_door&#xa;已取消退貨" id="bXErjZmzxn8OdvJPvmJd-15">
+          <mxCell parent="bXErjZmzxn8OdvJPvmJd-1" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;strokeWidth=1;fillColor=light-dark(#ECECFF,#1f2020);strokeColor=light-dark(#9370DB,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="54" width="184" x="1244" y="577.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="住戶取消退貨" mermaidId="e:Arrived-&gt;ReturnRejected#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=classic;endSize=9;fillColor=none;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=#E8E8E88D;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.65;entryX=0.35;entryY=0;" mermaidBaseValue="住戶取消退貨" id="bXErjZmzxn8OdvJPvmJd-23">
+          <mxCell edge="1" parent="bXErjZmzxn8OdvJPvmJd-1" source="bXErjZmzxn8OdvJPvmJd-11" style="curved=1;startArrow=none;endArrow=classic;endSize=9;fillColor=none;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=#E8E8E88D;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0;entryY=0.5;rounded=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;" target="bXErjZmzxn8OdvJPvmJd-15">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="機器人抵達住戶點位" mermaidId="e:Delivering-&gt;Arrived#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=classic;endSize=9;fillColor=none;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=#E8E8E88D;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.67;entryX=0.33;entryY=0;" mermaidBaseValue="機器人抵達住戶點位" id="bXErjZmzxn8OdvJPvmJd-21">
+          <mxCell edge="1" parent="bXErjZmzxn8OdvJPvmJd-1" source="bXErjZmzxn8OdvJPvmJd-7" style="curved=1;startArrow=none;endArrow=classic;endSize=9;fillColor=none;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=#E8E8E88D;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0;entryY=0.5;rounded=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;" target="bXErjZmzxn8OdvJPvmJd-11">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="arrived&#xa;已抵達" mermaidId="n:Arrived" mermaidBaseStyle="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;strokeWidth=1;fillColor=light-dark(#ECECFF,#1f2020);strokeColor=light-dark(#9370DB,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="arrived&#xa;已抵達" id="bXErjZmzxn8OdvJPvmJd-11">
+          <mxCell parent="bXErjZmzxn8OdvJPvmJd-1" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;strokeWidth=1;fillColor=light-dark(#ECECFF,#1f2020);strokeColor=light-dark(#9370DB,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="54" width="105" x="935" y="577.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="returned_timeout&#xa;逾時(作廢)" mermaidId="n:Timeout" mermaidBaseStyle="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;strokeWidth=1;fillColor=light-dark(#ECECFF,#1f2020);strokeColor=light-dark(#9370DB,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="returned_timeout&#xa;逾時(作廢)" id="bXErjZmzxn8OdvJPvmJd-16">
+          <mxCell parent="bXErjZmzxn8OdvJPvmJd-1" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;strokeWidth=1;fillColor=light-dark(#ECECFF,#1f2020);strokeColor=light-dark(#9370DB,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="54" width="192" x="1240" y="504" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="8分鐘未完成掃碼" mermaidId="e:Arrived-&gt;Timeout#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=classic;endSize=9;fillColor=none;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=#E8E8E88D;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.33;entryX=0.3;entryY=0;" mermaidBaseValue="8分鐘未完成掃碼" id="bXErjZmzxn8OdvJPvmJd-24">
+          <mxCell edge="1" parent="bXErjZmzxn8OdvJPvmJd-1" source="bXErjZmzxn8OdvJPvmJd-11" style="curved=1;startArrow=none;endArrow=classic;endSize=9;fillColor=none;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=#E8E8E88D;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.25;entryX=0;entryY=0.5;rounded=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;" target="bXErjZmzxn8OdvJPvmJd-16">
+            <mxGeometry relative="1" x="0.0302" as="geometry">
+              <mxPoint as="offset" />
+              <Array as="points">
+                <mxPoint x="1130" y="531" />
+              </Array>
+              <mxPoint x="1070" y="551.8199999999999" as="sourcePoint" />
+              <mxPoint x="1429" y="527.5" as="targetPoint" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="task_type = return&lt;br&gt;以 door_task_id&lt;br&gt;進行艙門分配" mermaidId="n:_note_0" mermaidBaseStyle="rounded=0;whiteSpace=wrap;html=1;align=left;spacingLeft=8;spacingRight=8;fillColor=light-dark(#fff5ad,#2a2a2a);strokeColor=light-dark(#aaaa33,#cccccc);strokeWidth=1.3;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="task_type = return&lt;br&gt;以 door_task_id&lt;br&gt;進行艙門分配" id="bXErjZmzxn8OdvJPvmJd-4">
+          <mxCell parent="bXErjZmzxn8OdvJPvmJd-1" style="rounded=0;whiteSpace=wrap;html=1;align=left;spacingLeft=8;spacingRight=8;fillColor=light-dark(#fff5ad,#2a2a2a);strokeColor=light-dark(#aaaa33,#cccccc);strokeWidth=1.3;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="66" width="165" x="399" y="430" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="" mermaidId="e:PickupNow-&gt;_note_0#0" mermaidBaseStyle="curved=1;dashed=1;dashed=1;startArrow=none;endArrow=none;fillColor=none;strokeColor=#aaaa33;exitX=1;exitY=0.39;entryX=0;entryY=0.5;" mermaidBaseValue="" id="bXErjZmzxn8OdvJPvmJd-5">
+          <mxCell edge="1" parent="bXErjZmzxn8OdvJPvmJd-1" source="bXErjZmzxn8OdvJPvmJd-3" style="curved=1;dashed=1;startArrow=none;endArrow=none;fillColor=none;strokeColor=#aaaa33;exitX=0.5;exitY=0;entryX=0;entryY=0.5;fixDash=1;rounded=0;exitDx=0;exitDy=0;" target="bXErjZmzxn8OdvJPvmJd-4">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="350" y="494" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" mermaidId="e:Delivering-&gt;_note_1#0" mermaidBaseStyle="curved=1;dashed=1;dashed=1;startArrow=none;endArrow=none;fillColor=none;strokeColor=#aaaa33;exitX=1;exitY=0.33;entryX=0;entryY=0.5;" mermaidBaseValue="" id="bXErjZmzxn8OdvJPvmJd-9">
+          <mxCell edge="1" parent="bXErjZmzxn8OdvJPvmJd-1" source="bXErjZmzxn8OdvJPvmJd-7" style="curved=1;dashed=1;startArrow=none;endArrow=none;fillColor=none;strokeColor=#aaaa33;exitX=0.5;exitY=0;entryX=0;entryY=0.5;fixDash=1;rounded=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" target="bXErjZmzxn8OdvJPvmJd-8">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="678.5" y="474" />
+              </Array>
+              <mxPoint x="770" y="473" as="targetPoint" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="管理員選擇艙門派送" mermaidId="e:PickupNow-&gt;Delivering#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=classic;endSize=9;fillColor=none;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=#E8E8E88D;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.63;entryX=0.33;entryY=0;" mermaidBaseValue="管理員選擇艙門派送" id="bXErjZmzxn8OdvJPvmJd-20">
+          <mxCell edge="1" parent="bXErjZmzxn8OdvJPvmJd-1" source="bXErjZmzxn8OdvJPvmJd-3" style="curved=1;startArrow=none;endArrow=classic;endSize=9;fillColor=none;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=#E8E8E88D;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0;entryY=0.5;rounded=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;" target="bXErjZmzxn8OdvJPvmJd-7">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="pickup_now&#xa;待派送" mermaidId="n:PickupNow" mermaidBaseStyle="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;strokeWidth=1;fillColor=light-dark(#ECECFF,#1f2020);strokeColor=light-dark(#9370DB,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="pickup_now&#xa;待派送" id="bXErjZmzxn8OdvJPvmJd-3">
+          <mxCell parent="bXErjZmzxn8OdvJPvmJd-1" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;strokeWidth=1;fillColor=light-dark(#ECECFF,#1f2020);strokeColor=light-dark(#9370DB,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="54" width="127" x="290" y="577.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="delivering&#xa;配送中" mermaidId="n:Delivering" mermaidBaseStyle="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;strokeWidth=1;fillColor=light-dark(#ECECFF,#1f2020);strokeColor=light-dark(#9370DB,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="delivering&#xa;配送中" id="bXErjZmzxn8OdvJPvmJd-7">
+          <mxCell parent="bXErjZmzxn8OdvJPvmJd-1" style="rounded=1;absoluteArcSize=1;arcSize=10;html=1;whiteSpace=wrap;strokeWidth=1;fillColor=light-dark(#ECECFF,#1f2020);strokeColor=light-dark(#9370DB,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="54" width="127" x="615" y="577.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="" mermaidId="n:root_start" mermaidBaseStyle="ellipse;html=1;fillColor=light-dark(#333333,#cccccc);strokeColor=light-dark(#333333,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="" id="bXErjZmzxn8OdvJPvmJd-17">
+          <mxCell parent="bXErjZmzxn8OdvJPvmJd-1" style="ellipse;html=1;fillColor=light-dark(#333333,#cccccc);strokeColor=light-dark(#333333,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="14" width="14" x="80" y="597.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="住戶建立退貨包裹" mermaidId="e:root_start-&gt;PickupNow#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=classic;endSize=9;fillColor=none;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=#E8E8E88D;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0;entryY=0.5;" mermaidBaseValue="住戶建立退貨包裹" id="bXErjZmzxn8OdvJPvmJd-19">
+          <mxCell edge="1" parent="bXErjZmzxn8OdvJPvmJd-1" source="bXErjZmzxn8OdvJPvmJd-17" style="curved=1;startArrow=none;endArrow=classic;endSize=9;fillColor=none;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=#E8E8E88D;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0;entryY=0.5;rounded=0;entryDx=0;entryDy=0;" target="bXErjZmzxn8OdvJPvmJd-3">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

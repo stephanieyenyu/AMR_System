@@ -1,0 +1,359 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Sitemap" id="sm2">
+    <mxGraphModel dx="774" dy="497" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1996" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="bandA" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f7f9fc;strokeColor=#cccccc;dashed=1;verticalAlign=top;align=left;spacingLeft=12;spacingTop=6;fontSize=15;fontStyle=1;fontColor=#777777;" value="管理員區　需 HTTP Basic Auth" vertex="1">
+          <mxGeometry height="1036" width="1300" x="20" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="bandS" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f6f6f6;strokeColor=#cccccc;dashed=1;verticalAlign=top;align=left;spacingLeft=12;spacingTop=6;fontSize=15;fontStyle=1;fontColor=#777777;" value="系統端點　不屬於任何使用者介面" vertex="1">
+          <mxGeometry height="226" width="1300" x="20" y="1092" as="geometry" />
+        </mxCell>
+        <mxCell id="bandU" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f7fbf7;strokeColor=#cccccc;dashed=1;verticalAlign=top;align=left;spacingLeft=12;spacingTop=6;fontSize=15;fontStyle=1;fontColor=#777777;" value="住戶區　全部在 LINE App 內，無帳號密碼" vertex="1">
+          <mxGeometry height="612" width="1300" x="20" y="1304" as="geometry" />
+        </mxCell>
+        <mxCell id="S1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;align=left;spacingLeft=10;spacingTop=4;verticalAlign=top;arcSize=8;" value="&lt;b&gt;建立包裹&lt;/b&gt;&lt;br&gt;選門牌 → 選收件人 → 選件數 → 「建立包裹並通知」" vertex="1">
+          <mxGeometry height="62" width="540" x="760" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="S2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;align=left;spacingLeft=10;spacingTop=4;verticalAlign=top;arcSize=8;" value="&lt;b&gt;機器人狀態&lt;/b&gt;&lt;br&gt;機器人狀態、即時位置、電量、四個艙門狀態&lt;br&gt;「返回管理室」（危險操作）、「機器人充電」&lt;br&gt;「開啟艙門」／「關閉艙門」" vertex="1">
+          <mxGeometry height="112" width="540" x="760" y="186" as="geometry" />
+        </mxCell>
+        <mxCell id="S3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;align=left;spacingLeft=10;spacingTop=4;verticalAlign=top;arcSize=8;" value="&lt;b&gt;待處理提示橫幅&lt;/b&gt;&lt;br&gt;紅底：拒收／逾時未取／不收 → 「確定」、「手動結案」&lt;br&gt;藍底：退貨已帶回管理室 → 「確認取出」" vertex="1">
+          <mxGeometry height="92" width="540" x="760" y="312" as="geometry" />
+        </mxCell>
+        <mxCell id="S4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;align=left;spacingLeft=10;spacingTop=4;verticalAlign=top;arcSize=8;" value="&lt;b&gt;包裹清單&lt;/b&gt;　欄位：門牌｜狀態｜艙門｜建立時間｜預約時間｜操作&lt;br&gt;篩選：門牌、日期區間、分頁&lt;br&gt;「全部派送」（危險操作）、選取後「刪除已選」&lt;br&gt;列內：放置包裹（選艙門）、釋放、通知住戶（疑似漏拿）" vertex="1">
+          <mxGeometry height="112" width="540" x="760" y="418" as="geometry" />
+        </mxCell>
+        <mxCell id="S5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;align=left;spacingLeft=10;spacingTop=4;verticalAlign=top;arcSize=8;" value="&lt;b&gt;選擇日期&lt;/b&gt; → 「查詢」" vertex="1">
+          <mxGeometry height="40" width="540" x="760" y="574" as="geometry" />
+        </mxCell>
+        <mxCell id="S6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;align=left;spacingLeft=10;spacingTop=4;verticalAlign=top;arcSize=8;" value="&lt;b&gt;包裹狀態統計&lt;/b&gt;　當日各狀態筆數" vertex="1">
+          <mxGeometry height="44" width="540" x="760" y="628" as="geometry" />
+        </mxCell>
+        <mxCell id="S7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;align=left;spacingLeft=10;spacingTop=4;verticalAlign=top;arcSize=8;" value="&lt;b&gt;任務時間軸&lt;/b&gt;　依 package_id 分筆的事件紀錄做分頁" vertex="1">
+          <mxGeometry height="44" width="540" x="760" y="686" as="geometry" />
+        </mxCell>
+        <mxCell id="S8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;align=left;spacingLeft=10;spacingTop=4;verticalAlign=top;arcSize=8;" value="&lt;b&gt;篩選與批次&lt;/b&gt;　門牌篩選、選取後「全部銷案」" vertex="1">
+          <mxGeometry height="44" width="540" x="760" y="774" as="geometry" />
+        </mxCell>
+        <mxCell id="S9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;align=left;spacingLeft=10;spacingTop=4;verticalAlign=top;arcSize=8;" value="&lt;b&gt;例外包裹清單&lt;/b&gt;　欄位：門牌｜收件人｜狀態｜建立時間｜主畫面處理｜操作｜已通知時間&lt;br&gt;列內：「通知住戶」（補發）、「重新派貨」&lt;br&gt;※ 重新派貨需先在主控台完成確認／關門" vertex="1">
+          <mxGeometry height="92" width="540" x="760" y="832" as="geometry" />
+        </mxCell>
+        <mxCell id="S10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;align=left;spacingLeft=10;spacingTop=4;verticalAlign=top;arcSize=8;" value="&lt;b&gt;門牌篩選&lt;/b&gt;" vertex="1">
+          <mxGeometry height="36" width="540" x="760" y="968" as="geometry" />
+        </mxCell>
+        <mxCell id="S11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;align=left;spacingLeft=10;spacingTop=4;verticalAlign=top;arcSize=8;" value="&lt;b&gt;綁定清單&lt;/b&gt;　欄位：門牌｜姓名｜狀態｜綁定時間｜操作&lt;br&gt;列內：「修改綁定」（彈窗：門牌、姓名）、「刪除綁定」" vertex="1">
+          <mxGeometry height="70" width="540" x="760" y="1018" as="geometry" />
+        </mxCell>
+        <mxCell id="S12" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;align=left;spacingLeft=10;spacingTop=4;verticalAlign=top;arcSize=8;" value="&lt;b&gt;服務健康檢查&lt;/b&gt;　回傳服務名稱與狀態" vertex="1">
+          <mxGeometry height="62" width="540" x="760" y="1132" as="geometry" />
+        </mxCell>
+        <mxCell id="S13" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;align=left;spacingLeft=10;spacingTop=4;verticalAlign=top;arcSize=8;" value="&lt;b&gt;FastAPI 自動產生的 API 文件&lt;/b&gt;&lt;br&gt;※ 手動觸發機器人抵達回呼" vertex="1">
+          <mxGeometry height="62" width="540" x="760" y="1238" as="geometry" />
+        </mxCell>
+        <mxCell id="S14" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;align=left;spacingLeft=10;spacingTop=4;verticalAlign=top;arcSize=8;" value="&lt;b&gt;圖文選單（住戶端的導覽列）&lt;/b&gt;&lt;br&gt;「我的包裹」查詢未結束包裹｜「退貨」開啟退貨頁&lt;br&gt;「關門」補救掃碼後忘記按完成｜「使用說明」" vertex="1">
+          <mxGeometry height="100" width="540" x="760" y="1344" as="geometry" />
+        </mxCell>
+        <mxCell id="S15" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;align=left;spacingLeft=10;spacingTop=4;verticalAlign=top;arcSize=8;" value="&lt;b&gt;到貨通知&lt;/b&gt;　「取貨」｜「預約取貨」（時間選擇器）｜「不收」" vertex="1">
+          <mxGeometry height="44" width="540" x="760" y="1488" as="geometry" />
+        </mxCell>
+        <mxCell id="S16" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;align=left;spacingLeft=10;spacingTop=4;verticalAlign=top;arcSize=8;" value="&lt;b&gt;抵達通知&lt;/b&gt;　「開啟相機掃碼」（連到掃碼頁）｜「拒收」／「暫時不退貨」" vertex="1">
+          <mxGeometry height="56" width="540" x="760" y="1546" as="geometry" />
+        </mxCell>
+        <mxCell id="S17" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;align=left;spacingLeft=10;spacingTop=4;verticalAlign=top;arcSize=8;" value="&lt;b&gt;純文字通知&lt;/b&gt;　退回提醒、預約提醒、綁定回覆" vertex="1">
+          <mxGeometry height="62" width="540" x="760" y="1616" as="geometry" />
+        </mxCell>
+        <mxCell id="S18" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;align=left;spacingLeft=10;spacingTop=4;verticalAlign=top;arcSize=8;" value="&lt;b&gt;掃碼取貨／放件頁&lt;/b&gt;&lt;br&gt;掃描機器人螢幕 QR → 驗證 ID Token 與取貨碼 → 艙門開啟&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;開門後通知&lt;/b&gt;　「取貨完成」｜「放貨完成」&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="540" x="760" y="1722" as="geometry" />
+        </mxCell>
+        <mxCell id="S19" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=11;align=left;spacingLeft=10;spacingTop=4;verticalAlign=top;arcSize=8;" value="&lt;b&gt;退貨申請頁&lt;/b&gt;&lt;br&gt;填寫件數（1–4）→ 送出 → 建立退貨任務" vertex="1">
+          <mxGeometry height="62" width="540" x="760" y="1836" as="geometry" />
+        </mxCell>
+        <mxCell id="P_admin" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8eff8;strokeColor=#2f6096;fontSize=12;fontStyle=1;arcSize=10;" value="/admin　主控台&lt;br&gt;&lt;font style=&#39;font-size:10px&#39;&gt;templates/dashboard.html&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="300" x="340" y="285" as="geometry" />
+        </mxCell>
+        <mxCell id="P_reports" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8eff8;strokeColor=#2f6096;fontSize=12;fontStyle=1;arcSize=10;" value="/admin/reports　每日報表&lt;br&gt;&lt;font style=&#39;font-size:10px&#39;&gt;templates/reports.html&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="300" x="340" y="617" as="geometry" />
+        </mxCell>
+        <mxCell id="P_exc" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8eff8;strokeColor=#2f6096;fontSize=12;fontStyle=1;arcSize=10;" value="/admin/exceptions　退回／作廢包裹處理&lt;br&gt;&lt;font style=&#39;font-size:10px&#39;&gt;templates/exceptions.html&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="300" x="340" y="814" as="geometry" />
+        </mxCell>
+        <mxCell id="P_res" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8eff8;strokeColor=#2f6096;fontSize=12;fontStyle=1;arcSize=10;" value="/admin/residents　住戶綁定管理&lt;br&gt;&lt;font style=&#39;font-size:10px&#39;&gt;templates/residents.html&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="300" x="340" y="993" as="geometry" />
+        </mxCell>
+        <mxCell id="P_root" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4f4f4;strokeColor=#999999;fontSize=12;fontStyle=1;arcSize=10;fontColor=#666666;dashed=1;" value="/　（無畫面）" vertex="1">
+          <mxGeometry height="70" width="300" x="340" y="1128" as="geometry" />
+        </mxCell>
+        <mxCell id="P_docs" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4f4f4;strokeColor=#999999;fontSize=12;fontStyle=1;arcSize=10;fontColor=#666666;dashed=1;" value="/docs　（無畫面）" vertex="1">
+          <mxGeometry height="70" width="300" x="340" y="1234" as="geometry" />
+        </mxCell>
+        <mxCell id="P_menu" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf3ea;strokeColor=#2e7d32;fontSize=12;fontStyle=1;arcSize=10;" value="LINE 圖文選單" vertex="1">
+          <mxGeometry height="70" width="300" x="340" y="1359" as="geometry" />
+        </mxCell>
+        <mxCell id="P_push" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf3ea;strokeColor=#2e7d32;fontSize=12;fontStyle=1;arcSize=10;" value="推播訊息（Flex Message）" vertex="1">
+          <mxGeometry height="70" width="300" x="340" y="1548" as="geometry" />
+        </mxCell>
+        <mxCell id="P_scan" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf3ea;strokeColor=#2e7d32;fontSize=12;fontStyle=1;arcSize=10;" value="/liff/scan　掃碼取貨&lt;br&gt;&lt;font style=&#39;font-size:10px&#39;&gt;main.py 內的 HTML 常數&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="300" x="340" y="1722" as="geometry" />
+        </mxCell>
+        <mxCell id="P_ret" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf3ea;strokeColor=#2e7d32;fontSize=12;fontStyle=1;arcSize=10;" value="/liff/return-request　退貨申請&lt;br&gt;&lt;font style=&#39;font-size:10px&#39;&gt;main.py 內的 HTML 常數&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="300" x="340" y="1832" as="geometry" />
+        </mxCell>
+        <mxCell id="EA" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ededed;strokeColor=#444444;fontSize=12;fontStyle=1;arcSize=30;" value="管理員瀏覽器&lt;br&gt;—&lt;br&gt;HTTP Basic Auth&lt;br&gt;未通過回 401" vertex="1">
+          <mxGeometry height="110" width="220" x="40" y="619" as="geometry" />
+        </mxCell>
+        <mxCell id="ES" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ededed;strokeColor=#444444;fontSize=12;fontStyle=1;arcSize=30;" value="服務端點&lt;br&gt;—&lt;br&gt;無認證、非使用者介面" vertex="1">
+          <mxGeometry height="90" width="220" x="40" y="1171" as="geometry" />
+        </mxCell>
+        <mxCell id="EU" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ededed;strokeColor=#444444;fontSize=12;fontStyle=1;arcSize=30;" value="住戶 LINE App&lt;br&gt;—&lt;br&gt;加官方帳號好友&lt;br&gt;LIFF 頁靠 ID Token 驗證" vertex="1">
+          <mxGeometry height="110" width="220" x="40" y="1575" as="geometry" />
+        </mxCell>
+        <mxCell id="note1" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fbfbf5;strokeColor=#b8b39a;fontSize=10;size=14;align=left;" value="&lt;b&gt;四個管理頁共用&lt;/b&gt;&lt;br&gt;_base.html（頁首、樣式引入）&lt;br&gt;_nav.html（導覽列，四頁互相連通）&lt;br&gt;base.css、common.js" vertex="1">
+          <mxGeometry height="92" width="250" x="1360" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="note2" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fbfbf5;strokeColor=#b8b39a;fontSize=10;size=14;align=left;" value="主頁面右上角有「重新整理」，且四個葉面都有導覽列，任一頁可直接切到其他三頁。" vertex="1">
+          <mxGeometry height="58" width="250" x="1360" y="196" as="geometry" />
+        </mxCell>
+        <mxCell id="note3" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fbfbf5;strokeColor=#b8b39a;fontSize=10;size=14;align=left;" value="&lt;b&gt;兩個 LIFF 頁不在任何導覽列上&lt;/b&gt;&lt;br&gt;只能從圖文選單「退貨」或抵達通知的&lt;br&gt;「開啟相機掃碼」按鈕進入。&lt;br&gt;兩頁的 HTML 直接寫在 main.py 裡，&lt;br&gt;沒有用 templates/ 或 static/。" vertex="1">
+          <mxGeometry height="110" width="250" x="1360" y="1324" as="geometry" />
+        </mxCell>
+        <mxCell id="note4" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fbfbf5;strokeColor=#b8b39a;fontSize=10;size=14;align=left;" value="住戶端的「導覽」有兩個來源：&lt;br&gt;常駐的圖文選單，以及事件觸發的&lt;br&gt;推播訊息按鈕。多數操作入口在推播裡，&lt;br&gt;不是在固定頁面上。" vertex="1">
+          <mxGeometry height="88" width="250" x="1360" y="1448" as="geometry" />
+        </mxCell>
+        <mxCell id="m1" edge="1" parent="1" source="EA" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#333333;strokeWidth=2;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="P_admin" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="674" />
+              <mxPoint x="300" y="320" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2" edge="1" parent="1" source="EA" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#333333;strokeWidth=2;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="P_reports" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="674" />
+              <mxPoint x="300" y="652" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3" edge="1" parent="1" source="EA" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#333333;strokeWidth=2;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="P_exc" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="674" />
+              <mxPoint x="300" y="849" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4" edge="1" parent="1" source="EA" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#333333;strokeWidth=2;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="P_res" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="674" />
+              <mxPoint x="300" y="1028" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5" edge="1" parent="1" source="ES" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#333333;strokeWidth=2;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="P_root" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="1216" />
+              <mxPoint x="300" y="1163" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m6" edge="1" parent="1" source="ES" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#333333;strokeWidth=2;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="P_docs" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="1216" />
+              <mxPoint x="300" y="1269" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m7" edge="1" parent="1" source="EU" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#333333;strokeWidth=2;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="P_menu" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="1630" />
+              <mxPoint x="300" y="1394" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m8" edge="1" parent="1" source="EU" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#333333;strokeWidth=2;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="P_push" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="1630" />
+              <mxPoint x="300" y="1583" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m9" edge="1" parent="1" source="EU" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#333333;strokeWidth=2;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="P_scan" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="1630" />
+              <mxPoint x="300" y="1757" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m10" edge="1" parent="1" source="EU" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#333333;strokeWidth=2;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="P_ret" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="1630" />
+              <mxPoint x="300" y="1867" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m11" edge="1" parent="1" source="P_admin" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#666666;strokeWidth=1;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="S1" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="715" y="320" />
+              <mxPoint x="715" y="141" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m12" edge="1" parent="1" source="P_admin" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#666666;strokeWidth=1;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="S2" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="715" y="320" />
+              <mxPoint x="715" y="242" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m13" edge="1" parent="1" source="P_admin" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#666666;strokeWidth=1;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="S3" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="715" y="320" />
+              <mxPoint x="715" y="358" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m14" edge="1" parent="1" source="P_admin" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#666666;strokeWidth=1;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="S4" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="715" y="320" />
+              <mxPoint x="715" y="474" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m15" edge="1" parent="1" source="P_reports" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#666666;strokeWidth=1;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="S5" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="715" y="652" />
+              <mxPoint x="715" y="594" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m16" edge="1" parent="1" source="P_reports" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#666666;strokeWidth=1;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="S6" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="715" y="652" />
+              <mxPoint x="715" y="650" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m17" edge="1" parent="1" source="P_reports" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#666666;strokeWidth=1;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="S7" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="715" y="652" />
+              <mxPoint x="715" y="708" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m18" edge="1" parent="1" source="P_exc" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#666666;strokeWidth=1;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="S8" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="715" y="849" />
+              <mxPoint x="715" y="796" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m19" edge="1" parent="1" source="P_exc" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#666666;strokeWidth=1;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="S9" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="715" y="849" />
+              <mxPoint x="715" y="878" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m20" edge="1" parent="1" source="P_res" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#666666;strokeWidth=1;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="S10" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="715" y="1028" />
+              <mxPoint x="715" y="986" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m21" edge="1" parent="1" source="P_res" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#666666;strokeWidth=1;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="S11" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="715" y="1028" />
+              <mxPoint x="715" y="1053" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m22" edge="1" parent="1" source="P_root" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#666666;strokeWidth=1;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="S12" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="715" y="1163" />
+              <mxPoint x="715" y="1163" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m23" edge="1" parent="1" source="P_docs" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#666666;strokeWidth=1;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="S13" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="715" y="1269" />
+              <mxPoint x="715" y="1269" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m24" edge="1" parent="1" source="P_menu" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#666666;strokeWidth=1;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="S14" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="715" y="1394" />
+              <mxPoint x="715" y="1394" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m25" edge="1" parent="1" source="P_push" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#666666;strokeWidth=1;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="S15" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="715" y="1583" />
+              <mxPoint x="715" y="1510" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m26" edge="1" parent="1" source="P_push" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#666666;strokeWidth=1;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="S16" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="715" y="1583" />
+              <mxPoint x="715" y="1574" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m27" edge="1" parent="1" source="P_push" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#666666;strokeWidth=1;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="S17" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="715" y="1583" />
+              <mxPoint x="715" y="1647" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m28" edge="1" parent="1" source="P_scan" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#666666;strokeWidth=1;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="S18" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="715" y="1757" />
+              <mxPoint x="715" y="1757" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m29" edge="1" parent="1" source="P_ret" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#666666;strokeWidth=1;endArrow=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="S19" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="715" y="1867" />
+              <mxPoint x="715" y="1867" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,40 @@
+{% extends "_base.html" %}
+
+{% block title %}FlashBot 每日報表{% endblock %}
+
+{% block content %}
+
+<div class="card">
+  <h2>選擇日期</h2>
+  <input type="date" id="reportDate" />
+  <button id="queryBtn" onclick="queryReport()">查詢</button>
+</div>
+
+<div class="card">
+  <h2>包裹狀態統計</h2>
+  <div id="summaryGrid" class="summary-grid"><div class="empty-hint">請選擇日期後查詢</div></div>
+</div>
+
+<div class="card">
+  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
+    <h2 style="margin:0;">任務時間軸</h2>
+    <div id="logPagerInfo" style="font-size:15px;color:#888;"></div>
+    <div style="margin-left:auto;display:flex;gap:12px;align-items:center;">
+      <a id="logPrevBtn" href="javascript:void(0)" onclick="prevLogGroup()"
+        style="font-size:16px;color:#444;cursor:pointer;">← 上一筆</a>
+      <span id="logPagerCount" style="font-size:15px;color:#888;white-space:nowrap;"></span>
+      <a id="logNextBtn" href="javascript:void(0)" onclick="nextLogGroup()"
+        style="font-size:16px;color:#444;cursor:pointer;">下一筆 →</a>
+    </div>
+  </div>
+  <table>
+    <thead><tr><th>時間</th><th>等級</th><th>事件</th><th>內容</th></tr></thead>
+    <tbody id="logTableBody"><tr><td colspan="4" class="empty-hint">請選擇日期後查詢</td></tr></tbody>
+  </table>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/reports.js"></script>
+{% endblock %}

@@ -1,0 +1,482 @@
+<mxfile host="app.diagrams.net" pages="2">
+  <diagram name="Component Diagram" id="cd6">
+    <mxGraphModel dx="1675" dy="772" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1560" pageHeight="1384" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=16;fontStyle=1;fontColor=#333333;" value="Component Diagram — Aurobox" vertex="1">
+          <mxGeometry height="26" width="700" x="40" y="24" as="geometry" />
+        </mxCell>
+        <mxCell id="t2" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#888888;" value="球＋插槽＝介面：球端提供，插槽端需要。介面名稱標於符號旁。" vertex="1">
+          <mxGeometry height="20" width="700" x="40" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="X2" parent="1" style="shape=module;jettyWidth=10;jettyHeight=5;whiteSpace=wrap;html=1;fillColor=#efefef;strokeColor=#999999;fontSize=11;align=left;verticalAlign=top;spacingLeft=18;spacingTop=6;" value="&lt;b&gt;«external»&lt;/b&gt;&lt;br&gt;管理員瀏覽器" vertex="1">
+          <mxGeometry height="60" width="200" x="60" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="X1" parent="1" style="shape=module;jettyWidth=10;jettyHeight=5;whiteSpace=wrap;html=1;fillColor=#efefef;strokeColor=#999999;fontSize=11;align=left;verticalAlign=top;spacingLeft=18;spacingTop=6;" value="&lt;b&gt;«external»&lt;/b&gt;&lt;br&gt;LINE Platform&lt;br&gt;Messaging API · LIFF · Webhook" vertex="1">
+          <mxGeometry height="90" width="200" x="60" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="X3" parent="1" style="shape=module;jettyWidth=10;jettyHeight=5;whiteSpace=wrap;html=1;fillColor=#efefef;strokeColor=#999999;fontSize=11;align=left;verticalAlign=top;spacingLeft=18;spacingTop=6;" value="&lt;b&gt;«external»&lt;/b&gt;&lt;br&gt;Pudu 開放平台" vertex="1">
+          <mxGeometry height="60" width="180" x="1330" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="G1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fbfcfe;strokeColor=#2f6096;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=16;spacingTop=10;fontSize=15;fontStyle=1;fontColor=#2f6096;" value="line-backend" vertex="1">
+          <mxGeometry height="700" width="560" x="300" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="C1" parent="1" style="shape=module;jettyWidth=10;jettyHeight=5;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#2f6096;fontSize=11;align=left;verticalAlign=top;spacingLeft=18;spacingTop=6;" value="&lt;b&gt;«component»　介面層&lt;/b&gt;&lt;br&gt;Webhook（驗簽·事件分派）· LIFF API&lt;br&gt;Dashboard API · 機器人回呼端點&lt;br&gt;Dashboard 前端（4 頁 + 靜態檔）" vertex="1">
+          <mxGeometry height="80" width="480" x="340" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="C2" parent="1" style="shape=module;jettyWidth=10;jettyHeight=5;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1a4a7a;fontSize=11;align=left;verticalAlign=top;spacingLeft=18;spacingTop=6;" value="&lt;b&gt;«component»　業務邏輯層&lt;/b&gt;&lt;br&gt;包裹狀態機（8 狀態·分組轉換）· 行程推進&lt;br&gt;艙門分配 · 通知對象展開&lt;br&gt;排程任務（逾時·提醒·輪詢·安全網）" vertex="1">
+          <mxGeometry height="80" width="480" x="340" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="C3" parent="1" style="shape=module;jettyWidth=10;jettyHeight=5;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#2f6096;fontSize=11;align=left;verticalAlign=top;spacingLeft=18;spacingTop=6;" value="&lt;b&gt;«component»　對外通訊&lt;/b&gt;&lt;br&gt;line_messaging.py&lt;br&gt;line_verify.py" vertex="1">
+          <mxGeometry height="70" width="220" x="340" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="C4" parent="1" style="shape=module;jettyWidth=10;jettyHeight=5;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#2f6096;fontSize=11;align=left;verticalAlign=top;spacingLeft=18;spacingTop=6;" value="&lt;b&gt;«component»　機器人客戶端&lt;/b&gt;&lt;br&gt;call_robot_api&lt;br&gt;對機器人的唯一出口" vertex="1">
+          <mxGeometry height="70" width="220" x="600" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="C5" parent="1" style="shape=module;jettyWidth=10;jettyHeight=5;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#2f6096;fontSize=11;align=left;verticalAlign=top;spacingLeft=18;spacingTop=6;" value="&lt;b&gt;«component»　資料存取&lt;/b&gt;　models.py · db.py · config.py" vertex="1">
+          <mxGeometry height="50" width="480" x="340" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="D1" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#ffffff;strokeColor=#666666;fontSize=11;verticalAlign=middle;" value="PostgreSQL&lt;br&gt;packages · line_binding&lt;br&gt;package_recipients · task_logs" vertex="1">
+          <mxGeometry height="60" width="260" x="450" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="G2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fbfdfb;strokeColor=#2e7d32;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=16;spacingTop=10;fontSize=15;fontStyle=1;fontColor=#2e7d32;" value="flashbot-robot" vertex="1">
+          <mxGeometry height="700" width="340" x="940" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="R1" parent="1" style="shape=module;jettyWidth=10;jettyHeight=5;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#2e7d32;fontSize=11;align=left;verticalAlign=top;spacingLeft=18;spacingTop=6;" value="&lt;b&gt;«component»　介面層&lt;/b&gt;&lt;br&gt;api.py（14 支路由）&lt;br&gt;艙門指派·裝載·派送·開門&lt;br&gt;完成·取消·返航·召回·充電·狀態" vertex="1">
+          <mxGeometry height="80" width="280" x="970" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="R2" parent="1" style="shape=module;jettyWidth=10;jettyHeight=5;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#2e7d32;fontSize=11;align=left;verticalAlign=top;spacingLeft=18;spacingTop=6;" value="&lt;b&gt;«component»　背景任務層&lt;/b&gt;&lt;br&gt;tasks.py&lt;br&gt;抵達輪詢·QR 顯示·抵達回呼&lt;br&gt;召回等待·位置更新" vertex="1">
+          <mxGeometry height="70" width="280" x="970" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="R3" parent="1" style="shape=module;jettyWidth=10;jettyHeight=5;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#2e7d32;fontSize=11;align=left;verticalAlign=top;spacingLeft=18;spacingTop=6;" value="&lt;b&gt;«component»　硬體控制層&lt;/b&gt;&lt;br&gt;robot.py　FlashbotController&lt;br&gt;導航·艙門批次開關·任務畫面" vertex="1">
+          <mxGeometry height="80" width="280" x="970" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="R5" parent="1" style="shape=module;jettyWidth=10;jettyHeight=5;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#2e7d32;fontSize=11;align=left;verticalAlign=top;spacingLeft=18;spacingTop=6;" value="&lt;b&gt;«component»　對外通訊&lt;/b&gt;&lt;br&gt;pudu_client.py　HMAC-SHA1 簽章" vertex="1">
+          <mxGeometry height="60" width="280" x="970" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="R4" parent="1" style="shape=module;jettyWidth=10;jettyHeight=5;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#2e7d32;fontSize=11;align=left;verticalAlign=top;spacingLeft=18;spacingTop=6;" value="&lt;b&gt;«component»　資料存取&lt;/b&gt;　models.py" vertex="1">
+          <mxGeometry height="44" width="280" x="970" y="730" as="geometry" />
+        </mxCell>
+        <mxCell id="D2" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#ffffff;strokeColor=#666666;fontSize=11;verticalAlign=middle;" value="PostgreSQL&lt;br&gt;doors · robot_state" vertex="1">
+          <mxGeometry height="60" width="180" x="1040" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="i1" parent="1" style="shape=providedRequiredInterface;html=1;outlineConnect=0;strokeColor=#2f6096;fillColor=#ffffff;strokeWidth=1.5;direction=east;" value="" vertex="1">
+          <mxGeometry height="22" width="22" x="279" y="179" as="geometry" />
+        </mxCell>
+        <mxCell id="l1a" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#2f6096;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="260" y="190" as="sourcePoint" />
+            <mxPoint x="279" y="190" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l1b" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#2f6096;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="301" y="190" as="sourcePoint" />
+            <mxPoint x="340" y="190" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t1" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#444444;labelBackgroundColor=#ffffff;" value="&lt;b&gt;IAdminWeb&lt;/b&gt;　HTTPS + Basic Auth" vertex="1">
+          <mxGeometry height="16" width="220" x="262" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="i2" parent="1" style="shape=providedRequiredInterface;html=1;outlineConnect=0;strokeColor=#2f6096;fillColor=#ffffff;strokeWidth=1.5;direction=east;" value="" vertex="1">
+          <mxGeometry height="22" width="22" x="289" y="219" as="geometry" />
+        </mxCell>
+        <mxCell id="l2a" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#2f6096;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" target="i2" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="280" y="300" />
+              <mxPoint x="280" y="230" />
+            </Array>
+            <mxPoint x="260" y="300" as="sourcePoint" />
+            <mxPoint x="300" y="300" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l2b" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#2f6096;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="311" y="230" as="sourcePoint" />
+            <mxPoint x="340" y="230" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t2b" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#444444;labelBackgroundColor=#ffffff;" value="&lt;b&gt;IWebhook&lt;/b&gt;　POST /webhook 驗簽" vertex="1">
+          <mxGeometry height="16" width="210" x="262" y="258" as="geometry" />
+        </mxCell>
+        <mxCell id="i3" parent="1" style="shape=providedRequiredInterface;html=1;outlineConnect=0;strokeColor=#2f6096;fillColor=#ffffff;strokeWidth=1.5;direction=east;" value="" vertex="1">
+          <mxGeometry height="22" width="22" x="274" y="349" as="geometry" />
+        </mxCell>
+        <mxCell id="l3a" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#2f6096;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="260" y="360" as="sourcePoint" />
+            <mxPoint x="274" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l3b" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#2f6096;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="310" y="360.06" />
+              <mxPoint x="310" y="525" />
+            </Array>
+            <mxPoint x="296" y="360" as="sourcePoint" />
+            <mxPoint x="340" y="525" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t3" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#444444;labelBackgroundColor=#ffffff;" value="&lt;b&gt;ILineMessaging&lt;/b&gt;　推播 · 驗證" vertex="1">
+          <mxGeometry height="16" width="180" x="95" y="392" as="geometry" />
+        </mxCell>
+        <mxCell id="i4" parent="1" style="shape=providedRequiredInterface;html=1;outlineConnect=0;strokeColor=#1a4a7a;fillColor=#ffffff;strokeWidth=1.5;direction=north;" value="" vertex="1">
+          <mxGeometry height="22" width="22" x="569" y="279" as="geometry" />
+        </mxCell>
+        <mxCell id="l4a" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#1a4a7a;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="580" y="250" as="sourcePoint" />
+            <mxPoint x="580" y="279" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l4b" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#1a4a7a;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="580" y="301" as="sourcePoint" />
+            <mxPoint x="580" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t4" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#444444;labelBackgroundColor=#ffffff;" value="&lt;b&gt;IPackageOperation&lt;/b&gt;　建立 · 狀態轉換" vertex="1">
+          <mxGeometry height="16" width="230" x="596" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="i5" parent="1" style="shape=providedRequiredInterface;html=1;outlineConnect=0;strokeColor=#2f6096;fillColor=#ffffff;strokeWidth=1.5;direction=north;" value="" vertex="1">
+          <mxGeometry height="22" width="22" x="439" y="439" as="geometry" />
+        </mxCell>
+        <mxCell id="l5a" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#2f6096;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="450" y="410" as="sourcePoint" />
+            <mxPoint x="450" y="439" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l5b" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#2f6096;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="450" y="461" as="sourcePoint" />
+            <mxPoint x="450" y="490" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t5" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#444444;labelBackgroundColor=#ffffff;" value="&lt;b&gt;IMessaging&lt;/b&gt;" vertex="1">
+          <mxGeometry height="16" width="110" x="466" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="i6" parent="1" style="shape=providedRequiredInterface;html=1;outlineConnect=0;strokeColor=#2f6096;fillColor=#ffffff;strokeWidth=1.5;direction=north;" value="" vertex="1">
+          <mxGeometry height="22" width="22" x="699" y="439" as="geometry" />
+        </mxCell>
+        <mxCell id="l6a" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#2f6096;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="710" y="410" as="sourcePoint" />
+            <mxPoint x="710" y="439" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l6b" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#2f6096;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="710" y="461" as="sourcePoint" />
+            <mxPoint x="710" y="490" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t6" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#444444;labelBackgroundColor=#ffffff;" value="&lt;b&gt;IRobotCommand&lt;/b&gt;" vertex="1">
+          <mxGeometry height="16" width="130" x="726" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="i7" parent="1" style="shape=providedRequiredInterface;html=1;outlineConnect=0;strokeColor=#2f6096;fillColor=#ffffff;strokeWidth=1.5;direction=north;" value="" vertex="1">
+          <mxGeometry height="22" width="22" x="569" y="589" as="geometry" />
+        </mxCell>
+        <mxCell id="l7a" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#2f6096;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="580" y="410" as="sourcePoint" />
+            <mxPoint x="580" y="589" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l7b" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#2f6096;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="580" y="611" as="sourcePoint" />
+            <mxPoint x="580" y="640" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t7" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#444444;labelBackgroundColor=#ffffff;" value="&lt;b&gt;IRepository&lt;/b&gt;　ORM Session" vertex="1">
+          <mxGeometry height="16" width="180" x="596" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="l7c" edge="1" parent="1" style="endArrow=open;endSize=8;html=1;rounded=0;strokeColor=#999999;dashed=1;edgeStyle=orthogonalEdgeStyle;fontSize=10;labelBackgroundColor=#ffffff;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="580" y="690" as="sourcePoint" />
+            <mxPoint x="580" y="860" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t7c" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#444444;labelBackgroundColor=#ffffff;" value="SQLAlchemy" vertex="1">
+          <mxGeometry height="16" width="90" x="590" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="i8" parent="1" style="shape=providedRequiredInterface;html=1;outlineConnect=0;strokeColor=#b23b3b;fillColor=#ffffff;strokeWidth=1.5;direction=north;" value="" vertex="1">
+          <mxGeometry height="22" width="22" x="869" y="299" as="geometry" />
+        </mxCell>
+        <mxCell id="l8a" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#b23b3b;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" target="i8" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="880" y="525" />
+            </Array>
+            <mxPoint x="820" y="525" as="sourcePoint" />
+            <mxPoint x="870" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l8b" edge="1" parent="1" source="i8" style="endArrow=none;html=1;rounded=0;strokeColor=#b23b3b;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="880" y="205" />
+            </Array>
+            <mxPoint x="880" y="321" as="sourcePoint" />
+            <mxPoint x="970" y="205" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t8" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#444444;labelBackgroundColor=#ffffff;" value="&lt;b&gt;IRobotHardware&lt;/b&gt;　/api/door-tasks · /api/doors · /api/robot" vertex="1">
+          <mxGeometry height="16" width="240" x="620" y="575" as="geometry" />
+        </mxCell>
+        <mxCell id="i9" parent="1" style="shape=providedRequiredInterface;html=1;outlineConnect=0;strokeColor=#b23b3b;fillColor=#ffffff;strokeWidth=1.5;direction=south;" value="" vertex="1">
+          <mxGeometry height="22" width="22" x="901" y="289" as="geometry" />
+        </mxCell>
+        <mxCell id="l9a" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#b23b3b;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;entryX=1;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" target="i9" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="912" y="365" />
+            </Array>
+            <mxPoint x="970" y="365" as="sourcePoint" />
+            <mxPoint x="912" y="300" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l9b" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#b23b3b;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="912" y="225" />
+            </Array>
+            <mxPoint x="912" y="289" as="sourcePoint" />
+            <mxPoint x="820" y="225" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t9" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#444444;labelBackgroundColor=#ffffff;" value="&lt;b&gt;IArrivalCallback&lt;/b&gt;　POST /door-tasks/:id/arrived" vertex="1">
+          <mxGeometry height="16" width="290" x="895" y="262" as="geometry" />
+        </mxCell>
+        <mxCell id="i10" parent="1" style="shape=providedRequiredInterface;html=1;outlineConnect=0;strokeColor=#2e7d32;fillColor=#ffffff;strokeWidth=1.5;direction=north;" value="" vertex="1">
+          <mxGeometry height="22" width="22" x="1099" y="279" as="geometry" />
+        </mxCell>
+        <mxCell id="l10a" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#2e7d32;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1110" y="250" as="sourcePoint" />
+            <mxPoint x="1110" y="279" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l10b" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#2e7d32;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1110" y="301" as="sourcePoint" />
+            <mxPoint x="1110" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t10" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#444444;labelBackgroundColor=#ffffff;" value="&lt;b&gt;IBackgroundTask&lt;/b&gt;　抵達輪詢 · 回呼" vertex="1">
+          <mxGeometry height="16" width="210" x="1126" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="i11" parent="1" style="shape=providedRequiredInterface;html=1;outlineConnect=0;strokeColor=#2e7d32;fillColor=#ffffff;strokeWidth=1.5;direction=north;" value="" vertex="1">
+          <mxGeometry height="22" width="22" x="1099" y="419" as="geometry" />
+        </mxCell>
+        <mxCell id="l11a" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#2e7d32;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1110" y="400" as="sourcePoint" />
+            <mxPoint x="1110" y="419" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l11b" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#2e7d32;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1110" y="441" as="sourcePoint" />
+            <mxPoint x="1110" y="470" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t11" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#444444;labelBackgroundColor=#ffffff;" value="&lt;b&gt;IHardwareControl&lt;/b&gt;　導航 · 艙門 · 畫面" vertex="1">
+          <mxGeometry height="16" width="210" x="1126" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="i12" parent="1" style="shape=providedRequiredInterface;html=1;outlineConnect=0;strokeColor=#2e7d32;fillColor=#ffffff;strokeWidth=1.5;direction=north;" value="" vertex="1">
+          <mxGeometry height="22" width="22" x="1099" y="569" as="geometry" />
+        </mxCell>
+        <mxCell id="l12a" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#2e7d32;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1110" y="550" as="sourcePoint" />
+            <mxPoint x="1110" y="569" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l12b" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#2e7d32;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1110" y="591" as="sourcePoint" />
+            <mxPoint x="1110" y="620" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t12" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#444444;labelBackgroundColor=#ffffff;" value="&lt;b&gt;IPuduClient&lt;/b&gt;　簽章 REST" vertex="1">
+          <mxGeometry height="16" width="160" x="1126" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="i13" parent="1" style="shape=providedRequiredInterface;html=1;outlineConnect=0;strokeColor=#2e7d32;fillColor=#ffffff;strokeWidth=1.5;direction=north;" value="" vertex="1">
+          <mxGeometry height="22" width="22" x="946" y="489" as="geometry" />
+        </mxCell>
+        <mxCell id="l13a" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#2e7d32;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="957" y="240" />
+            </Array>
+            <mxPoint x="970" y="240" as="sourcePoint" />
+            <mxPoint x="957" y="489" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l13b" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#2e7d32;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="957" y="752" />
+            </Array>
+            <mxPoint x="957" y="511" as="sourcePoint" />
+            <mxPoint x="970" y="752" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t13" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#444444;labelBackgroundColor=#ffffff;" value="&lt;b&gt;IRepository&lt;/b&gt;" vertex="1">
+          <mxGeometry height="16" width="80" x="862" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="l13c" edge="1" parent="1" style="endArrow=open;endSize=8;html=1;rounded=0;strokeColor=#999999;dashed=1;edgeStyle=orthogonalEdgeStyle;fontSize=10;labelBackgroundColor=#ffffff;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1110" y="774" as="sourcePoint" />
+            <mxPoint x="1110" y="860" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t13c" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#444444;labelBackgroundColor=#ffffff;" value="SQLAlchemy" vertex="1">
+          <mxGeometry height="16" width="90" x="1120" y="815" as="geometry" />
+        </mxCell>
+        <mxCell id="i14" parent="1" style="shape=providedRequiredInterface;html=1;outlineConnect=0;strokeColor=#2f6096;fillColor=#ffffff;strokeWidth=1.5;direction=east;" value="" vertex="1">
+          <mxGeometry height="22" width="22" x="1279" y="639" as="geometry" />
+        </mxCell>
+        <mxCell id="l14a" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#2f6096;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1250" y="650" as="sourcePoint" />
+            <mxPoint x="1279" y="650" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l14b" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;strokeColor=#2f6096;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1301" y="650" as="sourcePoint" />
+            <mxPoint x="1330" y="650" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t14" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#444444;labelBackgroundColor=#ffffff;" value="&lt;b&gt;Pudu Open API&lt;/b&gt;　HTTPS + HMAC-SHA1" vertex="1">
+          <mxGeometry height="16" width="230" x="1210" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="leg" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fbfbf5;strokeColor=#b8b39a;fontSize=10;size=12;align=left;verticalAlign=top;" value="&lt;b&gt;圖例&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;«component»&lt;/b&gt;　元件（模組圖示）&lt;br&gt;&lt;b&gt;—○&lt;/b&gt;　提供介面（球）&lt;br&gt;&lt;b&gt;—⊂&lt;/b&gt;　需要介面（插槽）&lt;br&gt;球嵌入插槽＝組裝連接器&lt;br&gt;&lt;br&gt;&lt;font color=&#39;#2f6096&#39;&gt;藍&lt;/font&gt;　line-backend 與外部平台&lt;br&gt;&lt;font color=&#39;#2e7d32&#39;&gt;綠&lt;/font&gt;　flashbot-robot 內部&lt;br&gt;&lt;font color=&#39;#b23b3b&#39;&gt;紅&lt;/font&gt;　跨服務 HTTP&lt;br&gt;&lt;font color=&#39;#999999&#39;&gt;灰虛線&lt;/font&gt;　資料存取" vertex="1">
+          <mxGeometry height="190" width="200" x="60" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="nL" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fbfbf5;strokeColor=#b8b39a;fontSize=10;size=12;align=left;verticalAlign=top;" value="&lt;b&gt;兩側同一切法&lt;/b&gt;&lt;br&gt;介面層 → 業務邏輯／背景任務 →&lt;br&gt;對外通訊 → 資料存取。&lt;br&gt;&lt;br&gt;&lt;b&gt;call_robot_api 是唯一出口&lt;/b&gt;：全檔僅此一處使用 ROBOT_API_BASE_URL，派工、艙門、召回、狀態刷新、返航輪詢、開門守衛檢查全部經由它。" vertex="1">
+          <mxGeometry height="180" width="200" x="60" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="tt" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=16;fontStyle=1;fontColor=#333333;" value="元件與檔案對照" vertex="1">
+          <mxGeometry height="24" width="400" x="40" y="960" as="geometry" />
+        </mxCell>
+        <mxCell id="ra0" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="&lt;b&gt;元件&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="180" x="40" y="994" as="geometry" />
+        </mxCell>
+        <mxCell id="rb0" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="&lt;b&gt;提供的介面&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="240" x="220" y="994" as="geometry" />
+        </mxCell>
+        <mxCell id="rc0" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="&lt;b&gt;對應程式碼&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="1050" x="460" y="994" as="geometry" />
+        </mxCell>
+        <mxCell id="ra1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f7f7f7;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="介面層" vertex="1">
+          <mxGeometry height="30" width="180" x="40" y="1024" as="geometry" />
+        </mxCell>
+        <mxCell id="rb1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f7f7f7;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="IAdminWeb · IWebhook · IArrivalCallback" vertex="1">
+          <mxGeometry height="30" width="240" x="220" y="1024" as="geometry" />
+        </mxCell>
+        <mxCell id="rc1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f7f7f7;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="main.py — /webhook（驗簽·四種事件分派）、/liff/* 3 支、/admin/* 21 支、機器人回呼 2 支；templates/ 4 頁 + _base + _nav；static/ 2 CSS 5 JS" vertex="1">
+          <mxGeometry height="30" width="1050" x="460" y="1024" as="geometry" />
+        </mxCell>
+        <mxCell id="ra2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="業務邏輯層" vertex="1">
+          <mxGeometry height="30" width="180" x="40" y="1054" as="geometry" />
+        </mxCell>
+        <mxCell id="rb2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="IPackageOperation" vertex="1">
+          <mxGeometry height="30" width="240" x="220" y="1054" as="geometry" />
+        </mxCell>
+        <mxCell id="rc2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="main.py — 8 狀態守衛條件、advance_trip_or_return、try_assign_door、_push_to_recipients、APScheduler 6 支排程" vertex="1">
+          <mxGeometry height="30" width="1050" x="460" y="1054" as="geometry" />
+        </mxCell>
+        <mxCell id="ra3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f7f7f7;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="對外通訊" vertex="1">
+          <mxGeometry height="30" width="180" x="40" y="1084" as="geometry" />
+        </mxCell>
+        <mxCell id="rb3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f7f7f7;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="IMessaging" vertex="1">
+          <mxGeometry height="30" width="240" x="220" y="1084" as="geometry" />
+        </mxCell>
+        <mxCell id="rc3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f7f7f7;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="line_messaging.py（push_arrival／push_arrived／reply_text／Flex 共 8 支）、line_verify.py（verify_liff_id_token）" vertex="1">
+          <mxGeometry height="30" width="1050" x="460" y="1084" as="geometry" />
+        </mxCell>
+        <mxCell id="ra4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="機器人客戶端" vertex="1">
+          <mxGeometry height="30" width="180" x="40" y="1114" as="geometry" />
+        </mxCell>
+        <mxCell id="rb4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="IRobotCommand" vertex="1">
+          <mxGeometry height="30" width="240" x="220" y="1114" as="geometry" />
+        </mxCell>
+        <mxCell id="rc4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="main.py — call_robot_api：唯一出口，統一逾時 5 秒與重試" vertex="1">
+          <mxGeometry height="30" width="1050" x="460" y="1114" as="geometry" />
+        </mxCell>
+        <mxCell id="ra5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f7f7f7;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="資料存取" vertex="1">
+          <mxGeometry height="30" width="180" x="40" y="1144" as="geometry" />
+        </mxCell>
+        <mxCell id="rb5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f7f7f7;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="IRepository" vertex="1">
+          <mxGeometry height="30" width="240" x="220" y="1144" as="geometry" />
+        </mxCell>
+        <mxCell id="rc5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f7f7f7;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="models.py（4 張表）、db.py、config.py" vertex="1">
+          <mxGeometry height="30" width="1050" x="460" y="1144" as="geometry" />
+        </mxCell>
+        <mxCell id="ra6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="介面層（機器人）" vertex="1">
+          <mxGeometry height="30" width="180" x="40" y="1174" as="geometry" />
+        </mxCell>
+        <mxCell id="rb6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="IRobotHardware" vertex="1">
+          <mxGeometry height="30" width="240" x="220" y="1174" as="geometry" />
+        </mxCell>
+        <mxCell id="rc6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="api.py — 14 支：door-tasks 的 assign／assign-timeout／pickup-complete／complete／cancel／return；doors 的 load／return-open／return-complete／return-timeout；robot 的 dispatch／recall／recharge；dashboard/status" vertex="1">
+          <mxGeometry height="30" width="1050" x="460" y="1174" as="geometry" />
+        </mxCell>
+        <mxCell id="ra7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f7f7f7;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="背景任務層" vertex="1">
+          <mxGeometry height="30" width="180" x="40" y="1204" as="geometry" />
+        </mxCell>
+        <mxCell id="rb7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f7f7f7;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="IBackgroundTask" vertex="1">
+          <mxGeometry height="30" width="240" x="220" y="1204" as="geometry" />
+        </mxCell>
+        <mxCell id="rc7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f7f7f7;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="tasks.py — _poll_notify_display_qr（輪詢抵達→顯示 QR→回呼中央）、_wait_and_execute_recall、_poll_and_update_location、_queue_door_action" vertex="1">
+          <mxGeometry height="30" width="1050" x="460" y="1204" as="geometry" />
+        </mxCell>
+        <mxCell id="ra8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="硬體控制層" vertex="1">
+          <mxGeometry height="30" width="180" x="40" y="1234" as="geometry" />
+        </mxCell>
+        <mxCell id="rb8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="IHardwareControl" vertex="1">
+          <mxGeometry height="30" width="240" x="220" y="1234" as="geometry" />
+        </mxCell>
+        <mxCell id="rc8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="robot.py — FlashbotController：custom_call 導航、control_doors 批次開關、custom_content 任務畫面、get_status_summary、DOOR_MODE 三／四門映射" vertex="1">
+          <mxGeometry height="30" width="1050" x="460" y="1234" as="geometry" />
+        </mxCell>
+        <mxCell id="ra9" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f7f7f7;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="對外通訊（機器人）" vertex="1">
+          <mxGeometry height="30" width="180" x="40" y="1264" as="geometry" />
+        </mxCell>
+        <mxCell id="rb9" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f7f7f7;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="IPuduClient" vertex="1">
+          <mxGeometry height="30" width="240" x="220" y="1264" as="geometry" />
+        </mxCell>
+        <mxCell id="rc9" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f7f7f7;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="pudu_client.py — HMAC-SHA1（x-date + method + content-MD5 + path，Base64）、指令日誌" vertex="1">
+          <mxGeometry height="30" width="1050" x="460" y="1264" as="geometry" />
+        </mxCell>
+        <mxCell id="ra10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="資料存取（機器人）" vertex="1">
+          <mxGeometry height="30" width="180" x="40" y="1294" as="geometry" />
+        </mxCell>
+        <mxCell id="rb10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="IRepository" vertex="1">
+          <mxGeometry height="30" width="240" x="220" y="1294" as="geometry" />
+        </mxCell>
+        <mxCell id="rc10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dddddd;fontSize=10;align=left;spacingLeft=8;verticalAlign=middle;" value="models.py（doors／robot_state）、app.py（create_app、blueprint 註冊）" vertex="1">
+          <mxGeometry height="30" width="1050" x="460" y="1294" as="geometry" />
+        </mxCell>
+        <mxCell id="src" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=9;fontColor=#aaaaaa;" value="來源：line-backend/app/、flashbot-robot/src/aurobox/ @ 4231f68（已逐項比對程式碼）" vertex="1">
+          <mxGeometry height="20" width="700" x="40" y="1336" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="_gZ6FyL6oRl_UXGTZaG5" name="第 2 页">
+    <mxGraphModel dx="1005" dy="463" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
