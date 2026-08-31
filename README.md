@@ -501,4 +501,5 @@ service logs a warning and falls back to a three-door mapping, which silently re
 AI Development Dept. Intern, Aurotek · July – August 2026 · Taipei
 
 Built and exercised against physical hardware in-house.
+Commit history was squashed before publication to remove operational data and internal identifiers.
 //Shared for portfolio purposes with permission from Aurotek. Not licensed for reuse.//
