@@ -1870,8 +1870,9 @@ async def admin_robot_recall(db: Session = Depends(get_db)):
     「放置包裹」／「全部派送」互相讀到對方寫到一半的資料。鎖不到（skip_locked）
     代表那一筆正在被別的操作處理，直接跳過，不計入這次的重置筆數。
 
-    注意：這裡只保護了「叫回」這一側，place_package／admin_dispatch_batch
-    目前還沒有加鎖，兩邊要完全避開競態，那兩支之後也需要補上同樣的機制。
+    請求路徑（place_package／admin_dispatch_batch 等）用 nowait，鎖不到就立刻
+    失敗，因為那些函式跑在 async handler 裡，阻塞等待會卡住整個事件迴圈。本函式
+    是批次掃描，所以用 skip_locked：跳過被佔用的那筆，其他照常處理。
     """
     ok, resp, error = call_robot_api("POST", "/api/robot/recall", retries=1)
     if not ok:
