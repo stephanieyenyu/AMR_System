@@ -25,6 +25,8 @@ explicit operator path for the class that cannot be inferred. All three are argu
 
 *Package creation → assign doors → loading → dispatch → arrival → QR scan → pickup → return to standby.*
 
+[Full demo (6 min)](https://youtu.be/weCxq86P4LI) · [Short demo (50 sec)](https://youtu.be/zTG4C7RRjNw)
+
 ---
 
 ## What it does
