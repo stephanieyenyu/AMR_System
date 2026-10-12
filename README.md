@@ -453,8 +453,6 @@ absent, refuse packages, and actuate controls out of order.
 │   │   ├── tasks.py                Background polling, the one callback into line-backend
 │   │   └── config.py               Door mapping and environment binding
 │   └── .env.example
-├── data/
-│   └── packages.json               Raw package export backing docs/metrics.md
 ├── render.yaml                     Deployment blueprint for both services
 └── docs/
     ├── architecture.md             Service topology and communication properties
