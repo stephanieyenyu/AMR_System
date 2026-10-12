@@ -114,7 +114,7 @@ already knew how the system worked. That gap is stated here rather than in a foo
 All data comes from the PostgreSQL databases backing the test system. The observation window
 runs 2026-07-14 to 2026-08-14, comprising 21 days with recorded activity. The sampling frame is
 the complete `packages` table at snapshot time (164 rows) and the complete `task_logs` table
-(2,678 rows across 53 event types). `data/packages.json` holds the raw package export; every
+(2,678 rows across 53 event types). The raw package export is held outside this repository; every
 derivation appears in [`docs/metrics.md`](docs/metrics.md).
 
 | Measurement | Value | Nature |
