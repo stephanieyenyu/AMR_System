@@ -4,8 +4,8 @@ All information referenced in the README file comes from the PostgreSQL database
 
 **Snapshot date** 2026-08-14
 **Observation window** 2026-07-14 to 2026-08-14 (21 days with activity)
-**Raw export** [`data/packages.json`](../data/packages.json) — the `GET /admin/packages`
-response for all 164 records at snapshot time
+**Raw export** the `GET /admin/packages` response for all 164 records at snapshot time.
+Held outside this repository: it carries internal test-account identifiers and is not committed.
 
 Unit identifiers in the data (`stephanie`, `jason`, `kevin`, `zola`, `joyce`) are test
 account labels rather than resident records. `豆豆待機` and `高高待機` denote robot standby
